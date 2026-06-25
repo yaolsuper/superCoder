@@ -210,4 +210,4 @@ superCoder/
 
 ## 许可
 
-MIT License — Copyright 2026 yaol888
+MIT License — Copyright 2026 yaolsuper
