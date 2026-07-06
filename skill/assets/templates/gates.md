@@ -13,6 +13,9 @@
 | 当前状态 | PENDING / READY / RUNNING / BLOCKED / VERIFYING / ACCEPTED / MERGED |
 | 本轮唯一目标 |  |
 | 恢复 / 交接场景 | 新任务 / 跨模型恢复 / 跨轮次继续 / 上下文压缩后恢复 |
+| 执行模式 | 单 MR 执行 / 连续项目执行 |
+| MR 启动人工确认 | 需要 / 不需要 |
+| 人工确认触发原因 | 用户明确要求 / 启动阻塞 / 方案不唯一 / 不适用 |
 | 状态来源文件 | `coder-current-task.md` / `project-progress.md` / `checkpoint-status.md` / `handoff.md` / 当前 MR / Review |
 | 任务执行链路 | analysis / plan / MR / current task 均存在：是 / 否 |
 | 实施计划文件 | `.coder/<development_project_id>/plans/<task_id>-implementation-plan.md` |
@@ -89,9 +92,11 @@
 
 | 项 | 内容 |
 |---|---|
-| 触发事件 | 用户确认计划 / 开始执行 MR-X / 进入下一 MR / 开始验证 / 验收 / 恢复执行 |
-| 触发来源 | 用户输入（含触发词）/ Checkpoint 报告 PASS / 偏差降级 |
-| 阶段升级裁决 | 当前阶段可升级：是 / 否；触发词明确：是 / 否；含糊指令按原地或澄清处理：是 / 否 |
+| 触发事件 | 用户确认计划 / 开始执行 MR-X / 自动进入下一 MR / 开始验证 / 验收 / 恢复执行 |
+| 触发来源 | 用户输入（含触发词）/ Checkpoint 报告 PASS / 当前 MR 验收通过且 can_start_next=true / 偏差降级 |
+| 执行模式 | 单 MR 执行 / 连续项目执行 |
+| MR 启动人工确认 | 需要 / 不需要 |
+| 阶段升级裁决 | 当前阶段可升级：是 / 否；触发来源明确：是 / 否；含糊指令在等待人工审核态按原地或澄清处理：是 / 否 |
 | 旧阶段 | ANALYSIS / PLANNING / MR_SPLIT / READY / RUNNING / VERIFYING / ACCEPTED |
 | 新阶段 | 同上 |
 | 旧 stage_epoch |  |
@@ -271,5 +276,7 @@
 | 是否存在未处理偏差 | 是 / 否 |
 | 是否允许进入下一 MR | 是 / 否 |
 | 下一 MR |  |
+| 下一 MR 启动方式 | 自动进入启动门禁 / 等待人工审核 / 阻塞待修复 / 无下一 MR |
+| 自动进入下一 MR 依据 | 当前 MR ACCEPTED / 验证通过 / CP4+CP5 PASS / 状态回写完整 / can_start_next=true / 下一 MR READY |
 | 备注 |  |
 ```

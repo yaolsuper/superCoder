@@ -11,6 +11,8 @@
 | 当前阶段 | ANALYSIS / PLANNING / MR_SPLIT / RUNNING / VERIFYING / ACCEPTED / BLOCKED |
 | 当前 MR / 任务切片 |  |
 | 总体状态 | PENDING / READY / RUNNING / BLOCKED / VERIFYING / ACCEPTED / MERGED |
+| 执行模式 | 单 MR 执行 / 连续项目执行 |
+| MR 启动人工确认 | 需要 / 不需要 |
 | stage_epoch | int（与 coder-current-task.md / checkpoint-status.md 必须相等） |
 | 计划确认状态 | DRAFT_PENDING_CONFIRMATION / CONFIRMED / BLOCKED / N/A |
 | 阶段最近转换 | from -> to / 触发词或 Checkpoint PASS |
@@ -61,6 +63,7 @@
 |---|---|
 | 当前可观察事实 | 已读文件 / 已改文件 / 已执行命令 / 已验证结果 |
 | 当前可干预点 | 等待确认 / 可继续 / 需要回退 / 需要补验证 / 需要修复状态 |
+| 下一 MR 启动方式 | 自动进入启动门禁 / 等待人工审核 / 阻塞待修复 / 无下一 MR |
 | 可回退范围 | 本轮修改文件 / 本 MR 修改文件 / 仅协议产物 / 不可自动回退 |
 | 回退依据 | 执行记录 / 偏差记录 / git diff 摘要 / 手工说明 |
 | 跨 IDE / Model 恢复入口 | `handoff.md` + `task-state.md` + 当前 MR 文件 |
@@ -114,6 +117,8 @@
 | 审查结论未超出审查范围 | PASS / FAIL / N/A |  |
 | 命令输出和内容查询均有界过滤 | PASS / FAIL / N/A |  |
 | 本地测试值未写入产品默认配置 | PASS / FAIL / N/A |  |
+| 连续执行模式下下一 MR 自动启动依据完整 | PASS / FAIL / N/A | 当前 MR ACCEPTED、验证通过、CP4/CP5 PASS、状态回写完整、can_start_next=true、下一 MR READY |
+| 人工确认仅在明确要求或阻塞时触发 | PASS / FAIL / N/A |  |
 
 ## 下一步
 

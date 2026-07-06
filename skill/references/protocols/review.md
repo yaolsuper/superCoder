@@ -1,6 +1,6 @@
 # Coder 代码审查与质量审核协议
 
-当用户要求代码审查、质量审核、回归风险评估、放行判断、MR review 或“看看这段改动有没有问题”时读取本文件。此类任务默认不修改产品代码；若用户要求直接修复，再切换到 `references/protocols/execution.md` 并通过启动门禁。
+仅当用户明确要求使用 superCoder 执行代码审查、质量审核、回归风险评估、放行判断、MR review 或“看看这段改动有没有问题”时读取本文件。普通 code review / 代码评审请求必须先检查当前环境是否有 vibe coding 工具自带的 code review 技能，并优先使用该能力；质量审核、回归风险评估、放行判断或检查未提交变更不因本规则自动使用 vibe coding。不要让 superCoder 抢占默认代码评审触发。此类任务默认不修改产品代码；若用户要求直接修复，再切换到 `references/protocols/execution.md` 并通过启动门禁。
 
 代码审查和质量审核必须严格控制逻辑，防止过度泛化。审查目标不是限制模型发现问题的能力，而是要求每个结论可复核、可定位、可验证。
 如果审查对象是本 Skill 生成的分析报告、实施计划、MR 文件、执行记录或验收决策等正式产物，还必须同时使用 `references/protocols/checkpoint.md`，并输出 Checkpoint 结论。

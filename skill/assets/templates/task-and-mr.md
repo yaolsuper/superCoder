@@ -11,6 +11,9 @@ task_id: string
 development_project_id: string
 mr_id: string
 status: PENDING | READY | RUNNING | BLOCKED | VERIFYING | ACCEPTED | MERGED
+execution_mode: single_mr | continuous_project
+manual_confirmation_required: true | false
+manual_confirmation_reason: explicit_user_request | startup_blocker | ambiguous_safe_plan | scope_change | none
 stage_epoch: int                      # 单调递增阶段版本号，与 project-progress.md / checkpoint-status.md 必须相等
 stage_last_transition:
   from: ANALYSIS | PLANNING | MR_SPLIT | READY | RUNNING | VERIFYING | ACCEPTED
@@ -64,6 +67,7 @@ last_recovery_point: string
 last_handoff_reason: new_task | model_switch | session_resume | context_compaction | user_scope_change | none
 next_mr: string
 can_start_next: true | false
+auto_start_next_allowed: true | false
 ```
 
 `source_chain.plan` 和 `source_chain.mr` 是正式编码执行的硬门槛。分析中间态可以暂时没有 plan；计划待确认态可以暂时没有 MR；但状态必须是 `PENDING` 或 `BLOCKED` 且 `can_start_next: false`。任何 `READY`、`RUNNING`、`VERIFYING`、`ACCEPTED` 的编码任务都不得出现 `source_chain.plan: null` 或 `source_chain.mr: null`。
@@ -126,7 +130,7 @@ resume_gate:
   blocked_reason: string
 ```
 
-如果 `status_consistency: FAIL`、`stage_epoch_consistency: FAIL` 或 `can_enter_start_gate: false`，只能修复状态产物、登记偏差或请求用户确认，不得修改产品代码。含糊指令（“继续”“接着做”）不构成升级信号，见 `references/protocols/execution.md` 阶段升级裁决规则。
+如果 `status_consistency: FAIL`、`stage_epoch_consistency: FAIL` 或 `can_enter_start_gate: false`，只能修复状态产物、登记偏差或请求用户确认，不得修改产品代码。含糊指令（“继续”“接着做”）只有在 `manual_confirmation_required: true` 或 handoff 明确等待人工审核时才被视为不能升级；连续执行模式下，当前 MR 已验收且 `can_start_next: true` / `auto_start_next_allowed: true` 时，可以按文件证据进入下一 MR 启动门禁，见 `references/protocols/execution.md` 阶段升级裁决规则。
 
 ## MR 文件结构
 
@@ -264,9 +268,12 @@ MR 文件必须是详细落地指导和边界文件，不能只是执行摘要�
 ```yaml
 mr_id: MR-X
 status: RUNNING
+execution_mode: continuous_project
+manual_confirmation_required: false
 previous_required_status: ACCEPTED
 next_mr: MR-Y
 can_start_next: false
+auto_start_next_allowed: false
 checkpoint_status: .coder/<development_project_id>/checkpoint-status.md
 current_checkpoint:
   id: CP4
@@ -294,6 +301,7 @@ review_profile:
 | 当前 Step |  |
 | 最近恢复点 |  |
 | 可干预点 | 需要用户确认 / 可继续执行 / 需要回退 / 等待验证 |
+| 下一 MR 启动方式 | 自动进入启动门禁 / 等待人工审核 / 阻塞待修复 / 无下一 MR |
 | 回退策略 |  |
 | 最近更新时间 |  |
 
@@ -330,6 +338,18 @@ review_profile:
 SCOPE_DEVIATION / ENV_BLOCKER / TEST_FAILURE / CROSS_MR_ISSUE / REQUIREMENT_CHANGE / TOOLING_FAILURE / UNKNOWN_RISK
 
 ## 问题描述
+
+## 异常修复与自测
+
+| 项 | 内容 |
+|---|---|
+| 是否当前 MR 范围内可修复 | 是 / 否 |
+| 已尝试修复次数 |  |
+| 最大允许修复次数 |  |
+| 修复动作 |  |
+| 自测命令与结果 |  |
+| Checkpoint 复审结果 |  |
+| 是否仍需人工确认 | 是 / 否 |
 
 ## 当前影响
 

@@ -148,6 +148,9 @@ PENDING -> READY -> RUNNING -> BLOCKED -> VERIFYING -> ACCEPTED -> MERGED
 | `acceptance` | 验收标准 |
 | `validation_commands` | 验证命令 |
 | `can_start_next` | 是否允许进入下一 MR |
+| `execution_mode` | 执行模式：`single_mr` 表示只推进当前 MR；`continuous_project` 表示按状态账本连续推进完整项目需求 |
+| `manual_confirmation_required` | 是否要求 MR 启动前人工确认；只能由用户明确要求、启动阻塞、方案不唯一、范围变化等条件触发 |
+| `auto_start_next_allowed` | 当前 MR 验收后是否允许自动进入下一 MR 启动门禁；必须基于验证、Checkpoint、状态回写和下一 MR READY 证据 |
 | `stage_epoch` | 阶段版本号；`coder-current-task.md`、`project-progress.md`、`checkpoint-status.md` 三者必须相等，作为阶段转换原子性的可验证证据 |
 | `stage_last_transition` | 最近一次阶段转换记录：from / to / trigger（用户触发词或 Checkpoint 报告 PASS） |
 
@@ -166,7 +169,9 @@ PENDING -> READY -> RUNNING -> BLOCKED -> VERIFYING -> ACCEPTED -> MERGED
 | 状态回写 | 将阶段、MR、Step、验证、偏差、回退和下一步写回 Markdown 状态源；未回写视为未完成 |
 | 阶段转换原子性 | 任何状态机阶段转换必须以 `coder-current-task.md`、`project-progress.md`、`checkpoint-status.md` 三文件 `stage_epoch` 同步跳变为唯一证据；无 epoch 跳变阶段不算转换，不得据此修改产品代码或推进下游 |
 | stage_epoch | 单调递增的阶段版本号，三文件必须相等；每发生一次合法阶段转换 +1；不一致即恢复门禁 / 启动门禁失败 |
-| 阶段升级裁决 | 用户口头指令只能降级或原地保持当前阶段，不得升级；阶段升级必须同时满足“当前阶段可升级 + stage_epoch 三文件写入 + 触发词明确”。含糊指令（继续 / 接着做）在等待确认态不构成升级信号 |
+| 阶段升级裁决 | 用户口头指令不得绕过 Markdown 状态账本升级阶段；阶段升级必须同时满足“当前阶段可升级 + stage_epoch 三文件写入 + 明确触发来源”。触发来源可以是用户确认、Checkpoint PASS、当前 MR 验收通过且 `can_start_next: true`。含糊指令（继续 / 接着做）仅在等待人工审核或计划确认态不构成升级信号 |
+| 连续项目执行 | 用户目标覆盖完整项目需求时，按 MR 依赖顺序串行推进；每个 MR 独立门禁、验证、Checkpoint 和状态回写，MR 之间默认不等人工确认 |
+| 人工确认例外 | 只有用户明确要求 MR 启动人工审核，或启动阻塞、方案不唯一、范围变化、未处理 Blocker 等无法安全自动推进的情况，才在 MR 启动前等待人工确认 |
 | pre-edit guard | 修改产品代码前的硬前置闸门：当前阶段为 RUNNING、三文件 stage_epoch 一致、source_chain.plan/mr 文件真实存在、路径守卫通过、CP4 无 Blocker；任一不满足禁止调用产品代码修改工具 |
 | Handoff | 跨模型和跨轮次恢复文件，下一模型必须优先读取它和状态文件，而不是依赖上一模型对话总结 |
 | Checkpoint | 正式产物或执行步骤进入下游前的专项复核关卡 |

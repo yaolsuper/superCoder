@@ -184,15 +184,29 @@ sed -n '120,220p' path/to/file
 
 ## 阶段升级裁决规则
 
-用户口头指令与 `handoff.md` 记录的“下一步协议”冲突时，按以下规则裁决，防止把含糊指令擅自升级为阶段跳变：
+用户口头指令与 `handoff.md` 记录的“下一步协议”冲突时，按以下规则裁决。默认目标是按状态账本连续推进项目需求；人工确认是例外，只在用户明确要求人工审核或状态阻塞时触发。
 
-- 用户指令只能“降级”或“原地”当前阶段（如 RUNNING → BLOCKED、VERIFYING → BLOCKED），不得“升级”（如 PLANNING → RUNNING、PENDING → READY）。
+- 用户指令不能绕过 Markdown 状态账本直接升级阶段；阶段升级必须有文件证据，不得只凭对话意图。
 - 阶段升级（确认计划、开始执行、进入下一 MR）必须同时满足：
   1. 当前阶段处于可升级态（如计划已过 CP1/CP2/CP3、MR 已过 CP1/CP4、当前 MR 已过 CP4 与验证门禁）。
   2. 触发一次 `stage_epoch` 三文件同步跳变写入（见 `SKILL.md` 阶段转换原子性）。
-  3. 用户指令中明确包含升级触发词：“确认计划”“按此计划拆 MR”“按该计划执行”“开始执行 MR-X”“进入下一 MR”等。
-- 含糊指令（“继续”“接着做”“往下走”“完成它”）在 `handoff.md` 记录为“等待确认计划”或当前阶段为 PLANNING/MR_SPLIT 时，不得升级阶段；只能在当前阶段内继续已授权动作，或输出澄清请求。
-- 升级触发词缺位、`stage_epoch` 未跳变或当前阶段不可升级，任一不满足则阶段不变，禁止据此调用产品代码修改工具。
+  3. 存在明确触发来源：用户确认计划 / 用户要求开始指定 MR / Checkpoint PASS / 当前 MR 验证和 CP5 PASS 且 `can_start_next: true` / `handoff.md` 明确记录“可继续执行下一 MR”。
+- 含糊指令（“继续”“接着做”“往下走”“完成它”）在 `handoff.md` 记录为“等待人工审核”“等待确认计划”或 `manual_confirmation_required: true` 时，不得升级阶段；只能在当前阶段内继续已授权动作，或输出澄清请求。
+- 含糊指令在连续执行模式下可以作为恢复执行触发，但能否进入下一 MR 只看文件证据：当前 MR `ACCEPTED`、验证记录存在、CP4/CP5 PASS、状态回写完整、`can_start_next: true`、下一 MR `READY` 且启动条件满足。
+- 缺少触发来源、`stage_epoch` 未跳变、当前阶段不可升级、存在未处理 Blocker 或人工确认标记时，阶段不变，禁止据此调用产品代码修改工具。
+
+## 连续 MR 执行恢复
+
+当用户要求“完整执行一个项目需求”“直到任务完成”或从已有 `.coder/<development_project_id>/` 继续时，按以下顺序恢复并推进，不在 MR 间默认等待人工确认：
+
+1. 读取 `project-progress.md` 的 MR 进度表、`coder-current-task.md`、`checkpoint-status.md`、`handoff.md`、`task-state.md`、当前 MR、最近执行记录和验证记录。
+2. 若当前 MR 为 `RUNNING`，从 `task-state.md` 的最近恢复点继续当前 MR。
+3. 若当前 MR 为 `VERIFYING`，优先执行或补齐验证，并按验证结果修复、复审或验收。
+4. 若当前 MR 为 `BLOCKED`，读取偏差记录；可在当前 MR 范围内修复且未达到升级条件时，先修复并自测；否则等待人工信息。
+5. 若当前 MR 为 `ACCEPTED` / `MERGED` 且 `can_start_next: true`，定位下一 MR，执行恢复门禁和启动门禁；下一 MR 启动条件满足且 `manual_confirmation_required` 不为 true 时，允许自动进入下一 MR。
+6. 若没有下一 MR 或全部 MR 已 `ACCEPTED` / `MERGED`，进入最终验收决策。
+
+连续执行仍必须保持“一次只执行一个 MR”。每个 MR 都要独立完成启动门禁、阶段转换、pre-edit guard、变更计划、实现、差异检查、Checkpoint、验证、执行记录和状态回写。
 
 ## 3. 启动门禁
 
@@ -229,7 +243,7 @@ sed -n '120,220p' path/to/file
 - `project-progress.md`：当前阶段置为 `RUNNING`，`stage_epoch` +1。
 - `checkpoint-status.md`：`stage_epoch` +1，勾选“允许执行当前 Step”。
 
-三文件 `stage_epoch` 必须相等；任一落后即转换未完成，禁止进入 pre-edit guard，禁止修改产品代码。用户口头指令不得单独构成转换；阶段升级需同时满足可升级态、`stage_epoch` 写入、触发词明确（见阶段升级裁决规则）。
+三文件 `stage_epoch` 必须相等；任一落后即转换未完成，禁止进入 pre-edit guard，禁止修改产品代码。用户口头指令不得单独构成转换；阶段升级需同时满足可升级态、`stage_epoch` 写入、明确触发来源（见阶段升级裁决规则）。连续执行模式下，上一 MR 验收通过且 `can_start_next: true` 可以作为进入下一 MR 的触发来源。
 
 ## 5. pre-edit guard（修改产品代码的硬前置）
 
@@ -343,7 +357,7 @@ git status --short
 如果用户要求“直到任务完成”，且当前任务契约存在 `validation_commands` 或等价验证方式，默认必须执行验证。只有用户明确说“不跑测试 / 不做验证”时才可以跳过；跳过后状态不得超过 `VERIFYING` 或 `BLOCKED`，不得标记 `ACCEPTED`。
 验证结果必须写入 `.coder/<development_project_id>/validation/<task-or-mr-id>-validation.md`，并在执行记录、项目进度总览卡片和 handoff 中给出摘要。只在最终回复里写验证结果不算完成验证门禁。
 
-验证失败时先按偏差类型分类；类型含义见 `references/glossary.md`，重试和恢复细节见 `references/guides/error-recovery.md`。
+验证失败或实现异常时先按偏差类型分类；类型含义见 `references/glossary.md`，重试和恢复细节见 `references/guides/error-recovery.md`。若失败属于当前 MR 范围且存在明确修复路径，必须先记录异常、执行小范围修复、重新自测和复审；不得把可自修复失败直接升级给用户。
 
 默认最大重试次数为 2 次，可由 `.coder-config.yaml` 调整。每次重试都必须记录失败命令、原因、影响范围、处理动作和重试结果。
 
@@ -411,7 +425,7 @@ git status --short
 
 ## 15. 验收决策
 
-只有全部条件满足时，才允许进入下一 MR：
+只有全部条件满足时，才允许进入下一 MR；满足后默认可以连续推进，不需要人工逐个 MR 确认，除非用户或任务契约显式要求：
 
 - 当前 MR 状态为 `ACCEPTED` 或 `MERGED`
 - 验证命令已通过，或未执行项已有明确、可接受的原因
@@ -426,8 +440,11 @@ git status --short
 - 偏差已解决或归档
 - 恢复方案明确
 - 下一 MR 启动条件满足
+- `manual_confirmation_required` 不为 true，且 `handoff.md` 下一步协议不是“等待人工审核”
 
 否则保持 `can_start_next: false`。
+
+若上述条件全部满足，把 `handoff.md` 的下一步协议写为“可自动进入下一 MR 启动门禁”，并在 `project-progress.md` 中标记下一 MR。若条件不满足，把阻塞原因写入 `deviations/*.md` 或执行记录偏差章节，并保持当前真实状态，不得口头承诺“下一轮继续即可”而不落盘。
 
 最终回复前必须执行完成一致性锁：
 

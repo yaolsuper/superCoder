@@ -8,7 +8,7 @@
 |---|---|---|
 | entry | `SKILL.md` / `agents/openai.yaml` | 触发判断、读取路由、不可违背硬约束和默认入口提示 |
 | planning | `references/protocols/planning.md` | 分析、迁移评估、实施计划、MR 拆分、来源链路和 BUG 修复完整链路与根因证据矩阵 |
-| review | `references/protocols/review.md` | 代码审查、质量审核、回归风险评估和放行判断 |
+| review | `references/protocols/review.md` | 用户明确要求 superCoder 时的代码审查、质量审核、回归风险评估和放行判断；只有普通 code review / 代码评审优先使用 vibe coding 工具自带的 code review 技能 |
 | execution | `references/protocols/execution.md` | 跨模型恢复门禁（stage_epoch 一致校验）、阶段升级裁决、阶段转换写入、pre-edit guard、启动门禁、路径守卫、实现、验证、handoff 和执行记录 |
 | checkpoint | `references/protocols/checkpoint.md` | 正式产物复核、依赖顺序检查、Blocker 处理和状态一致性 |
 | document_review | `references/document-review-checklist.md` | BRD、PRD、ADD、LLD、DBD、MR 和 Coder 产物的场景化 Review 清单 |
@@ -29,7 +29,7 @@
 | 下游模块 | 依赖模块 | 原因 |
 |---|---|---|
 | planning | entry, checkpoint, templates, document_review | 正式分析和计划需要路径、产物结构、复核和场景化 Review 标准 |
-| review | entry, checkpoint, document_review, prompts | Review 结论必须有范围、证据、推理链和专项清单 |
+| review | entry, checkpoint, document_review, prompts | 仅在显式选择 superCoder review 时启用；Review 结论必须有范围、证据、推理链和专项清单 |
 | execution | entry, planning, checkpoint, templates, guides | 编码执行必须继承任务链路、路径守卫、验证门禁和偏差处理 |
 | checkpoint | entry, document_review, prompts | Checkpoint 需要识别产物类型并保持 Generator / Reviewer / Fixer 分离 |
 | manifest | entry, planning, review, execution, checkpoint, templates, guides | 模块映射必须覆盖所有受路由保护的模块文件 |
@@ -40,7 +40,7 @@
 - 阶段转换原子性（stage_epoch 三文件同步）和阶段升级裁决：`SKILL.md`（定义）+ `references/protocols/execution.md`（裁决规则与 pre-edit guard）
 - 默认入口摘要：`agents/openai.yaml`
 - 分析、计划和 MR 拆分细则：`references/protocols/planning.md`
-- 代码审查和质量审核细则：`references/protocols/review.md`
+- superCoder 代码审查和质量审核细则：`references/protocols/review.md`（仅显式要求 superCoder 时）
 - 编码执行流程：`references/protocols/execution.md`
 - Checkpoint 规则：`references/protocols/checkpoint.md`
 - 场景化文档 Review 清单：`references/document-review-checklist.md`

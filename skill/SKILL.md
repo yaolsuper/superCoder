@@ -1,7 +1,7 @@
 ---
 name: superCoder
 version: "2.0"
-description: "superCoder 开发执行协议技能。Use when 任何开发相关任务：结合当前系统实现分析、读代码定位、改代码/修复缺陷、运行测试/验证、代码审查/检查未提交更改、MR 拆分/推进、生成本次需求相关 git add/提交范围；必须把正式执行产物写入 .coder/<development_project_id>/。"
+description: "superCoder 开发执行协议技能。Use when 任何开发相关任务：结合当前系统实现分析、读代码定位、改代码/修复缺陷、运行测试/验证、MR 拆分/推进、生成本次需求相关 git add/提交范围；仅当用户明确要求使用 superCoder 做 code review / 代码审查 / 质量审核 / 放行判断时处理审查任务；只有普通 code review / 代码评审优先查找并使用 vibe coding 工具自带的 code review 技能。必须把正式执行产物写入 .coder/<development_project_id>/。"
 ---
 
 # Coder 开发功能执行技能
@@ -18,23 +18,25 @@ description: "superCoder 开发执行协议技能。Use when 任何开发相关�
 
 ## 触发闸门
 
-只要用户请求会导致读取工程代码、判断实现方案、修改产品代码、运行测试、审查 diff、检查未提交变更、推进 MR、生成与本次开发有关的 `git add` / 提交范围，均视为开发相关任务，必须使用本 Skill。用户不必显式说 `superCoder`。
+只要用户请求会导致读取工程代码、判断实现方案、修改产品代码、运行测试、推进 MR、生成与本次开发有关的 `git add` / 提交范围，均视为开发相关任务，必须使用本 Skill。用户不必显式说 `superCoder`。
+
+code review / 代码评审 / review 当前改动是例外：此类请求默认先检查当前环境是否有 vibe coding 工具自带的 code review 技能，并优先使用该能力。检查未提交变更、质量审核、回归风险评估和放行判断不因本规则自动使用 vibe coding；只有用户明确说“使用 superCoder 做 code review / 代码审查 / 质量审核 / 放行判断”或等价表达时，才由本 Skill 进入 `references/protocols/review.md`。
 
 以下常见说法必须触发本 Skill：
 
 - “结合当前系统实现分析”“看下当前实现怎么改”“按现有代码分析方案”
 - “修复”“调整”“实现”“优化代码”“补测试”“跑验证”
-- “请检查我未提交的更改”“review 当前改动”“看看这次改动有没有问题”
+- “使用 superCoder 检查我未提交的更改”“用 superCoder review 当前改动”“按 superCoder 看看这次改动有没有问题”
 - “继续改”“按刚才的 review 修”“发布到某引擎/环境前变量需要调整”
 - “生成本次需求开发相关的 git add”“列出本次需求提交文件”
 
-如果一开始只是分析，但分析过程中准备修改代码、运行验证、输出提交范围或审查当前 diff，必须先切换到本 Skill 的对应协议，再继续。不得用普通 Codex 默认开发流程绕过本 Skill。
+如果一开始只是分析，但分析过程中准备修改代码、运行验证或输出提交范围，必须先切换到本 Skill 的对应协议，再继续。若只是准备做 code review / 代码评审，先按代码评审例外规则查找 vibe coding 工具自带的 code review 技能；只有显式要求 superCoder 审查时才切换到本 Skill review 协议。
 
 维护、审查或同步 superCoder Skill 本身时不进入 `.coder/<development_project_id>/` 开发执行流程；这类任务按普通文件维护处理。
 
 ## 使用场景
 
-当用户要求执行开发工作时使用本 Skill，包括需求/代码分析、迁移评估、可行性分析、开发实施计划、MR 拆分、代码审查、质量审核、实现功能、修复缺陷、修改代码、运行回归检查、完成单个 MR、推进单个工程阶段，或按研发文档推进实现。
+当用户要求执行开发工作时使用本 Skill，包括需求/代码分析、迁移评估、可行性分析、开发实施计划、MR 拆分、实现功能、修复缺陷、修改代码、运行回归检查、完成单个 MR、推进单个工程阶段，或按研发文档推进实现。代码审查、质量审核、回归风险评估和放行判断只有在用户明确指定 superCoder 时才使用本 Skill；其中只有普通 code review / 代码评审优先使用 vibe coding 工具自带的 code review 技能。
 
 当任务只是解释概念、阅读资料、生成非开发文档、闲聊、审查或维护 Skill 本身，或没有明确开发目标时，不使用本 Skill 的执行流程。审查或维护本 Skill 本身时按普通文件分析/编辑处理，不要求生成 `.coder/<development_project_id>/` 研发执行产物。
 
@@ -45,7 +47,7 @@ description: "superCoder 开发执行协议技能。Use when 任何开发相关�
 | 需求 | 读取文件 |
 |---|---|
 | 分析现状、迁移评估、生成开发实施计划、MR 拆分 | `references/protocols/planning.md` |
-| 代码审查、质量审核、回归风险评估、放行判断 | `references/protocols/review.md` |
+| 用户明确要求 superCoder 执行代码审查、质量审核、回归风险评估、放行判断 | `references/protocols/review.md` |
 | 实际执行开发、修改代码、运行验证、推进 MR | `references/protocols/execution.md` |
 | 输出 pre-edit guard（修改产品代码前硬闸门）、启动门禁、变更计划、状态回写计划门禁（计划态/恢复态/阶段转换）、验证门禁、执行记录、验收决策表格 | `assets/templates/gates.md` |
 | 输出正式产物后做专项复核、控制幻觉、目标偏移、依赖顺序或 Step 串行执行 | `references/protocols/checkpoint.md` |
@@ -88,7 +90,19 @@ description: "superCoder 开发执行协议技能。Use when 任何开发相关�
 - 阶段转换必须记录触发原因：触发词（用户输入）、触发文件（哪个 Checkpoint 报告 PASS）和前后阶段。
 - 恢复门禁和启动门禁必须校验三文件 `stage_epoch` 一致；不一致时 `status_consistency: FAIL`，不得修改产品代码。
 
-用户口头确认或意图不得单独构成阶段转换；只有伴随 `stage_epoch` 三文件同步跳变的写入，阶段才算真正切换。含糊指令（“继续”“接着做”）不得升级阶段，详见 `references/protocols/execution.md` 的阶段升级裁决规则。
+用户口头确认或意图不得单独构成阶段转换；只有伴随 `stage_epoch` 三文件同步跳变的写入，阶段才算真正切换。含糊指令（“继续”“接着做”）不得把等待人工审核态升级为执行态，详见 `references/protocols/execution.md` 的阶段升级裁决规则。
+
+## 连续执行与人工确认策略
+
+默认执行模式是连续执行项目需求，而不是每个 MR 都等待人工确认。用户要求“完整执行一个项目需求”“直到完成”“继续执行”或等价表达时，必须先从 Markdown 状态账本恢复进度，然后按 MR 依赖顺序串行推进：当前 MR 验证通过、CP4/CP5 PASS、状态回写完整、`can_start_next: true` 且下一 MR 启动条件满足时，可以自动进入下一 MR 的启动门禁。
+
+只有出现以下明确情况，MR 启动才必须等待人工确认：
+
+- 用户明确要求“按 MR 执行启动需要人工介入审核”“每个 MR 开始前等我确认”“MR 启动前人工审批”或等价指令。
+- MR 启动门禁、阶段转换、路径守卫、需求边界、方案选择或验证修复出现阻塞，且无法从现有 Markdown 状态、代码事实、Checkpoint 结论和任务契约中推出唯一安全方案。
+- 下一 MR 需要改变已确认范围、接口、架构、配置、数据库、部署、依赖、数据迁移或跨 MR 归属。
+
+Checkpoint 的结论必须直接驱动后续动作：PASS 时按允许动作推进；CONDITIONAL_PASS / Major 时先执行限定修复并复审；FAIL / Blocker 时只修复同一产物、记录偏差或阻塞。验证失败、工具失败或实现异常必须先按 `references/guides/error-recovery.md` 在当前 MR 范围内记录、修复和自测；只有达到升级条件或缺少安全方案时才请求人工补充信息。
 
 ## Markdown 状态源
 
@@ -131,7 +145,7 @@ coder-current-task.md
 
 如果无法预先确定 `development_project_id`，允许只做有界发现：读取 `.coder-config.yaml`（如存在）、查找 `.coder/*/coder-current-task.md` 的路径清单、再回退到项目根目录 `coder-current-task.md`。不得因此读取全部 `.coder/**` 内容。
 
-跨模型、跨轮次、上下文压缩、用户说“继续”“开始执行”“实施开发”“直到任务完成”或从已存在 `.coder/<development_project_id>/` 继续时，必须把本轮视为恢复执行。恢复执行不能依赖上一模型的对话记忆或助手消息，必须从文件重新装配状态：
+跨模型、跨轮次、上下文压缩、用户说“继续”“开始执行”“实施开发”“直到任务完成”或从已存在 `.coder/<development_project_id>/` 继续时，必须把本轮视为恢复执行。恢复执行不能依赖上一模型的对话记忆或助手消息，必须从文件重新装配状态，并按“连续执行与人工确认策略”判断是继续当前 MR、进入下一 MR、修复异常还是等待人工确认：
 
 ```text
 coder-current-task.md
@@ -143,7 +157,7 @@ handoff.md（如不存在，先创建最小恢复摘要）
 task-state.md / context-summary.md（如存在）
 ```
 
-如果这些文件显示状态仍为 `READY`、`MR_SPLIT`、`DRAFT_PENDING_CONFIRMATION`、存在未处理 Blocker，或缺少本轮必需的执行记录 / 进度 / Checkpoint / handoff 更新，不得把对话中的“已完成”“我会补齐”当作状态更新依据。
+如果这些文件显示存在 `DRAFT_PENDING_CONFIRMATION`、未处理 Blocker、状态不一致，或缺少本轮必需的执行记录 / 进度 / Checkpoint / handoff 更新，不得把对话中的“已完成”“我会补齐”当作状态更新依据。`READY` 或 `MR_SPLIT` 本身不是人工确认阻塞；只有等待人工审核标记、计划未确认、Checkpoint 未放行或启动条件不满足时才停止。
 
 本 Skill 生成的协议产物默认写入：
 
@@ -200,10 +214,10 @@ MR 文件是具体落地指导与边界文件，必须足够详细，不能只�
 ## 硬约束
 
 - 任意时刻只执行一个 MR 或一个等价任务切片。
-- 每轮只执行一个目标。
+- 每轮只执行一个目标；当用户目标是完整项目需求时，该目标可以覆盖多个 MR，但任意时刻只能有一个活动 MR，MR 之间必须串行完成门禁、验证、Checkpoint 和状态回写。
 - 阶段转换（计划确认、开始执行、进入下一 MR、开始验证、验收）必须以 `coder-current-task.md`、`project-progress.md`、`checkpoint-status.md` 三文件 `stage_epoch` 同步跳变为唯一证据；无 epoch 跳变不得声称阶段已变，不得据此修改产品代码或推进下游。
 - 从计划态或任务态切入时，若 `project-progress.md` 当前阶段未达到 `RUNNING`，禁止调用任何产品代码修改工具；修改产品代码前必须通过 `references/protocols/execution.md` 的 pre-edit guard。
-- 用户口头指令不得直接升级任务阶段；阶段升级必须同时满足“当前阶段可升级 + `stage_epoch` 三文件写入 + 触发词明确（确认计划 / 按此计划拆 MR / 开始执行 MR-X 等）”。含糊指令（继续 / 接着做）在 handoff 记录为“等待确认”时，只能继续当前阶段或请求澄清，不得升级。
+- 用户口头指令不得直接绕过状态账本升级任务阶段；阶段升级必须同时满足“当前阶段可升级 + `stage_epoch` 三文件写入 + 明确触发来源（用户确认、Checkpoint PASS、当前 MR 验收通过且 `can_start_next: true`）”。含糊指令（继续 / 接着做）在 handoff 记录为“等待人工审核 / 等待确认计划”时，只能继续当前阶段或请求澄清，不得升级；在连续执行模式下且状态账本已放行时，可按文件证据进入下一 MR。
 - 跨模型、跨轮次或从已有 `.coder/**` 继续时，必须先完成恢复执行门禁；未从文件确认当前状态（含 `stage_epoch` 一致性）前不得修改产品代码。
 - 有依赖关系的 Step 必须串行执行、逐项复核和逐项放行；不得把依赖 Step 合并并行生成。
 - 正式产物必须经过 Checkpoint 专项复核；无 Review Report 或 `checkpoint-status.md` 未更新时，不得声明完成。
