@@ -1,0 +1,140 @@
+# superCoder module map for package maintenance checks.
+# Paths are relative to the repository root.
+# This file is not a runtime project configuration.
+
+modules:
+  - id: skill_pack
+    routed_by_skill: true
+    files:
+      - "skills/superCoder/SKILL.md"
+      - "skills/superCoder/references/agent-usage-feedback.md"
+      - "skills/superCoder-planning/SKILL.md"
+      - "skills/superCoder-bug-root-cause/SKILL.md"
+      - "skills/superCoder-ledger-audit/SKILL.md"
+      - "skills/superCoder-execution/SKILL.md"
+      - "skills/superCoder-checkpoint/SKILL.md"
+      - "skills/superCoder-review/SKILL.md"
+      - "skills/superCoder-verification/SKILL.md"
+
+  - id: planning
+    routed_by_skill: true
+    files:
+      - "skills/superCoder-planning/SKILL.md"
+      - "skills/superCoder-planning/references/planning.md"
+      - "skills/superCoder-bug-root-cause/references/bug-root-cause.md"
+      - "skills/superCoder-checkpoint/references/checkpoint.md"
+      - "skills/superCoder-checkpoint/references/document-review-checklist.md"
+      - "skills/superCoder/assets/templates/gates.md"
+      - "skills/superCoder/assets/templates/progress-overview.md"
+      - "skills/superCoder/assets/templates/task-and-mr.md"
+
+  - id: bug_root_cause
+    routed_by_skill: true
+    files:
+      - "skills/superCoder-bug-root-cause/SKILL.md"
+      - "skills/superCoder-bug-root-cause/references/bug-root-cause.md"
+      - "skills/superCoder-planning/references/planning.md"
+      - "skills/superCoder-execution/references/execution.md"
+      - "skills/superCoder-checkpoint/references/checkpoint.md"
+
+  - id: review
+    routed_by_skill: true
+    files:
+      - "skills/superCoder-review/SKILL.md"
+      - "skills/superCoder-review/references/review.md"
+      - "skills/superCoder-checkpoint/references/checkpoint.md"
+      - "skills/superCoder-checkpoint/references/document-review-checklist.md"
+      - "skills/superCoder-checkpoint/references/prompts/reviewer.md"
+
+  - id: execution
+    routed_by_skill: true
+    files:
+      - "skills/superCoder-execution/SKILL.md"
+      - "skills/superCoder-execution/references/execution.md"
+      - "skills/superCoder-execution/references/guides/error-recovery.md"
+      - "skills/superCoder-execution/references/guides/cicd-integration.md"
+      - "skills/superCoder-ledger-audit/references/ledger-audit.md"
+      - "skills/superCoder-bug-root-cause/references/bug-root-cause.md"
+      - "skills/superCoder-checkpoint/references/checkpoint.md"
+      - "skills/superCoder/assets/templates/gates.md"
+      - "skills/superCoder/assets/templates/progress-overview.md"
+      - "skills/superCoder/assets/templates/task-and-mr.md"
+
+  - id: ledger_audit
+    routed_by_skill: true
+    files:
+      - "skills/superCoder-ledger-audit/SKILL.md"
+      - "skills/superCoder-ledger-audit/references/ledger-audit.md"
+      - "skills/superCoder-execution/references/execution.md"
+      - "skills/superCoder-checkpoint/references/checkpoint.md"
+
+  - id: verification
+    routed_by_skill: true
+    files:
+      - "skills/superCoder-verification/SKILL.md"
+      - "skills/superCoder-ledger-audit/references/ledger-audit.md"
+      - "skills/superCoder-checkpoint/references/checkpoint.md"
+      - "skills/superCoder-execution/references/execution.md"
+      - "skills/superCoder-bug-root-cause/references/bug-root-cause.md"
+
+  - id: checkpoint
+    routed_by_skill: true
+    files:
+      - "skills/superCoder-checkpoint/SKILL.md"
+      - "skills/superCoder-checkpoint/references/checkpoint.md"
+      - "skills/superCoder-checkpoint/references/document-review-checklist.md"
+      - "skills/superCoder-checkpoint/references/prompts/generator.md"
+      - "skills/superCoder-checkpoint/references/prompts/reviewer.md"
+      - "skills/superCoder-checkpoint/references/prompts/fixer.md"
+      - "skills/superCoder-ledger-audit/references/ledger-audit.md"
+      - "skills/superCoder-bug-root-cause/references/bug-root-cause.md"
+
+  - id: templates
+    routed_by_skill: false
+    files:
+      - "skills/superCoder/assets/templates/gates.md"
+      - "skills/superCoder/assets/templates/index.md"
+      - "skills/superCoder/assets/templates/progress-overview.md"
+      - "skills/superCoder/assets/templates/task-and-mr.md"
+      - "skills/superCoder/assets/examples/protocol-examples.md"
+
+  - id: shared
+    routed_by_skill: false
+    files:
+      - "skills/superCoder/references/shared/index.md"
+      - "skills/superCoder/references/shared/glossary.md"
+      - "skills/superCoder/config/coder-config-example.yaml"
+      - "skills/superCoder/config/module-map.yaml"
+
+  - id: harness
+    routed_by_skill: false
+    files:
+      - "harness/app-agent/plugin.json"
+      - "harness/app-agent/tool-mapping.md"
+      - "harness/opencode/plugin.js"
+      - "harness/opencode/tool-mapping.md"
+      - "harness/ops-agent/tool-mapping.md"
+      - "harness/deepseek/tool-mapping.md"
+      - "harness/glm/tool-mapping.md"
+
+  - id: behavior_tests
+    routed_by_skill: false
+    files:
+      - "tests/skill-behavior/README.md"
+      - "tests/skill-behavior/scenarios.yaml"
+      - "tests/skill-behavior/p1-missing-ledger-continue.md"
+      - "tests/skill-behavior/p2-accepted-without-validation.md"
+      - "tests/skill-behavior/p3-stage-epoch-mismatch.md"
+      - "tests/skill-behavior/p4-inline-hotfix.md"
+      - "tests/skill-behavior/p5-review-routing.md"
+      - "tests/skill-behavior/p6-no-completion-without-fresh-verification.md"
+      - "tests/skill-behavior/p7-planning-does-not-generate-mr-before-confirmation.md"
+      - "tests/skill-behavior/p8-cp5-not-required-before-running.md"
+      - "tests/skill-behavior/p9-shared-resource-resolution.md"
+      - "tests/skill-behavior/results/README.md"
+
+  - id: manifest
+    routed_by_skill: false
+    files:
+      - "skills/superCoder/config/module-map.yaml"
+      - "skills/superCoder/references/shared/index.md"

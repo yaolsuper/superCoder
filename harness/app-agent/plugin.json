@@ -1,0 +1,13 @@
+{
+  "name": "superCoder-app-agent-harness",
+  "version": "0.1.0",
+  "description": "Generic app-agent harness adapter scaffold for distributing the superCoder Skill Pack in desktop, IDE, or chat-based coding runtimes.",
+  "skills": "../../skills",
+  "entrySkill": "superCoder",
+  "toolMapping": "tool-mapping.md",
+  "notes": [
+    "Core skill text remains harness-neutral.",
+    "This adapter must not edit user global configuration.",
+    "Validate packaging behavior in the target runtime before release."
+  ]
+}

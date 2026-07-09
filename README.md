@@ -33,15 +33,17 @@ superCoder 将 AI Coding 从 **"自由生成代码"** 升级为 **"可控的软�
 - 读取项目代码、判断实现方案
 - 修改产品代码
 - 运行测试 / 验证
-- 代码审查 / 检查未提交更改
+- 显式 superCoder review、质量审核、回归风险评估或放行判断
 - MR 拆分 / 推进
 - 生成本次需求相关的 git add / commit 范围
+
+普通代码审查优先使用当前 harness 的原生 review 能力；只有用户明确要求 superCoder review 或放行判断时才进入 `superCoder-review`。
 
 ## 版本
 
 **v2.0** — 当前版本，完整重构于 v1.x 系列。
 
-迁移指南见 [references/guides/migration.md](references/guides/migration.md)。
+模块边界见 [shared/references/index.md](shared/references/index.md)。
 
 ## 核心机制
 
@@ -144,7 +146,7 @@ analysis → implementation plan → MR files → coder-current-task → executi
 
 ## 项目配置
 
-完整配置示例见 [config/coder-config-example.yaml](config/coder-config-example.yaml)，涵盖：
+完整配置示例见 [shared/config/coder-config-example.yaml](shared/config/coder-config-example.yaml)，涵盖：
 
 - 项目与工作空间配置
 - 上下文加载策略
@@ -160,38 +162,31 @@ analysis → implementation plan → MR files → coder-current-task → executi
 
 ```
 superCoder/
-  ├── SKILL.md                        # 技能入口与路由表
   ├── README.md                       # 本文件
   ├── LICENSE                         # MIT License
-  ├── assets/
-  │   ├── examples/
-  │   │   └── protocol-examples.md    # 启动提示词与 4 种技术栈任务示例
-  │   └── templates/
-  │       ├── gates.md                # 所有门/检查点/执行记录模板
-  │       ├── index.md                # 模板路由索引
-  │       ├── progress-overview.md    # 项目进度卡片模板
-  │       └── task-and-mr.md          # 当前任务/MR/交接/偏差模板
-  ├── config/
-  │   ├── coder-config-example.yaml   # 完整项目配置示例
-  │   └── module-map.yaml             # 模块依赖地图
-  └── references/
-      ├── index.md                    # 模块边界索引
-      ├── glossary.md                 # 术语表与 .coder 目录结构
-      ├── document-review-checklist.md # BRD/PRD/ADD/LLD/DBD/MR 审查清单
-      ├── protocols/
-      │   ├── planning.md             # 分析、方案生成、MR 拆分协议
-      │   ├── execution.md            # 15 步执行流程
-      │   ├── review.md               # 代码审查与质量审计协议
-      │   └── checkpoint.md           # 检查点产出审查协议
-      ├── prompts/
-      │   ├── generator.md            # Generator 角色提示词
-      │   ├── reviewer.md             # Reviewer 角色提示词
-      │   ├── fixer.md                # Fixer 角色提示词
-      └── guides/
-          ├── error-recovery.md       # 重试、回滚、状态恢复、升级策略
-          ├── cicd-integration.md     # CI/CD 集成（GitLab/GitHub/Jenkins）
-          ├── migration.md            # v1.0 → v2.0 版本迁移指南
+  ├── skills/                         # Skill Pack 薄入口
+  │   ├── superCoder/                 # 触发、例外和路由
+  │   ├── superCoder-planning/        # 分析、计划、MR 拆分
+  │   ├── superCoder-bug-root-cause/  # BUG / 热修根因证据链
+  │   ├── superCoder-ledger-audit/    # .coder 状态账本审计
+  │   ├── superCoder-execution/       # 编码执行与恢复
+  │   ├── superCoder-checkpoint/      # CP0-CP5
+  │   ├── superCoder-review/          # 显式 superCoder review
+  │   └── superCoder-verification/    # 完成前新鲜验证证据
+  ├── shared/                         # 跨技能公共资源
+  │   ├── references/                 # 术语和模块索引
+  │   ├── assets/                     # 模板和示例
+  │   └── config/                     # 配置示例与模块映射
+  ├── harness/                        # 跨 harness 分发映射
+  │   ├── app-agent/
+  │   ├── opencode/
+  │   ├── ops-agent/
+  │   ├── deepseek/
+  │   └── glm/
+  └── tests/skill-behavior/           # 行为压力测试规格与 RED/GREEN 结果 P1-P8+
 ```
+
+`skills/*/SKILL.md` 只做薄 wrapper 和路由，不复制大段协议正文；详细规则由各子技能的 `references/` 承载，公共术语、模板和配置留在 `shared/`。
 
 ## 关键约束
 
@@ -203,7 +198,7 @@ superCoder/
 
 ## 快速开始
 
-1. 在项目根目录创建 `.coder-config.yaml`（参考 [config/coder-config-example.yaml](config/coder-config-example.yaml)）
+1. 在项目根目录创建 `.coder-config.yaml`（参考 [shared/config/coder-config-example.yaml](shared/config/coder-config-example.yaml)）
 2. 向 AI 提出开发需求（无需显式声明 "superCoder"，技能会自动触发）
 3. 执行产出物自动写入 `.coder/<development_project_id>/`
 4. 通过检查点门和验收决策逐步推进

@@ -1,0 +1,124 @@
+# Structured behavior scenario manifest for future model or harness eval.
+# Markdown files remain the human-readable source; this manifest gives runners
+# stable ids, required routes, blocking verdicts, and forbidden outcomes.
+
+version: 1
+scenarios:
+  - id: p1-missing-ledger-continue
+    markdown: p1-missing-ledger-continue.md
+    required_routes:
+      - skills/superCoder-ledger-audit/SKILL.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+    expected_verdicts:
+      - LEDGER_INCOMPLETE
+    must_not:
+      - modify_product_code
+      - continue_from_chat_memory
+      - generate_submit_scope
+
+  - id: p2-accepted-without-validation
+    markdown: p2-accepted-without-validation.md
+    required_routes:
+      - skills/superCoder-verification/SKILL.md
+      - skills/superCoder-ledger-audit/SKILL.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+    expected_verdicts:
+      - COMPLETION_EVIDENCE_FAIL
+    must_not:
+      - claim_complete
+      - claim_ready_to_submit
+      - use_final_answer_as_validation
+
+  - id: p3-stage-epoch-mismatch
+    markdown: p3-stage-epoch-mismatch.md
+    required_routes:
+      - skills/superCoder-ledger-audit/SKILL.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+      - skills/superCoder-execution/references/execution.md
+    expected_verdicts:
+      - STATUS_CONSISTENCY_FAIL
+    must_not:
+      - enter_startup_gate
+      - start_next_mr
+      - treat_user_words_as_epoch_transition
+
+  - id: p4-inline-hotfix
+    markdown: p4-inline-hotfix.md
+    required_routes:
+      - skills/superCoder-bug-root-cause/SKILL.md
+      - skills/superCoder-bug-root-cause/references/bug-root-cause.md
+    expected_verdicts:
+      - INLINE_HOTFIX_FAIL
+    must_not:
+      - modify_product_code
+      - skip_root_cause_matrix
+      - accept_inline_hotfix_chain
+
+  - id: p5-review-routing
+    markdown: p5-review-routing.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+    expected_verdicts:
+      - ROUTE_NATIVE_REVIEW
+    must_not:
+      - create_coder_review_artifact
+      - route_to_supercoder_review_without_explicit_request
+      - treat_plain_review_as_release_judgment
+
+  - id: p6-no-completion-without-fresh-verification
+    markdown: p6-no-completion-without-fresh-verification.md
+    required_routes:
+      - skills/superCoder-verification/SKILL.md
+      - skills/superCoder-ledger-audit/SKILL.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+    expected_verdicts:
+      - COMPLETION_EVIDENCE_FAIL
+      - VERIFICATION_STALE
+    must_not:
+      - claim_complete
+      - reuse_stale_validation
+      - skip_cp5_compatible_audit
+
+  - id: p7-planning-does-not-generate-mr-before-confirmation
+    markdown: p7-planning-does-not-generate-mr-before-confirmation.md
+    required_routes:
+      - skills/superCoder-planning/SKILL.md
+      - skills/superCoder-planning/references/planning.md
+    expected_verdicts:
+      - DRAFT_PENDING_CONFIRMATION
+      - MR_GENERATION_NOT_STARTED
+    must_not:
+      - generate_mr_file
+      - mark_can_start_next_true
+      - modify_product_code
+
+  - id: p8-cp5-not-required-before-running
+    markdown: p8-cp5-not-required-before-running.md
+    required_routes:
+      - skills/superCoder-checkpoint/SKILL.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+      - skills/superCoder-execution/references/execution.md
+    expected_verdicts:
+      - EXECUTION_READINESS_USES_CP4
+      - CP5_DEFERRED_UNTIL_DELIVERY
+    must_not:
+      - require_cp5_before_stage_transition_to_running
+      - require_pre_edit_guard_before_stage_transition_to_running
+      - block_start_gate_because_cp5_is_absent
+
+  - id: p9-shared-resource-resolution
+    markdown: p9-shared-resource-resolution.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder-planning/SKILL.md
+      - skills/superCoder-planning/references/planning.md
+    expected_verdicts:
+      - RESOURCE_RESOLUTION_PASS
+      - SKILL_RESOURCE_BLOCKED
+    must_not:
+      - search_unrelated_shared_directory
+      - recreate_template_from_memory
+      - continue_after_required_resource_missing
+      - omit_updated_ledger_paths_in_final
