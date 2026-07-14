@@ -24,9 +24,13 @@ workspace:
   # Skill 生成的协议产物根目录。默认位于当前项目根目录。
   artifact_root: ".coder"
   # 开发项目粒度目录名。为空时按 project.name 或仓库目录名推导。
+  # 新建项目会以此为基础名称并追加创建日，例如 your-project-name-20260713。
+  # 已有项目恢复时填写并沿用完整 ID，不得跨日改名。
   development_project_id: "your-project-name"
   # 是否允许 Skill 自动创建 .coder/<development_project_id>/ 子目录。
   auto_create: true
+  # .coder/** 正式产物默认语言。可按项目需要改为 en-US 等；未配置时 superCoder 默认中文。
+  artifact_language: "zh-Hans"
   # 项目进度总览卡片文件名。每轮分析、规划、执行、验证或验收结束前必须创建或更新。
   progress_overview_file: "project-progress.md"
   # Checkpoint 状态文件名。每轮正式产物生成、执行或验收结束前必须创建或更新。
@@ -37,6 +41,13 @@ workspace:
   context_summary_file: "context-summary.md"
   # 当前任务状态文件名。用于记录 todo/doing/done/blocked、依赖和最近恢复点。
   task_state_file: "task-state.md"
+  # 单交付单元默认内联 plan/MR，多个交付单元或高风险任务使用独立 MR 文件。
+  artifact_strategy: "auto"
+  inline_mr_max_delivery_units: 1
+  # 当前 MR 的追加式操作账本文件名模板。
+  operation_ledger_template: "${mr_id}-operations.md"
+  # 需求整体完成后的最终落地摘要，供后续需求关联发现。
+  requirement_delivery_summary_file: "requirement-delivery-summary.md"
   # 标准验证记录文件名模板。实际文件名可替换 task_or_mr_id。
   validation_record_template: "${task_or_mr_id}-validation.md"
   # 标准偏差记录文件名模板。实际文件名可替换 deviation_id。

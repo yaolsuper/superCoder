@@ -122,7 +122,7 @@ analysis → implementation plan → MR files → coder-current-task → executi
   └── archive/                  # 已归档产出物
 ```
 
-`development_project_id` 优先级：任务/MR 合约字段 → `.coder-config.yaml` workspace 字段 → `.coder-config.yaml` project.name → 仓库目录名。
+新建项目的 `development_project_id` 基础名称优先级：任务/MR 合约字段 → `.coder-config.yaml` workspace 字段 → `.coder-config.yaml` project.name → 仓库目录名。生成时规范化为 `<base-name>-<YYYYMMDD>`（项目创建日的本地日期）；已有项目原样沿用既有 ID，不跨日重命名。
 
 ## 15 步执行流程
 

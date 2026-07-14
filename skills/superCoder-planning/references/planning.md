@@ -1,20 +1,23 @@
 # Coder 分析与实施计划协议
 
-当用户要求“分析”“调研”“评估”“迁移方案”“开发实施计划”“MR 拆分”“阶段计划”时读取本文件。此类任务只生成执行产物，不修改产品代码；若用户明确要求开始编码，再切换到 `skills/superCoder-execution/references/execution.md`。
+当用户要求“分析”“调研”“评估”“迁移方案”“开发实施计划”“MR 拆分”“阶段计划”时读取本文件。此类任务只生成执行产物，不修改产品代码；若用户明确要求开始编码，再切换到 `../../superCoder-execution/references/execution.md`。
 
 共享资源已经打包到主技能目录 `skills/superCoder/`。从本文件读取共享资源时，只使用 `../../superCoder/assets/...`、`../../superCoder/references/shared/...` 或 `../../superCoder/config/...`；不得读取包根 `shared/`、当前子技能 `shared/`、工作区同名目录或其他挂载目录。若必需共享模板或引用无法加载，停止并返回 `SKILL_RESOURCE_BLOCKED`，不得用记忆重造模板继续。
 
 需要项目进度总览卡片模板时，只读取 `../../superCoder/assets/templates/progress-overview.md`。需要当前任务或 MR 文件结构时，只读取 `../../superCoder/assets/templates/task-and-mr.md`。
-需要对分析报告、实施计划、MR 文件、当前任务契约或最终交付做专项复核时，读取 `skills/superCoder-checkpoint/references/checkpoint.md`。
-需要处理 BUG、缺陷、回归、线上问题、热修、P0/P1/P2 修复时，读取 `skills/superCoder-bug-root-cause/references/bug-root-cause.md`。
-需要按 BRD、PRD、ADD、LLD、DBD、MR 或 Coder 产物类型做场景化 Review 时，读取 `skills/superCoder-checkpoint/references/document-review-checklist.md`。
+需要对分析报告、实施计划、MR 文件、当前任务契约或最终交付做专项复核时，读取 `../../superCoder-checkpoint/references/checkpoint.md`。
+需要处理 BUG、缺陷、回归、线上问题、热修、P0/P1/P2 修复时，读取 `../../superCoder-bug-root-cause/references/bug-root-cause.md`。
+需要按 BRD、PRD、ADD、LLD、DBD、MR 或 Coder 产物类型做场景化 Review 时，读取 `../../superCoder-checkpoint/references/document-review-checklist.md`。
 
-分析、实施计划和 MR 拆分必须形成可追溯的分层推导链路。不得只一次性平铺生成一组看似合规的文档；若分析结论、计划项、MR 文件之间缺少明确来源映射，视为未完成。
+先按 `../../superCoder/SKILL.md` 选择 `LIGHT` / `STANDARD` / `CONTROLLED`。`LIGHT` 只记录当前任务必要证据，不生成分析、计划和 MR 套件；`STANDARD` 按可恢复需求生成必要产物；仅 `CONTROLLED` 强制完整分层链路。
+
+`STANDARD` / `CONTROLLED` 的分析、实施计划和 MR 拆分必须形成可追溯的分层推导链路。不得只一次性平铺生成一组看似合规的文档；若分析结论、计划项、MR 文件之间缺少明确来源映射，视为未完成。
 每个层级生成后必须执行 Checkpoint 复核并记录状态。不得在分析未复核时直接生成实施计划；不得在计划未复核时直接生成 MR；不得在计划未获用户确认时生成 MR；不得把存在依赖的阶段或 Step 合并并行输出。
 Checkpoint 复核必须包含场景化 checklist：分析报告使用 `ANALYSIS`，实施计划使用 `PLAN`，独立 MR 文件使用 `MR`，当前任务契约使用 `CURRENT_TASK`。如果用户要求生成或审查 BRD/PRD/ADD/LLD/DBD，按对应文档类型执行专项 checklist，不得只用通用复核清单。
 聊天答复不得替代规划产物。只要本协议适用且用户没有明确要求轻量口头答复，最终回复前必须确认 `.coder/<development_project_id>/` 下本轮必需产物已经存在；若没有生成，必须把状态写成 `BLOCKED` 或说明轻量例外，不得声明完成。
+正式 `.coder/**` 产物必须遵守 `../../superCoder/references/shared/glossary.md` 的“输出语言策略”。默认使用中文撰写标题、章节名、正文、结论、状态说明和复核意见；代码标识、API 名称、字段名、路径、命令、错误码、日志摘录、协议状态值和 checklist 名称保留原文。只有用户、仓库规范或 `.coder-config.yaml` 明确指定其他语言时，才允许整体改用指定语言，并在产物中记录语言来源。
 
-正式编码执行必须遵循固定任务执行链路：
+`CONTROLLED` 编码执行必须遵循完整任务执行链路：
 
 ```text
 分析报告 -> 实施计划 -> 详细 MR 文件 -> 当前任务契约 -> 编码执行
@@ -35,6 +38,10 @@ Checkpoint 复核必须包含场景化 checklist：分析报告使用 `ANALYSIS`
 
 不得为了模板整齐而压缩掉重要备选方案；也不得把未验证假设写成已验证事实。
 
+## 历史关联需求发现
+
+开始新需求的 ANALYSIS 或 ANALYSIS_AND_PLANNING 时，读取并执行 `../../superCoder-requirement-traceability/references/requirement-traceability.md` 的“新需求关联发现”。分析报告必须记录候选筛选、关系证据和对当前需求的影响；不得凭宽泛关键词确认关联。
+
 分析和规划阶段同样必须有界读取。用于查代码、查日志、查差异或查历史的命令必须带路径、关键词、行数、时间窗口或文件类型过滤；不得用无范围 `git diff`、`docker logs -f`、无界日志、无界全文读取来收集证据。证据矩阵中的命令证据应记录精确命令和有界摘要。
 
 ## BUG 修复场景
@@ -50,6 +57,21 @@ BUG、缺陷、回归、线上问题、热修、P0/P1/P2 修复必须读取并�
 | 同时要求分析并生成详细实施计划 | ANALYSIS_AND_PLANNING | 分析报告、待确认实施计划、项目进度总览卡片、当前任务契约 |
 | 计划已确认后生成 MR 拆分 | MR_SPLIT | 独立 MR 文件、项目进度总览卡片、当前任务契约 |
 
+## 计划与 MR 产物策略
+
+规划时必须先确定交付单元数量，再选择最低重复的产物策略：
+
+| 策略 | 适用条件 | 产物 |
+|---|---|---|
+| `INLINE_MR` | 只有一个交付单元，范围和依赖清晰，且不需要独立 MR 审批文档 | 单一 `plans/<task-id>-delivery-plan.md`，同时承载决策层和执行层 |
+| `SPLIT_MR` | 两个及以上 MR，或涉及迁移、高风险、跨模块依赖、独立审批 | `plans/*-implementation-plan.md` + `mrs/*.md` |
+
+计划必须记录 `artifact_strategy`、`delivery_unit_count` 和单调递增的 `plan_revision`。`INLINE_MR` 的单一文件分为“决策层”和“执行层”：确认前执行层只能为 `PENDING`，确认后原文件原子更新为 `READY`，不得再复制生成内容等价的 `mrs/*.md`。其 `source_chain.plan` 与 `source_chain.mr` 可以指向同一真实文件，但必须标记 `artifact_strategy: INLINE_MR`，并继续满足计划确认、CP3/CP4、路径守卫和阶段转换门禁。
+
+`SPLIT_MR` 的计划只保留全局目标、方案取舍、阶段、依赖图、MR 索引、全局风险和分析结论映射。独立 MR 只保留该交付单元的精确目标、来源结论 ID、文件/接口/数据契约、路径守卫、带稳定 ID 的 Step、验证和验收；不得复制计划的完整背景、方案比较和全局风险。
+
+如果交付单元数量、接口、数据、架构、依赖或风险等级发生变化，先增加 `plan_revision` 并重新复核。每个 MR 或执行层必须记录 `based_on_plan_revision`；版本不一致时标记 `BLOCKED`，不得执行。
+
 ## 产物落点
 
 所有分析和计划产物默认写入：
@@ -59,6 +81,7 @@ BUG、缺陷、回归、线上问题、热修、P0/P1/P2 修复必须读取并�
 ```
 
 不得默认写到项目根目录或业务代码目录。只有用户明确指定输出路径时，才可写到指定位置。不得只生成项目根目录下的单个 `*-plan.md` 或 `*-analysis.md` 后结束。
+写入 `.coder/<development_project_id>/` 的分析报告、实施计划、MR 文件、项目进度总览卡片、当前任务契约、Checkpoint 状态、handoff、task-state、复核报告、执行记录、验证摘要和偏差记录都属于正式产物，必须应用同一输出语言策略，避免主报告和配套状态文件语言不一致。
 
 推荐结构：
 
@@ -80,7 +103,7 @@ BUG、缺陷、回归、线上问题、热修、P0/P1/P2 修复必须读取并�
   archive/
 ```
 
-`development_project_id` 的推导规则见 `../../superCoder/references/shared/glossary.md`。若无法从任务或配置推导，使用本次目标的短横线命名，例如 `python-migration`。
+`development_project_id` 的推导和日期规则见 `../../superCoder/references/shared/glossary.md`。若无法从任务或配置推导，以本次目标生成短横线基础名称，并追加首次创建日的本地日期 `YYYYMMDD`，例如 `python-migration-20260713`。恢复已有项目时原样沿用既有 ID，不得跨日重命名。
 
 实施计划文件必须标记计划确认状态：
 
@@ -91,7 +114,7 @@ mr_generation_status: NOT_STARTED | READY_TO_SPLIT | GENERATED | BLOCKED
 
 计划确认前，`mr_generation_status` 必须是 `NOT_STARTED` 或 `BLOCKED`，不得提前创建 `mrs/*.md`。
 
-所有模式都必须维护：
+`STANDARD` / `CONTROLLED` 必须维护：
 
 ```text
 .coder/<development_project_id>/checkpoint-status.md
@@ -127,6 +150,7 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 - 可行性验证路径
 - 需要进一步确认的问题
 - 建议的后续计划入口
+- 历史关联需求及关系证据
 - 证据矩阵
 
 分析报告只做事实梳理、差距判断和方案建议。不得把详细 Coder 任务卡、完整实施步骤或完整路径守卫塞进分析报告；这些内容属于 `plans/` 和 `mrs/`。
@@ -204,8 +228,9 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 - 生成产物清单
 - 分析结论映射
 - 计划确认状态和待确认项
+- `artifact_strategy`、`delivery_unit_count` 和 `plan_revision`
 
-实施计划是总览和索引，不得承载完整 MR 正文。计划确认前，MR 候选只能作为总览、依赖和预期路径存在，不得生成独立 MR 文件，不得写完整 Coder 任务卡、路径守卫、实施步骤或执行记录清单。计划确认后，这些内容必须拆到独立 MR 文件。
+`SPLIT_MR` 实施计划是总览和索引，不得承载完整 MR 正文。计划确认前，MR 候选只能作为总览、依赖和预期路径存在，不得生成独立 MR 文件，不得写完整 Coder 任务卡、路径守卫、实施步骤或执行记录清单；确认后这些内容拆到独立 MR 文件。`INLINE_MR` 按“决策层 + 执行层”例外处理，不复制第二份正文。
 
 实施计划必须包含分析结论映射，说明每个阶段或 MR 来自哪些分析结论。推荐表格：
 
@@ -217,7 +242,7 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 
 实施计划不得把“建议实现方式”误写成“唯一可实现方式”。只要满足当前目标、路径守卫、验收标准和验证方式，后续执行可在 MR 范围内选择更合适的具体实现；计划必须保留这种实现弹性。
 
-生成详细开发实施计划时，默认只生成待确认实施计划，禁止同步生成独立 MR 文件。实施计划中的 MR 候选表可以记录计划确认后的预期文件路径：
+生成详细开发实施计划时，默认只生成待确认实施计划。`SPLIT_MR` 禁止同步生成独立 MR 文件；`INLINE_MR` 可以在同一 delivery plan 中生成状态为 `PENDING` 的执行层，但确认前不得标记 `READY` 或进入执行。`SPLIT_MR` 的 MR 候选表可以记录计划确认后的预期文件路径：
 
 ```text
 .coder/<development_project_id>/mrs/<mr-id>-<slug>.md
@@ -242,7 +267,7 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 实施计划生成后必须执行 CP1/CP2/CP3：CP1 检查大纲结构、阶段顺序、MR 候选依赖和不可并行项；CP2 检查计划内容质量；CP3 检查分析结论到计划项和 MR 候选的链路。任一 Blocker 未清零时，不得允许计划确认，不得进入 MR 拆分。
 其中 CP2 必须使用 `PLAN Checklist`。如果计划承接 BRD/PRD/ADD/LLD/DBD，CP3 必须检查对应文档链路是否断链。
 
-规划模式不得把 `coder-current-task.md` 标记为 `READY`。只有进入 MR_SPLIT 模式并生成首个独立 MR 文件后，才允许把 `source_chain.mr` 指向该文件并进入可编码执行准备态。
+规划模式不得把 `coder-current-task.md` 标记为 `READY`。计划确认并进入 MR_SPLIT 后，`SPLIT_MR` 生成首个独立 MR 文件；`INLINE_MR` 将同一 delivery plan 的执行层切换为 `READY`。此后才允许填写真实 `source_chain.mr` 并进入可编码执行准备态。
 
 ## 计划确认门禁
 
@@ -268,13 +293,13 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 
 计划确认是一次阶段转换，必须按 `SKILL.md` 阶段转换原子性执行：在写状态文件前先输出 `../../superCoder/assets/templates/gates.md` 的“状态回写计划门禁”，把 PLANNING → MR_SPLIT 的 `stage_epoch` 三文件同步跳变记录为表格，触发词、前后阶段、epoch 变化必须可追溯。用户口头确认不得单独构成转换；含糊指令（“继续”“接着做”）在计划待确认时只能原地等待或请求澄清，不得升级，详见 `skills/superCoder-execution/references/execution.md` 阶段升级裁决规则。
 
-计划确认后进入 MR_SPLIT 模式，才允许生成独立 MR 文件：
+计划确认后进入 MR_SPLIT 模式。只有 `SPLIT_MR` 生成独立 MR 文件：
 
 ```text
 .coder/<development_project_id>/mrs/<mr-id>-<slug>.md
 ```
 
-MR_SPLIT 模式必须基于已确认计划生成 MR 文件，并同步创建或更新：
+MR_SPLIT 模式必须基于已确认计划生成独立 MR，或原子激活 `INLINE_MR` 执行层，并同步创建或更新：
 
 ```text
 .coder/<development_project_id>/project-progress.md
@@ -286,7 +311,7 @@ MR_SPLIT 模式必须基于已确认计划生成 MR 文件，并同步创建或�
 .coder/<development_project_id>/reviews/cp4-<task_id>-mr-split-review.md
 ```
 
-每个 MR 文件必须写入来源链路，并通过 CP1/CP4 和 `MR Checklist`。只有首个满足依赖、验收方式和路径守卫的 MR 可以标记为 `READY`；其他 MR 按依赖状态保持 `PENDING` 或 `BLOCKED`。
+每个独立 MR 或内联执行层必须写入来源链路、`based_on_plan_revision` 和稳定 Step，并通过 CP1/CP4 和 `MR Checklist`。只有首个满足依赖、验收方式和路径守卫的交付单元可以标记为 `READY`；其他交付单元按依赖状态保持 `PENDING` 或 `BLOCKED`。
 
 ## 组合模式
 
@@ -317,11 +342,11 @@ MR_SPLIT 模式必须基于已确认计划生成 MR 文件，并同步创建或�
 .coder/<development_project_id>/coder-current-task.md
 ```
 
-组合模式禁止在同一轮生成独立 `mrs/*.md`。如果只生成一个合并的 `*-plan.md` 文件、把全部 MR 正文写在实施计划中、没有生成/更新 `project-progress.md`、`checkpoint-status.md` 或 `handoff.md`，缺少专项复核报告，或缺少证据矩阵、分析结论映射，视为未完成。
+组合模式禁止在同一轮生成独立 `mrs/*.md` 或激活 `INLINE_MR` 执行层。如果 `SPLIT_MR` 把全部 MR 正文塞进实施计划，或任一策略没有生成/更新 `project-progress.md`、`checkpoint-status.md`、`handoff.md` 和专项复核报告，或缺少证据矩阵、分析结论映射，视为未完成。
 
-## MR 独立拆分规则
+## MR 执行层规则
 
-每个独立 MR 文件必须包含：
+每个独立 MR 文件或 `INLINE_MR` 执行层必须包含：
 
 - Coder 任务卡
 - 来源链路
@@ -341,7 +366,7 @@ MR_SPLIT 模式必须基于已确认计划生成 MR 文件，并同步创建或�
 - 偏差处理
 - 执行记录与验收清单
 
-计划确认前，实施计划中的 MR 候选拆分表只记录预期 MR 文件路径，不要求文件已存在。计划确认并进入 MR_SPLIT 后，实施计划中的 MR 拆分表必须链接到对应已生成 MR 文件。不要在实施计划中复制完整 MR 文件正文。
+计划确认前，`SPLIT_MR` 候选表只记录预期 MR 文件路径；确认并进入 MR_SPLIT 后链接到已生成 MR 文件。`INLINE_MR` 的索引链接到同一 delivery plan 执行层。不得跨文件复制完整执行层正文。
 
 MR 文件是具体落地指导与边界文件，不是摘要卡片。`实施步骤` 不得只写“新增 schema、实现 service、补测试”这类模块级动作，必须拆到可执行粒度，至少说明：
 
@@ -375,10 +400,10 @@ MR 来源链路必须说明：
 示例：
 
 ```text
-.coder/python-migration/analysis/python-migration-analysis.md
-.coder/python-migration/plans/python-migration-implementation-plan.md
-.coder/python-migration/mrs/mr-1-runtime-skeleton.md
-.coder/python-migration/project-progress.md
+.coder/python-migration-20260713/analysis/python-migration-analysis.md
+.coder/python-migration-20260713/plans/python-migration-implementation-plan.md
+.coder/python-migration-20260713/mrs/mr-1-runtime-skeleton.md
+.coder/python-migration-20260713/project-progress.md
 ```
 
 ## 完成响应
@@ -390,13 +415,13 @@ MR 来源链路必须说明：
 - `ANALYSIS`：`analysis/<task_id>-analysis.md`、`project-progress.md`、`coder-current-task.md`、`checkpoint-status.md`、`handoff.md`、`task-state.md`、本轮 `reviews/cp2-*.md`，以及已创建的 `context-summary.md`。
 - `PLANNING`：`plans/<task_id>-implementation-plan.md`、`project-progress.md`、`coder-current-task.md`、`checkpoint-status.md`、`handoff.md`、`task-state.md`、本轮 CP1/CP2/CP3 review，必要时列出规范化分析摘要。
 - `ANALYSIS_AND_PLANNING`：同时列出分析与规划两组产物；计划待确认时明确 `mrs/*.md` 未生成。
-- `MR_SPLIT`：列出本轮生成的每个 `mrs/*.md`、`project-progress.md`、`coder-current-task.md`、`checkpoint-status.md`、`handoff.md`、`task-state.md` 和对应 review。
+- `MR_SPLIT`：`SPLIT_MR` 列出每个 `mrs/*.md`；`INLINE_MR` 列出被激活的 delivery plan。两者都列出 `project-progress.md`、`coder-current-task.md`、`checkpoint-status.md`、`handoff.md`、`task-state.md` 和对应 review。
 
 规划类任务的完成校验：
 
 - `analysis/<task_id>-analysis.md`：组合模式必须存在
 - `plans/<task_id>-implementation-plan.md`：必须存在
-- `mrs/*.md`：只有 MR_SPLIT 模式必须至少存在一个；PLANNING 或 ANALYSIS_AND_PLANNING 模式下不得生成
+- 执行层：MR_SPLIT 模式下，`SPLIT_MR` 至少存在一个 `mrs/*.md`；`INLINE_MR` 必须存在同一 delivery plan 的 `READY` 执行层
 - `project-progress.md`：必须存在并反映本轮分析、规划或 MR 拆分状态
 - `coder-current-task.md`：必须存在
 - `checkpoint-status.md`：必须存在并反映本轮最新复核状态
@@ -406,7 +431,7 @@ MR 来源链路必须说明：
 - 每份复核报告必须写明 `document_type` 和 `checklist_set`
 - 分析报告必须包含证据矩阵，关键结论必须有证据或标明推断
 - 实施计划必须包含分析结论映射，所有 `READY` MR 必须能回溯到分析结论
-- 每个已生成 `mrs/*.md` 必须包含来源链路
+- 每个独立 MR 或内联执行层必须包含来源链路、`based_on_plan_revision` 和稳定 `step_id`
 - `project-progress.md` 必须包含状态一致性检查，且当前阶段、当前 MR、MR 进度表、当前任务契约状态不能相互矛盾
 - 下游产物不得早于上游 Checkpoint PASS；存在依赖的 Step 不得合并并行生成
 - 计划确认前不得生成独立 MR 文件，`coder-current-task.md` 不得进入 `READY`

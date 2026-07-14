@@ -10,11 +10,12 @@ description: "当 superCoder 任务已准备进入实现、产品代码修改、
 ## 必读文件
 
 - `references/execution.md`
-- 恢复、启动、下一 MR、提交范围或完成判断前读取 `../superCoder-ledger-audit/references/ledger-audit.md`
+- `STANDARD` / `CONTROLLED` 的恢复、下一 MR、提交范围或完成判断前读取 `../superCoder-ledger-audit/references/ledger-audit.md`；`LIGHT` 仅在升级时读取
 - BUG / hotfix / P0-P2 修改前读取 `../superCoder-bug-root-cause/references/bug-root-cause.md`
 - 需要 CP4/CP5 或产物复核时读取 `../superCoder-checkpoint/references/checkpoint.md`
 - 编写执行产物时读取 `../superCoder/assets/templates/gates.md` 和 `../superCoder/assets/templates/task-and-mr.md`
 - 需要项目进度总览卡片时读取 `../superCoder/assets/templates/progress-overview.md`
+- 需求整体完成并生成最终落地摘要时读取 `../superCoder-requirement-traceability/references/requirement-traceability.md`
 
 ## 资源门禁
 

@@ -4,6 +4,10 @@
 
 Checkpoint 的目标不是限制模型提出方案，而是在每个正式产物进入下游前做硬复核，确保输出有依据、符合目标、遵守计划顺序，并且依赖未满足时不会继续扩散错误。
 
+Checkpoint 对 `STANDARD` / `CONTROLLED` 的正式产物适用。`LIGHT` 的 `light-task.md` 不触发 CP0–CP5；若任务命中升级条件，先升级模式，再对新的正式产物应用对应 Checkpoint。
+
+当 Checkpoint 组合 Review findings、Ledger Audit facts 或其他子协议结论时，读取 `skills/superCoder/references/shared/decision-contract.md`，统一输出 `decision`、`protocol_codes`、`blockers`、`findings`、`evidence` 和 `allowed_actions`。Checkpoint 是下游流程放行的裁决者，不重新实现 Review 或 Ledger Audit 的领域规则。
+
 ## 核心规则
 
 - Generator、Reviewer、Fixer 必须分阶段执行：先生成，再复核，再按问题修复，再复核。不得在同一段输出中同时宣布生成、修复和放行；需要角色提示词时读取 `skills/superCoder-checkpoint/references/prompts/` 下对应文件。
@@ -101,6 +105,7 @@ CP5 的目标是在最终回复、验收决策、声明完成、输出提交范�
 | 状态一致 | `project-progress.md`、`coder-current-task.md`、`checkpoint-status.md`、`handoff.md`、执行记录、验证记录、复核报告和最终回复不矛盾 |
 | Ledger audit | `skills/superCoder-ledger-audit/references/ledger-audit.md` 结论为 PASS |
 | 无内联热修链路 | BUG、缺陷、回归、线上问题或热修不得以 `HOTFIX` / `inline_hotfix_*` / ad-hoc 占位链路替代真实 analysis / plan / fix-mr 文件 |
+| 需求最终落地摘要 | 需求整体完成时摘要已生成；正文符合 Why / Who / What，使用业务语言，边界和关联线索与验收事实一致，且不包含实施细节 |
 
 CP5 未 PASS 时：
 
@@ -163,6 +168,14 @@ CP5 未 PASS 时：
 | Major | 0 |
 | Minor | 0 |
 | 是否允许进入下一阶段 | 是 / 否 |
+
+统一决策字段：
+
+```yaml
+decision: PASS | CONDITIONAL_PASS | FAIL
+protocol_codes: []
+allowed_actions: []
+```
 
 ## 问题清单（Issues）
 

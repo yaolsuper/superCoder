@@ -15,6 +15,16 @@ modules:
       - "skills/superCoder-checkpoint/SKILL.md"
       - "skills/superCoder-review/SKILL.md"
       - "skills/superCoder-verification/SKILL.md"
+      - "skills/superCoder-requirement-traceability/SKILL.md"
+
+  - id: requirement_traceability
+    routed_by_skill: true
+    files:
+      - "skills/superCoder-requirement-traceability/SKILL.md"
+      - "skills/superCoder-requirement-traceability/references/requirement-traceability.md"
+      - "skills/superCoder/assets/templates/requirement-delivery-summary.md"
+      - "skills/superCoder-ledger-audit/references/ledger-audit.md"
+      - "skills/superCoder-checkpoint/references/checkpoint.md"
 
   - id: planning
     routed_by_skill: true
@@ -27,6 +37,8 @@ modules:
       - "skills/superCoder/assets/templates/gates.md"
       - "skills/superCoder/assets/templates/progress-overview.md"
       - "skills/superCoder/assets/templates/task-and-mr.md"
+      - "skills/superCoder/assets/templates/requirement-delivery-summary.md"
+      - "skills/superCoder-requirement-traceability/references/requirement-traceability.md"
 
   - id: bug_root_cause
     routed_by_skill: true
@@ -42,6 +54,7 @@ modules:
     files:
       - "skills/superCoder-review/SKILL.md"
       - "skills/superCoder-review/references/review.md"
+      - "skills/superCoder/references/shared/decision-contract.md"
       - "skills/superCoder-checkpoint/references/checkpoint.md"
       - "skills/superCoder-checkpoint/references/document-review-checklist.md"
       - "skills/superCoder-checkpoint/references/prompts/reviewer.md"
@@ -59,14 +72,16 @@ modules:
       - "skills/superCoder/assets/templates/gates.md"
       - "skills/superCoder/assets/templates/progress-overview.md"
       - "skills/superCoder/assets/templates/task-and-mr.md"
+      - "skills/superCoder/assets/templates/requirement-delivery-summary.md"
+      - "skills/superCoder-requirement-traceability/references/requirement-traceability.md"
 
   - id: ledger_audit
     routed_by_skill: true
     files:
       - "skills/superCoder-ledger-audit/SKILL.md"
       - "skills/superCoder-ledger-audit/references/ledger-audit.md"
+      - "skills/superCoder/references/shared/decision-contract.md"
       - "skills/superCoder-execution/references/execution.md"
-      - "skills/superCoder-checkpoint/references/checkpoint.md"
 
   - id: verification
     routed_by_skill: true
@@ -76,12 +91,14 @@ modules:
       - "skills/superCoder-checkpoint/references/checkpoint.md"
       - "skills/superCoder-execution/references/execution.md"
       - "skills/superCoder-bug-root-cause/references/bug-root-cause.md"
+      - "skills/superCoder/assets/templates/requirement-delivery-summary.md"
 
   - id: checkpoint
     routed_by_skill: true
     files:
       - "skills/superCoder-checkpoint/SKILL.md"
       - "skills/superCoder-checkpoint/references/checkpoint.md"
+      - "skills/superCoder/references/shared/decision-contract.md"
       - "skills/superCoder-checkpoint/references/document-review-checklist.md"
       - "skills/superCoder-checkpoint/references/prompts/generator.md"
       - "skills/superCoder-checkpoint/references/prompts/reviewer.md"
@@ -96,6 +113,7 @@ modules:
       - "skills/superCoder/assets/templates/index.md"
       - "skills/superCoder/assets/templates/progress-overview.md"
       - "skills/superCoder/assets/templates/task-and-mr.md"
+      - "skills/superCoder/assets/templates/requirement-delivery-summary.md"
       - "skills/superCoder/assets/examples/protocol-examples.md"
 
   - id: shared
@@ -103,6 +121,7 @@ modules:
     files:
       - "skills/superCoder/references/shared/index.md"
       - "skills/superCoder/references/shared/glossary.md"
+      - "skills/superCoder/references/shared/decision-contract.md"
       - "skills/superCoder/config/coder-config-example.yaml"
       - "skills/superCoder/config/module-map.yaml"
 
@@ -131,7 +150,17 @@ modules:
       - "tests/skill-behavior/p7-planning-does-not-generate-mr-before-confirmation.md"
       - "tests/skill-behavior/p8-cp5-not-required-before-running.md"
       - "tests/skill-behavior/p9-shared-resource-resolution.md"
+      - "tests/skill-behavior/p10-coder-artifacts-default-chinese.md"
+      - "tests/skill-behavior/p11-progressive-mode-routing.md"
+      - "tests/skill-behavior/p12-resource-path-syntax.md"
+      - "tests/skill-behavior/p13-plan-mr-strategy-operation-trace.md"
+      - "tests/skill-behavior/p14-requirement-delivery-summary.md"
       - "tests/skill-behavior/results/README.md"
+      - "tests/skill-behavior/results/2026-07-09-p10-coder-artifacts-default-chinese.md"
+      - "tests/skill-behavior/results/2026-07-10-p11-progressive-mode-routing.md"
+      - "tests/skill-behavior/results/2026-07-10-p12-resource-path-syntax.md"
+      - "tests/skill-behavior/results/2026-07-10-p13-plan-mr-strategy-operation-trace.md"
+      - "tests/skill-behavior/results/2026-07-10-p14-requirement-delivery-summary.md"
 
   - id: manifest
     routed_by_skill: false

@@ -10,6 +10,7 @@ description: 当 superCoder 任务需要 CP0-CP5 判断、正式产物复核、�
 ## 必读文件
 
 - `references/checkpoint.md`
+- 多协议组合判断需要 `../superCoder/references/shared/decision-contract.md`
 - CP5、恢复、完成、提交范围或下一 MR 决策需要 `../superCoder-ledger-audit/references/ledger-audit.md`
 - BUG / hotfix / P0-P2 产物需要 `../superCoder-bug-root-cause/references/bug-root-cause.md`
 - BRD / PRD / ADD / LLD / DBD / MR / Coder review checklist 需要 `references/document-review-checklist.md`
@@ -22,6 +23,7 @@ description: 当 superCoder 任务需要 CP0-CP5 判断、正式产物复核、�
 - 存在未解决 blocker 时阻断下游生成或执行。
 - 保持 Reviewer 输出和 Fixer 输出分离。
 - 在 CP5 交付批准前要求 ledger-audit 结论。
+- 使用统一决策契约组合 Review findings、Ledger Audit facts 和 Checkpoint 门禁。
 
 ## 禁止事项
 

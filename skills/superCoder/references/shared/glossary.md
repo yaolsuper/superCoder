@@ -31,12 +31,22 @@ BRD -> PRD -> ADD -> LLD -> DBD -> MR 拆分 -> 分阶段实施 -> 回归 -> 验
 .coder/<development_project_id>/
 ```
 
-`development_project_id` 按以下优先级确定：
+新建开发项目时，`development_project_id` 先按以下优先级确定基础名称：
 
 1. 当前任务或 MR 契约中的 `development_project_id`
 2. `.coder-config.yaml` 中的 `workspace.development_project_id`
 3. `.coder-config.yaml` 中的 `project.name`
 4. 当前仓库目录名
+
+将基础名称规范化为小写短横线命名后，追加项目创建日的本地日期，格式为 `YYYYMMDD`：
+
+```text
+<base-name>-<YYYYMMDD>
+```
+
+例如在 2026-07-13 创建 Python 迁移项目时，生成 `python-migration-20260713`。若候选名称已以 `-YYYYMMDD` 结尾，不得重复追加日期。日期取首次创建 `.coder/<development_project_id>/` 时执行环境的本地日期；同一项目后续跨日恢复、规划、执行和验证必须继续使用原 ID，不得按当天日期改名。
+
+已有 `.coder/` 项目或当前任务 / MR 契约已明确指向现存产物时，其 `development_project_id` 是恢复标识，必须原样沿用。不得为了补日期而重命名既有目录；需要迁移旧 ID 时必须作为独立迁移任务处理。
 
 推荐目录结构：
 
@@ -78,6 +88,21 @@ BRD -> PRD -> ADD -> LLD -> DBD -> MR 拆分 -> 分阶段实施 -> 回归 -> 验
 | `archive/` | 已完成任务归档 |
 
 `.coder/**` 是执行产物区，不等同于产品代码修改范围。产物写入文件必须在门禁和执行记录中列出，并遵守 `artifact_allowed_paths`。不得把 `.coder/**` 当作产品代码修改范围来绕过 `allowed_paths` / `forbidden_paths`。
+
+## 输出语言策略
+
+`.coder/**` 中的分析、计划、MR、复核、handoff、进度、任务状态、执行记录、验证摘要、偏差记录和归档摘要等正式产物默认使用中文。标题、章节名、正文、结论、状态说明、风险说明和 Review 意见都必须遵守该默认值，避免只在最终聊天回复中使用中文、而落盘产物沿用英文技术报告模板。
+
+语言选择优先级：
+
+1. 用户在当前任务中明确指定的产物语言。
+2. 仓库级规范，例如 `AGENTS.md` 或模块级规则。
+3. `.coder-config.yaml` 中的 `workspace.artifact_language`。
+4. superCoder 默认值：中文。
+
+无论整体产物语言是什么，以下内容保留原文：代码标识、类名、方法名、API 名称、字段名、配置键、文件路径、命令、错误码、日志摘录、协议状态值、Checkpoint ID、checklist 名称和第三方产品名。引用英文原文作为证据时可保留短摘录，但结论和解释仍按产物语言撰写。
+
+如果因用户或仓库规则改用非中文，正式产物应在开头或元数据中记录语言来源，例如 `artifact_language: en-US` 或“语言来源：用户明确要求英文”。不得因为源代码、模板示例或上一轮产物是英文，就自动把本轮 `.coder` 产物改为英文。
 
 ## 状态名称
 
@@ -140,6 +165,13 @@ PENDING -> READY -> RUNNING -> BLOCKED -> VERIFYING -> ACCEPTED -> MERGED
 | `source_type` | 上下文来源类型：规则、任务、决策、日志、资源、代码或配置 |
 | `freshness` | 上下文当前性标记：当前、可能过期或历史参考 |
 | `source_chain` | 当前任务、计划项或 MR 的来源链路，记录分析报告、实施计划和 MR 文件之间的推导关系 |
+| `artifact_strategy` | 计划与 MR 的产物策略：单交付单元使用 `INLINE_MR`，多 MR/高风险使用 `SPLIT_MR` |
+| `delivery_unit_count` | 当前确认计划中的独立交付单元数量 |
+| `plan_revision` | 已确认计划的单调递增版本；范围或关键契约变化时增加 |
+| `based_on_plan_revision` | MR 或执行层实际依据的计划版本，必须与当前计划一致 |
+| `step_id` | MR 内稳定的执行步骤标识，用于依赖、操作和证据关联 |
+| `operation_id` | 追加式操作账本中的单调递增操作标识 |
+| `relation_keys` | 最终落地摘要中的业务关联检索键，包括领域、能力、角色、业务对象、场景和关键词 |
 | `allowed_paths` | 当前任务允许修改的产品代码路径 |
 | `artifact_allowed_paths` | 当前任务允许写入的协议产物路径，默认 `.coder/**` |
 | `forbidden_paths` | 当前任务禁止修改的路径 |
@@ -166,6 +198,10 @@ PENDING -> READY -> RUNNING -> BLOCKED -> VERIFYING -> ACCEPTED -> MERGED
 | 详细 MR 文件 | 具体落地指导与边界文件，必须包含文件级变更计划、接口/方法契约、数据契约、实施步骤、测试矩阵和质量检查清单 |
 | 状态一致性检查 | 项目进度总览卡片中的校验表，确认当前任务、当前 MR、进度表、验证摘要和推导链路状态一致 |
 | Markdown 状态源 | 项目内 `.coder/<development_project_id>/*.md` 和子目录下 Markdown 产物，是任务推进、恢复、干预和回退的唯一可信状态来源 |
+| 操作账本 | `records/<mr-id>-operations.md`，按发生顺序追加状态转换、修改、命令、验证、重试、Checkpoint、偏差和回退，不允许覆盖历史 |
+| 状态投影 | `task-state.md` 中对当前 MR、Step、状态、阻塞和最近操作的简短快照；历史事实以操作账本为准 |
+| 会话计划投影 | Codex/harness 的临时 plan，由 Markdown 状态源恢复，用于展示本轮动作，不是权威状态源 |
+| 需求最终落地摘要 | `.coder/<development_project_id>/requirement-delivery-summary.md`，在需求整体验收后记录最终实现和关联检索信息，供后续需求发现依赖、重叠、冲突和回归风险 |
 | 状态回写 | 将阶段、MR、Step、验证、偏差、回退和下一步写回 Markdown 状态源；未回写视为未完成 |
 | 阶段转换原子性 | 任何状态机阶段转换必须以 `coder-current-task.md`、`project-progress.md`、`checkpoint-status.md` 三文件 `stage_epoch` 同步跳变为唯一证据；无 epoch 跳变阶段不算转换，不得据此修改产品代码或推进下游 |
 | stage_epoch | 单调递增的阶段版本号，三文件必须相等；每发生一次合法阶段转换 +1；不一致即恢复门禁 / 启动门禁失败 |

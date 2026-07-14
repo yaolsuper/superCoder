@@ -4,7 +4,7 @@
 
 共享资源已经打包到主技能目录 `skills/superCoder/`。从本文件读取共享资源时，只使用 `../../superCoder/assets/...`、`../../superCoder/references/shared/...` 或 `../../superCoder/config/...`；不得读取包根 `shared/`、当前子技能 `shared/`、工作区同名目录或其他挂载目录。若必需共享模板、门禁表或引用无法加载，停止并返回 `SKILL_RESOURCE_BLOCKED`，不得凭记忆重造门禁表格继续执行。
 
-需要标准门禁、验证、执行记录或验收表格时，只读取 `../../superCoder/assets/templates/gates.md`。需要项目进度总览卡片模板时，只读取 `../../superCoder/assets/templates/progress-overview.md`。需要当前任务、MR 或偏差模板时，只读取 `../../superCoder/assets/templates/task-and-mr.md`。需要输出专项复核、Step 依赖守卫或 Checkpoint 状态时，读取 `skills/superCoder-checkpoint/references/checkpoint.md`。需要恢复、进入下一 MR 或完成态审计时，读取 `skills/superCoder-ledger-audit/references/ledger-audit.md`。BUG / 热修执行前需要根因链路判断时，读取 `skills/superCoder-bug-root-cause/references/bug-root-cause.md`。需要按 MR、CURRENT_TASK、EXECUTION_RECORD 或 ACCEPTANCE_DECISION 做场景化 Review 时，读取 `skills/superCoder-checkpoint/references/document-review-checklist.md`。
+需要标准门禁、验证、执行记录或验收表格时，只读取 `../../superCoder/assets/templates/gates.md`。需要项目进度总览卡片模板时，只读取 `../../superCoder/assets/templates/progress-overview.md`。需要当前任务、MR 或偏差模板时，只读取 `../../superCoder/assets/templates/task-and-mr.md`。需求整体完成并生成关联索引时读取 `../../superCoder-requirement-traceability/references/requirement-traceability.md`。需要输出专项复核、Step 依赖守卫或 Checkpoint 状态时，读取 `skills/superCoder-checkpoint/references/checkpoint.md`。需要恢复、进入下一 MR 或完成态审计时，读取 `skills/superCoder-ledger-audit/references/ledger-audit.md`。BUG / 热修执行前需要根因链路判断时，读取 `skills/superCoder-bug-root-cause/references/bug-root-cause.md`。需要按 MR、CURRENT_TASK、EXECUTION_RECORD 或 ACCEPTANCE_DECISION 做场景化 Review 时，读取 `skills/superCoder-checkpoint/references/document-review-checklist.md`。
 
 ## 编码能力与过程边界
 
@@ -19,6 +19,14 @@
 
 不得以“模型判断”为理由越过路径守卫、扩大目标、跳过验证、跳过 Checkpoint、顺手重构或把未验证结论写成完成状态。
 
+## 按模式执行
+
+- `LIGHT`：修改前写入单一 `light-task.md` 的目标、允许/禁止路径、验收和停止条件；修改后追加实际 diff、精确验证命令、结果与剩余风险。不要求 `stage_epoch`、MR 或 CP0–CP5。
+- `STANDARD`：使用可恢复状态、路径守卫、差异和验证门禁；只加载当前任务必需的 Checkpoint。
+- `CONTROLLED`：执行本文的完整 15 步链路、ledger audit 和适用 Checkpoint。
+
+`LIGHT` 执行中一旦命中主入口的升级条件，必须在继续修改前升级为 `STANDARD` 或 `CONTROLLED`；已有 `light-task.md` 作为上游证据，不得丢弃。
+
 ## 开发意图升级
 
 如果本轮起初是“结合当前系统实现分析”“检查未提交更改”“review 当前改动”“生成本次需求相关 git add”等轻量请求，但执行中需要进入以下任一动作，必须视为开发执行或审查任务，回到 `SKILL.md` 读取路由并执行对应门禁：
@@ -31,9 +39,10 @@
 
 未完成路由和门禁前，不得直接动产品代码，也不得把普通聊天计划、IDE TODO 或 `update_plan` 当作 `.coder/<development_project_id>/` 状态更新。
 
-## 执行顺序
+## `CONTROLLED` 执行顺序
 
 按顺序执行。任一步失败，停止并记录，不进入下一步。
+以下编号章节的完整账本、`stage_epoch`、MR 和 CP 要求只对 `CONTROLLED` 强制。`STANDARD` 执行同名门禁的必要子集；`LIGHT` 只执行上文定义的单文件证据闭环。
 
 1. 加载上下文
 2. 跨模型 / 跨轮次恢复门禁
@@ -117,7 +126,7 @@ sed -n '120,220p' path/to/file
 
 如果仍无法确定 `development_project_id`，允许只列出 `.coder/*/coder-current-task.md` 的路径清单用于定位当前任务；定位后只读取当前任务契约和其 `required_context`。不得因为发现任务文件而读取全部 `.coder/**`、全部 MR 文件或完整历史记录。
 
-正式编码执行必须先校验任务执行链路。当前任务契约必须包含非空 `source_chain.analysis`、`source_chain.plan` 和 `source_chain.mr`，且三个路径都必须存在。若 `source_chain.plan: null`、实施计划文件不存在、MR 文件不存在，或当前 MR 不能回溯到实施计划和分析结论，启动门禁必须失败，且 `是否继续编码: 否`。
+`CONTROLLED` 编码执行必须先校验完整任务执行链路。`STANDARD` 可以使用经复核的 current task + plan 作为链路；`LIGHT` 使用 `light-task.md`。`CONTROLLED` 的当前任务契约必须包含非空 `source_chain.analysis`、`source_chain.plan` 和 `source_chain.mr`，且路径都必须存在；`INLINE_MR` 允许 plan/mr 指向同一 delivery plan。若 `source_chain.plan: null`、执行层文件不存在、当前 MR 不能回溯到实施计划和分析结论，或 `based_on_plan_revision` 不匹配，`CONTROLLED` 启动门禁必须失败，且 `是否继续编码: 否`。
 
 BUG、缺陷、回归、线上问题、P0/P1/P2 修复和热修任务必须通过 `skills/superCoder-bug-root-cause/references/bug-root-cause.md` 的根因证据链检查；`HOTFIX`、`inline_hotfix_root_cause`、`inline_hotfix_single_slice`、`ad_hoc_fix` 或同类内联占位值不构成启动证据。
 
@@ -213,6 +222,7 @@ BUG、缺陷、回归、线上问题、P0/P1/P2 修复和热修任务必须通�
 4. 若当前 MR 为 `BLOCKED`，读取偏差记录；可在当前 MR 范围内修复且未达到升级条件时，先修复并自测；否则等待人工信息。
 5. 若当前 MR 为 `ACCEPTED` / `MERGED` 且 `can_start_next: true`，定位下一 MR，执行恢复门禁和启动门禁；下一 MR 启动条件满足且 `manual_confirmation_required` 不为 true 时，允许自动进入下一 MR。
 6. 若没有下一 MR 或全部 MR 已 `ACCEPTED` / `MERGED`，进入最终验收决策。
+7. 全部交付单元和验证完成后，先按模板生成 `.coder/<development_project_id>/requirement-delivery-summary.md`，再执行最终 ledger audit 和 CP5；通过后完成最终状态回写和交付回复。
 
 连续执行仍必须保持“一次只执行一个 MR”。每个 MR 都要独立完成启动门禁、阶段转换、pre-edit guard、变更计划、实现、差异检查、Checkpoint、验证、执行记录和状态回写。
 
@@ -323,6 +333,14 @@ if modified_file is artifact:
 不得以“先把代码改完再补状态”为默认执行方式。产品代码修改和协议产物更新都必须来自已通过的变更计划；若执行中发现需要新增协议产物或状态文件，先暂停实现并更新变更计划。
 实现过程中不得只更新 IDE TODO 或对话内计划。任何 Step 完成、跳过、失败或调整，都必须回写到 `task-state.md` 和当前 MR 文件；否则该 Step 视为未完成。
 
+当前 MR 或 `INLINE_MR` delivery plan 中的每个可执行步骤必须有稳定 `step_id`（例如 `S1`、`S2`），并显式记录 `depends_on`。步骤标题或顺序调整不得改变既有 `step_id` 的语义；若语义改变，增加 `plan_revision` 并重新复核。
+
+会话内 plan、IDE TODO 或 harness 计划只作为当前 `.coder` 状态的临时投影。恢复或开始一轮执行时，必须从 `task-state.md` 的 `current_mr`、`current_step` 和当前 MR/delivery plan 重新生成；不得反向用旧会话 plan 覆盖账本。
+
+每个状态转换、产品文件修改、验证命令、预期失败、重试、Step 终态、Checkpoint、偏差和回退都必须追加到 `.coder/<development_project_id>/records/<mr-id>-operations.md`。操作记录是 append-only 事实时间线，不得覆盖或重排既有条目。每条至少包含 `operation_id`、`step_id`、`action`、`result`、时间、证据路径、实际修改文件和下一动作。
+
+`task-state.md` 只保存当前状态投影，至少包含 `current_mr`、`current_step`、`step_status`、`next_step`、`blocked_by` 和 `last_operation_id`。执行记录保留本轮摘要，不复制完整操作时间线。
+
 ## 9. 差异检查
 
 实现后、验证前，检查实际变更。推荐命令：
@@ -393,6 +411,7 @@ git status --short
 - 回滚方案或恢复建议
 - 未完成项
 - 是否允许进入下一 MR
+- 操作账本路径和本轮 `operation_id` 范围
 
 记录保持简洁。不要粘贴完整日志，只记录有界摘要和精确命令。
 如果本轮修改了产品代码但没有执行记录文件，不得标记 `ACCEPTED`，最终回复必须说明“执行记录缺失，状态未完成”。
@@ -434,6 +453,8 @@ git status --short
 
 ## 15. 验收决策
 
+需求级完成与单 MR 验收不同。单个 MR `ACCEPTED` 但仍有后续 MR 时，不生成最终落地摘要；只有需求范围内所有交付单元均已 `ACCEPTED` / `MERGED` 时才生成。
+
 只有全部条件满足时，才允许进入下一 MR；满足后默认可以连续推进，不需要人工逐个 MR 确认，除非用户或任务契约显式要求：
 
 - 当前 MR 状态为 `ACCEPTED` 或 `MERGED`
@@ -450,6 +471,8 @@ git status --short
 - 恢复方案明确
 - 下一 MR 启动条件满足
 - `manual_confirmation_required` 不为 true，且 `handoff.md` 下一步协议不是“等待人工审核”
+
+当不存在下一 MR、准备声明需求整体完成时，必须在最终 ledger audit 和 CP5 前执行 `../../superCoder-requirement-traceability/references/requirement-traceability.md`，生成并复核 `.coder/<development_project_id>/requirement-delivery-summary.md`。
 
 否则保持 `can_start_next: false`。
 
@@ -468,6 +491,7 @@ git status --short
 | 当前 MR | `mrs/<mr-id>-<slug>.md` 的执行记录与验收清单已更新 |
 | 验证记录 | `validation/<task-or-mr-id>-validation.md` 已记录执行命令、结果或未执行原因 |
 | 验证 | 已执行并通过，或未执行原因可接受且状态不声称完成 |
+| 最终落地摘要 | 需求整体完成时摘要存在，3W 需求内容与验收事实一致，且未包含实施细节 |
 
 任一项失败时，不得说“已完成”“可提交”“已验收”。必须说明真实状态、缺失文件或阻塞项，并给出下一步。
 

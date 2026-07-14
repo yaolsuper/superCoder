@@ -3,6 +3,7 @@
 仅当用户明确要求使用 superCoder 执行代码审查、质量审核、回归风险评估、放行判断、MR review 或“看看这段改动有没有问题”时读取本文件。普通 code review / 代码评审请求必须先检查当前环境是否有 vibe coding 工具自带的 code review 技能，并优先使用该能力；质量审核、回归风险评估、放行判断或检查未提交变更不因本规则自动使用 vibe coding。不要让 superCoder 抢占默认代码评审触发。此类任务默认不修改产品代码；若用户要求直接修复，再切换到 `skills/superCoder-execution/references/execution.md` 并通过启动门禁。
 
 代码审查和质量审核必须严格控制逻辑，防止过度泛化。审查目标不是限制模型发现问题的能力，而是要求每个结论可复核、可定位、可验证。
+需要输出批准、条件批准、阻断，或与 Checkpoint / Ledger Audit 组合时，读取 `skills/superCoder/references/shared/decision-contract.md`。Review 负责质量 findings、严重度和证据，不复制账本完整性、`stage_epoch` 或 CP5 的判定规则。
 如果审查对象是本 Skill 生成的分析报告、实施计划、MR 文件、执行记录或验收决策等正式产物，还必须同时使用 `skills/superCoder-checkpoint/references/checkpoint.md`，并输出 Checkpoint 结论。
 如果审查对象是 BRD、PRD、ADD、LLD、DBD、MR 或 Coder 正式产物，必须读取 `skills/superCoder-checkpoint/references/document-review-checklist.md`，先判定文档/产物类型，再使用对应场景 checklist；不得只使用通用审查原则给出放行结论。
 
@@ -103,6 +104,6 @@
 - 必要验证已执行，或未执行项有明确且可接受的原因。
 - 测试缺口不会阻断当前任务验收，或已作为风险列出。
 - 未把局部阅读结论泛化为全局质量结论。
-- 若审查对象涉及产品代码修改或执行记录，必须额外确认阶段可审计性：修改发生在 `project-progress.md` 当前阶段 == `RUNNING` 期间，`coder-current-task.md` / `project-progress.md` / `checkpoint-status.md` 三文件 `stage_epoch` 一致，且修改产品代码前已通过 pre-edit guard。阶段未达 `RUNNING` 却存在代码修改、`stage_epoch` 不一致、或 pre-edit guard 缺项，必须列为 Blocker，不得放行。详见 `SKILL.md` 阶段转换原子性与 `skills/superCoder-execution/references/execution.md` pre-edit guard。
+- 若审查对象涉及产品代码修改或执行记录，必须取得 Ledger Audit 的账本事实；需要最终交付时再交由 Checkpoint CP5 组合裁决。Ledger Audit 非 PASS 时按统一决策契约列为 Blocker，不得放行。
 
 否则结论必须是“不建议放行”或“无法给出放行结论”，并说明阻塞原因。

@@ -25,6 +25,7 @@
 | 最近复核报告 | `.coder/<development_project_id>/reviews/<checkpoint-id>-<artifact-name>-review.md` |
 | 最近执行记录 | `.coder/<development_project_id>/records/<task-or-mr-id>-execution-record.md` / 无 |
 | 最近验证记录 | `.coder/<development_project_id>/validation/<task-or-mr-id>-validation.md` / 无 |
+| 需求最终落地摘要 | `.coder/<development_project_id>/requirement-delivery-summary.md` / 未生成 |
 | 最近偏差记录 | `.coder/<development_project_id>/deviations/<deviation-id>.md` / 无 |
 | 上下文摘要 | `.coder/<development_project_id>/context-summary.md` / 无 |
 | 任务状态文件 | `.coder/<development_project_id>/task-state.md` / 无 |

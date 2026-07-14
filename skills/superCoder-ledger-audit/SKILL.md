@@ -10,8 +10,8 @@ description: 当 superCoder 决策依赖 .coder 账本、恢复状态、下一 M
 ## 必读文件
 
 - `references/ledger-audit.md`
+- 与 Review、Checkpoint 或验证协议组合时读取 `../superCoder/references/shared/decision-contract.md`
 - 当审计影响启动或产品代码修改时读取 `../superCoder-execution/references/execution.md`
-- 涉及 CP5 或最终交付时读取 `../superCoder-checkpoint/references/checkpoint.md`
 
 ## 职责
 
@@ -20,6 +20,7 @@ description: 当 superCoder 决策依赖 .coder 账本、恢复状态、下一 M
 - 验证 source-chain 引用确实存在为文件。
 - 判断下一步允许动作是状态修复、验证、执行、checkpoint 还是 handoff。
 - 输出明确审计结论，例如 `LEDGER_INCOMPLETE`、`STATUS_CONSISTENCY_FAIL` 或 `COMPLETION_EVIDENCE_FAIL`。
+- 只输出账本事实、协议错误码和账本层允许动作；由调用方 Checkpoint 决定最终放行。
 
 ## 禁止事项
 

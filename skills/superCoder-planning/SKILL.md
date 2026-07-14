@@ -14,6 +14,7 @@ description: 当 superCoder 任务要求分析、实施规划、迁移评估、�
 - 编写 current-task 或 MR 产物时读取 `../superCoder/assets/templates/task-and-mr.md`
 - 需要项目进度总览卡片时读取 `../superCoder/assets/templates/progress-overview.md`
 - 需要术语或 `development_project_id` 规则时读取 `../superCoder/references/shared/glossary.md`
+- 新需求需要发现或判断历史关联需求时读取 `../superCoder-requirement-traceability/references/requirement-traceability.md`
 - 仅当任务是 BUG / defect / regression / incident / hotfix / P0-P2 时读取 `../superCoder-bug-root-cause/references/bug-root-cause.md`
 
 ## 启动门禁

@@ -10,6 +10,7 @@ description: 仅当用户明确要求 superCoder review、质量审核、回归�
 ## 必读文件
 
 - `references/review.md`
+- 需要批准、条件批准、阻断或与其他协议组合时读取 `../superCoder/references/shared/decision-contract.md`
 - 请求 CP review 或正式产物判断时读取 `../superCoder-checkpoint/references/checkpoint.md`
 - review 涉及完成、提交范围或交付批准时读取 `../superCoder-ledger-audit/references/ledger-audit.md`
 - 涉及文档和 MR checklist 覆盖时读取 `../superCoder-checkpoint/references/document-review-checklist.md`
@@ -21,6 +22,7 @@ description: 仅当用户明确要求 superCoder review、质量审核、回归�
 - 按严重程度报告 findings；review 代码时提供文件和行号引用。
 - 区分代码正确性、回归风险、流程合规性和发布 readiness。
 - 返回明确的批准、条件批准或阻断决策。
+- 将 findings 映射到统一 `decision`，但不重复实现账本审计或 Checkpoint 规则。
 
 ## 禁止事项
 

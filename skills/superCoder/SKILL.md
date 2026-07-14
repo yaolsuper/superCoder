@@ -29,6 +29,7 @@ description: 当开发任务可能需要 superCoder 规划、执行、账本恢�
 
 ## 主技能资源解析
 
+- Markdown 中以 `./` 或 `../` 开头的加载路径相对当前文件解析；以 `skills/`、`harness/` 或 `tests/` 开头的路径相对仓库根目录解析。不得在仓库根前缀前再叠加文件相对前缀。`config/module-map.yaml` 的路径也相对仓库根目录。
 - superCoder 共享资源必须随主技能目录打包，主技能目录为 `skills/superCoder/`。
 - 主技能资源只从以下位置读取：`skills/superCoder/assets/`、`skills/superCoder/references/shared/`、`skills/superCoder/config/`。
 - 从任一子技能 `SKILL.md` 读取共享模板时，使用 `../superCoder/assets/...`、`../superCoder/references/shared/...` 或 `../superCoder/config/...`。
@@ -37,14 +38,28 @@ description: 当开发任务可能需要 superCoder 规划、执行、账本恢�
 
 ## 全局硬约束
 
-1. `.coder/` Markdown 文件是用户开发任务的可恢复状态源；聊天记忆不是账本。
-2. 必需账本缺失时，禁止继续执行、输出提交范围或声明完成。
-3. `stage_epoch` 不一致时，禁止修改产品代码或启动下一 MR。
-4. 修改产品代码必须具备有效的当前任务、来源链路、路径守卫和 pre-edit guard。
+1. `STANDARD` / `CONTROLLED` 的 `.coder/` Markdown 文件是可恢复状态源；`LIGHT` 使用单一 `light-task.md` 作为本轮证据源；聊天记忆不是账本。
+2. 当前模式的必需状态缺失时，禁止继续执行、输出提交范围或声明完成。
+3. 当前模式要求 `stage_epoch` 时，不一致必须禁止修改产品代码或启动下一 MR；`LIGHT` 不创建伪造的 epoch 文件。
+4. 修改产品代码必须具备当前模式要求的任务来源、路径守卫和 pre-edit guard；`LIGHT` 的 `light-task.md` 是有效的精简来源链路。
 5. BUG、回归、生产事故、hotfix 和 P0-P2 修复必须具备文件化根因证据链。
 6. “continue”、“go on” 或类似含糊指令不得升级阶段。
-7. 完成声明必须具备新鲜验证证据和兼容 CP5 的账本审计。
+7. 完成声明必须具备新鲜验证证据；`CONTROLLED` 还必须具备兼容 CP5 的账本审计，`STANDARD` / `LIGHT` 必须在各自状态产物中记录验证和剩余风险。
 8. Skill 正文应以通用动作描述流程；harness 映射负责把动作转换为具体工具。
+9. `.coder/**` 正式产物默认使用中文；若用户、仓库规范或 `.coder-config.yaml` 明确指定其他语言，按更具体规则执行。代码标识、API 名称、字段名、路径、命令、错误码、日志和协议关键字保留原文。
+10. `STANDARD` / `CONTROLLED` 的需求整体完成前必须生成 `requirement-delivery-summary.md`；缺失或与实际实现漂移时不得声明需求完成。需要供后续需求做关联跟踪的任务至少使用 `STANDARD`。
+
+## 渐进式模式选择
+
+进入子技能前，先按风险、范围和可恢复性选择最低充分模式；模式只约束输入、输出和门禁，不指定思考方法或唯一实现。
+
+| 模式 | 适用条件 | 最小证据 |
+|---|---|---|
+| `LIGHT` | 单轮、低风险、目标单一、路径小、无跨步恢复且不需要后续需求关联跟踪 | `.coder/<id>/light-task.md`：目标、路径、验收、实际 diff、验证和剩余风险 |
+| `STANDARD` | 需跨轮恢复、多文件或中等风险，但无多 MR / 迁移 / 事故链路 | current task、plan、进度、handoff、验证记录 |
+| `CONTROLLED` | 多 MR、高风险、BUG/事故、数据或架构迁移、发布/提交范围裁决 | 完整 analysis → plan → MR → current task → execution、ledger 和 CP0–CP5 |
+
+超出既定路径、需改变接口/数据/架构/依赖、出现未解释失败、需跨模型恢复，或用户要求提交/发布/完成放行时必须升级。BUG、hotfix 和 P0-P2 不得使用 `LIGHT`。
 
 ## 命中后门禁
 
@@ -64,6 +79,7 @@ description: 当开发任务可能需要 superCoder 规划、执行、账本恢�
 | CP0-CP5、正式产物复核、Generator/Reviewer/Fixer 分离 | `../superCoder-checkpoint/SKILL.md` |
 | 明确的 superCoder review、质量审核、回归风险、发布判断 | `../superCoder-review/SKILL.md` |
 | 声明 complete、fixed、passing、accepted 或 ready to submit 前 | `../superCoder-verification/SKILL.md` |
+| 需求最终落地摘要、历史关联需求发现与关系跟踪 | `../superCoder-requirement-traceability/SKILL.md` |
 
 ## 协议来源
 

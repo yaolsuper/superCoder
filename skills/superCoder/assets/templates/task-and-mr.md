@@ -3,6 +3,17 @@
 本文件只在需要当前任务结构、MR 文件结构、状态维护或偏差记录模板时读取。门禁表格见同目录 `gates.md`，项目进度总览卡片见同目录 `progress-overview.md`。
 本文件位于主技能目录 `skills/superCoder/assets/templates/`；共享资源不得从包根 `shared/` 或工作区同名目录读取。
 
+## 产物策略字段
+
+```yaml
+artifact_strategy: INLINE_MR | SPLIT_MR
+delivery_unit_count: 1
+plan_revision: 1
+based_on_plan_revision: 1
+```
+
+`INLINE_MR` 允许 plan 与 MR 指向同一 delivery plan；`SPLIT_MR` 必须使用独立 MR 文件。两种策略的执行层都必须使用稳定 `step_id`。
+
 ## 当前任务结构
 
 保持 `coder-current-task.md` 简短，通常控制在 300-600 个中文字符。不得包含长历史、完整日志或多个 MR 内容。
@@ -11,6 +22,9 @@
 task_id: string
 development_project_id: string
 mr_id: string
+artifact_strategy: INLINE_MR | SPLIT_MR
+plan_revision: int
+based_on_plan_revision: int
 status: PENDING | READY | RUNNING | BLOCKED | VERIFYING | ACCEPTED | MERGED
 execution_mode: single_mr | continuous_project
 manual_confirmation_required: true | false
@@ -61,7 +75,9 @@ validation_commands:
 context_summary: .coder/<development_project_id>/context-summary.md
 task_state: .coder/<development_project_id>/task-state.md
 execution_record: .coder/<development_project_id>/records/<task-or-mr-id>-execution-record.md
+operation_ledger: .coder/<development_project_id>/records/<mr-id>-operations.md
 validation_record: .coder/<development_project_id>/validation/<task-or-mr-id>-validation.md
+requirement_delivery_summary: .coder/<development_project_id>/requirement-delivery-summary.md
 review_reports:
   - .coder/<development_project_id>/reviews/<checkpoint-id>-<artifact-name>-review.md
 last_recovery_point: string
@@ -133,11 +149,11 @@ resume_gate:
 
 如果 `status_consistency: FAIL`、`stage_epoch_consistency: FAIL` 或 `can_enter_start_gate: false`，只能修复状态产物、登记偏差或请求用户确认，不得修改产品代码。含糊指令（“继续”“接着做”）只有在 `manual_confirmation_required: true` 或 handoff 明确等待人工审核时才被视为不能升级；连续执行模式下，当前 MR 已验收且 `can_start_next: true` / `auto_start_next_allowed: true` 时，可以按文件证据进入下一 MR 启动门禁，见 `skills/superCoder-execution/references/execution.md` 阶段升级裁决规则。
 
-## MR 文件结构
+## MR 执行层结构
 
-每个 MR 必须是 `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` 下的独立文件。实施计划只能链接这些文件，不得复制完整 MR 正文。
+`SPLIT_MR` 的每个 MR 必须是 `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` 下的独立文件，实施计划只能链接这些文件。`INLINE_MR` 使用 delivery plan 内的执行层，不创建内容等价的第二份文件。
 
-MR 文件只能在计划确认后的 MR_SPLIT 阶段生成。计划待确认时，实施计划可以列出 MR 候选和预期文件路径，但不得创建独立 MR 文件，不得把 MR 候选标记为 `READY`。
+独立 MR 文件或内联执行层只能在计划确认后的 MR_SPLIT 阶段进入可执行状态。计划待确认时不得创建独立 MR 文件，也不得把任何候选或内联执行层标记为 `READY`。
 
 每个 MR 文件必须包含：
 
@@ -240,11 +256,13 @@ MR 文件必须是详细落地指导和边界文件，不能只是执行摘要�
 
 ## 实施步骤
 
-1. 写失败测试：测试类、测试方法、断言点、预期失败原因。
-2. 实现最小代码：文件、类、方法、字段和异常映射。
-3. 运行目标验证：命令和预期结果。
-4. 修复当前范围内失败：允许修复文件和停止条件。
-5. 更新执行记录、验证摘要和项目进度卡片。
+| step_id | 目标 | depends_on | 状态 | 完成证据 |
+|---|---|---|---|---|
+| S1 | 写失败测试：测试类、测试方法、断言点、预期失败原因 | 无 | PENDING |  |
+| S2 | 实现最小代码：文件、类、方法、字段和异常映射 | S1 | PENDING |  |
+| S3 | 运行目标验证：命令和预期结果 | S2 | PENDING |  |
+| S4 | 修复当前范围内失败：允许修复文件和停止条件 | S3（失败时） | PENDING |  |
+| S5 | 更新执行记录、验证摘要和项目进度卡片 | S3 或 S4 | PENDING |  |
 
 ## 测试矩阵
 
@@ -300,6 +318,7 @@ review_profile:
 | mr_id |  |
 | 当前状态 | PENDING / READY / RUNNING / BLOCKED / VERIFYING / ACCEPTED |
 | 当前 Step |  |
+| 最近 operation_id |  |
 | 最近恢复点 |  |
 | 可干预点 | 需要用户确认 / 可继续执行 / 需要回退 / 等待验证 |
 | 下一 MR 启动方式 | 自动进入启动门禁 / 等待人工审核 / 阻塞待修复 / 无下一 MR |
@@ -308,9 +327,9 @@ review_profile:
 
 ## Step 状态
 
-| Step | 状态 | 输入 | 输出 | 验证 | 阻塞 / 偏差 |
-|---|---|---|---|---|---|
-|  | TODO / DOING / DONE / BLOCKED / SKIPPED |  |  |  |  |
+| step_id | 状态 | depends_on | 输入 | 输出 | 验证 / evidence | 阻塞 / 偏差 |
+|---|---|---|---|---|---|---|
+|  | TODO / DOING / DONE / BLOCKED / SKIPPED |  |  |  |  |  |
 
 ## 可观察事实
 
@@ -324,7 +343,26 @@ review_profile:
 - 
 ```
 
-`task-state.md` 不是执行记录全文，只记录当前推进状态和恢复点。每完成、跳过、失败或调整一个 Step，都必须更新。
+`task-state.md` 不是执行记录全文，只记录当前推进状态和恢复点。每完成、跳过、失败或调整一个 Step，都必须更新，并通过最近 `operation_id` 指向操作账本。
+
+## 操作账本模板
+
+默认路径：`.coder/<development_project_id>/records/<mr-id>-operations.md`。
+
+```yaml
+- operation_id: OP-0001
+  step_id: S1
+  action: read | state_transition | edit | run_command | validate | checkpoint | deviation | rollback
+  result: STARTED | PASS | EXPECTED_FAIL | FAIL | BLOCKED | SKIPPED
+  started_at: YYYY-MM-DDTHH:mm:ssZ
+  finished_at: YYYY-MM-DDTHH:mm:ssZ
+  evidence:
+    - path-or-command-summary
+  changed_files: []
+  next_action: 下一步动作
+```
+
+只追加新条目，不修改、删除或重新排序已有 `operation_id`。没有对应 operation 和 evidence 的 Step 不得进入终态。
 
 ## 偏差记录
 
