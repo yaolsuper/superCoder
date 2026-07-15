@@ -14,7 +14,7 @@ function createSuperCoderPlugin() {
     name: "supercoder-opencode-harness",
     version: "0.1.0",
     skillsDir: path.join(root, "skills"),
-    entrySkill: "supercoder",
+    entrySkill: "superCoder",
     toolMapping: path.join(__dirname, "tool-mapping.md"),
   };
 }

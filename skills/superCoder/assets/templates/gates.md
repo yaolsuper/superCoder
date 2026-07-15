@@ -280,3 +280,8 @@
 | 自动进入下一 MR 依据 | 当前 MR ACCEPTED / 验证通过 / CP4+CP5 PASS / 状态回写完整 / can_start_next=true / 下一 MR READY |
 | 备注 |  |
 ```
+## Knowledge Trace Gate
+
+- CP2-A → provisional Card → CP2-K → Plan → CP3 顺序完整
+- CP4 path scope + Change/Module scope + Operation/Validation evidence 完整
+- CP5 reconciliation MATCHED、Final Graph/Card/Index/Summary 无 drift，Risk/Recommendation/Module 无非法提升

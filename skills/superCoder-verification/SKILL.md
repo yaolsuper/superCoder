@@ -29,3 +29,6 @@ description: 在声明 superCoder 工作 complete、fixed、passing、accepted�
 - 在代码变化后复用旧验证输出。
 - 用最终回复、计划项或聊天摘要作为验证证明。
 - 把失败或跳过的验证包装成成功的完成声明。
+## Trace validation binding
+
+启用 Knowledge Trace 时，Validation 记录必须包含 `validation_id,target_refs,command,result,evidence_ref,source_digest`，target 至少解析到 actual Change、Claim 或 Module。`NOT_RUN`、stale 或缺 evidence 不得形成 PASSED 或完成声明。

@@ -1,0 +1,4 @@
+interface:
+  display_name: "superCoder"
+  short_description: "为复杂开发任务提供可恢复、可审计、可验证的执行与交付流程"
+  default_prompt: "Use $superCoder to plan, execute, and verify this development task with scoped changes and recoverable evidence."

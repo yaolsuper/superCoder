@@ -8,6 +8,8 @@
 YYYY-MM-DD-<scenario-id>.md
 ```
 
+P16 起的 runner 结果必须同时记录 `scenario_id`、`model`、`harness`、`commit`、`started_at`、`finished_at`、`raw_output_digest` 和 `result`。`result` 只允许 `PASS`、`FAIL` 或 `NOT_RUN`；汇总可使用 `PARTIAL` 表示部分场景未执行。
+
 ## Result Template
 
 ```markdown

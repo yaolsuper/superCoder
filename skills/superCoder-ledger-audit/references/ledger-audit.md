@@ -85,3 +85,6 @@ source_chain =
 - `skills/superCoder-execution/references/execution.md` 的恢复门禁、启动门禁和 pre-edit guard 必须调用本协议的结论。
 - `skills/superCoder-checkpoint/references/checkpoint.md` 的 CP5 消费本协议结论作为状态一致性依据；本协议不反向读取或执行 CP5。
 - `skills/superCoder-bug-root-cause/references/bug-root-cause.md` 负责判断 BUG / 热修链路是否真实；本协议只检查链路是否存在且未使用占位值。
+## Trace / Lineage Audit
+
+Audit 检查 event ID 唯一且 append-only、parent/retry 可解析、versioned I/O 与 producer 完整、Validation target/evidence 可解析，并保持与 stage_epoch 一致。Completion 时继续核对 expected/actual reconciliation、Final Graph、Card/Module revision、派生 index freshness 与 3W Summary digest；Audit 只判断事实完整性，不替代 CP4/CP5 的质量放行。

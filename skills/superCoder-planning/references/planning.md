@@ -438,3 +438,8 @@ MR 来源链路必须说明：
 - 阶段转换已按 `SKILL.md` 阶段转换原子性执行：`coder-current-task.md`、`project-progress.md`、`checkpoint-status.md` 三文件 `stage_epoch` 一致；计划确认触发的 PLANNING → MR_SPLIT 跳变已记录在“状态回写计划门禁”
 - 当前阶段不得存在未处理 Blocker
 - 涉及本地测试地址或临时配置时，必须确认其未被写成产品 profile 默认值或 fallback，除非用户明确授权
+## Knowledge Trace 接入（opt-in）
+
+当 `knowledge_trace.mode=opt_in|required` 且任务为 STANDARD/CONTROLLED 时，Analysis 先用 `coder_knowledge.py find/related` 获取有界候选，再按 `metadata`、指定 `section/entity` 取证；宽泛关键词只能形成 candidate。顺序固定为 `Analysis → CP2-A → DISCOVERED provisional Card → CP2-K → Plan → CP3`，CP2-A 不得依赖尚不存在的 Card。LIGHT 如需历史关联先升级；disabled 与 legacy read-only 不新增阻断。
+
+每个 Plan/MR item 必须记录 `claim_refs, expected_change_refs, module_refs, risk_refs, source_digest`。计划阶段只写 EXPECTED Change，缺映射由 CP3 返回 `PLAN_TRACE_GAP`，不得推测 actual 实现。

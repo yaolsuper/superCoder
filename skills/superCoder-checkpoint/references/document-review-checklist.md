@@ -194,3 +194,10 @@
 ```
 
 如果专项 checklist 中任一职责边界、上游承接、验收可执行性或依赖顺序检查为 `No`，默认至少为 Major；导致下游无法执行或存在虚构事实时必须升级为 Blocker。
+## Knowledge Card Checklist
+
+- manifest/ref/schema 与 section digest 可由 CLI 校验。
+- CP2-K 的 Claim/EXPECTED Change/Module/Risk 可回到 CP2-A Analysis 证据。
+- Plan item 无 trace mapping 时阻断 CP3。
+- Product Module 新节点保持 CANDIDATE，ACTIVE 必须有 maintainer/reviewer evidence。
+- Final Graph 仅引用 actual operation/validation，Summary 只有 Why/Who/What。

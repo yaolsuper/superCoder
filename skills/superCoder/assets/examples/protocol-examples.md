@@ -5,7 +5,7 @@
 ## 启动 Prompt
 
 ```text
-你现在执行 superCoder skill v2.0。
+你现在执行 superCoder skill v2.1。
 
 必须严格遵守：
 1. 当前任务唯一原则
@@ -68,6 +68,10 @@
 ```
 
 ## 当前任务示例
+
+## v2.1 CLI-first Knowledge Trace 示例
+
+先执行 `rebuild-index/validate-index`，再按 module `find` Requirement；只读 `metadata` 与命中的 `changes`、`risks`、`relationships` section，最后按 ref/id 读取 Evidence entity。完成时先 `materialize --dry-run`，确认 expected/actual reconciliation 与治理状态，再写入 Card、重建 index 和严格 Why/Who/What Summary。legacy 无 Card 时按 read-only 处理，不自动迁移。
 
 ````markdown
 # 当前 Coder 执行任务

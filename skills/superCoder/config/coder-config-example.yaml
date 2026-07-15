@@ -17,7 +17,7 @@ project:
     - spring-boot
     - maven
   # 最小 skill 版本要求
-  min_skill_version: "2.0"
+  min_skill_version: "2.1"
 
 # ===== Coder 工作区配置 =====
 workspace:
@@ -67,6 +67,16 @@ workspace:
   # 执行产物允许写入路径。该规则只适用于协议产物，不代表产品代码允许修改范围。
   artifact_allowed_paths:
     - ".coder/**"
+
+# ===== 需求知识追溯（默认不启用） =====
+knowledge_trace:
+  mode: "disabled" # disabled | opt_in | required
+  repository_id: null # sc:// 的权威仓库 ID；不得从路径或 remote 推导
+  required_modes:
+    - "STANDARD"
+    - "CONTROLLED"
+  legacy_policy: "read_only"
+  product_module_maintainers: []
 
 # ===== 上下文加载配置 =====
 context_loading:

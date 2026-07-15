@@ -60,3 +60,8 @@
 - ledger audit 检查摘要是否存在、是否漂移。
 - checkpoint 在 CP5 检查摘要质量和状态一致性。
 - verification 在声明需求整体完成前确认摘要和证据新鲜。
+## CLI-first 历史发现与最终需求图
+
+历史关联发现必须执行 `find → metadata → section/entity` 渐进式查询，保存 `requirement_ref, relation_type, matched_keys, evidence_refs, confidence`，并区分 candidate 与 confirmed。索引 stale/ambiguous 时停止，不回退到全文或聊天记忆。
+
+需求整体完成顺序固定为：冻结 operation/validation evidence → expected/actual Change reconciliation → `materialize --dry-run` → 原子写 Card → 校验 Card/Module → rebuild/validate index → 生成严格 Why/Who/What 摘要 → Ledger Audit → CP5。Final Requirement Graph 只引用实际 Operation/Validation；Risk、Recommendation、Module proposal 保持独立治理状态，不自动升级。

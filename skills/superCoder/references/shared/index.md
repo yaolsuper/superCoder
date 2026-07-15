@@ -10,6 +10,7 @@
 |---|---|---|
 | skill_pack | `skills/superCoder/SKILL.md` / `skills/superCoder-*/SKILL.md` | 薄入口 + 多技能组合；每个子技能只承载触发、职责和路由 |
 | decision_contract | `decision-contract.md` | Review、Ledger Audit、Checkpoint 等多协议组合时的统一决策字段、阻断映射和允许动作 |
+| trace_contract | `trace-model.md` / `knowledge-card-contract.md` / `product-tree-contract.md` | 稳定资源引用、CAE/PROV 关系、Card manifest/section 与产品树治理 |
 | planning | `skills/superCoder-planning/references/planning.md` | 分析、迁移评估、实施计划、MR 拆分和来源链路 |
 | bug_root_cause | `skills/superCoder-bug-root-cause/references/bug-root-cause.md` | BUG、缺陷、回归、线上问题、热修和 P0/P1/P2 修复的根因证据链 |
 | ledger_audit | `skills/superCoder-ledger-audit/references/ledger-audit.md` | 跨模型 / 跨工具恢复、完成态、下一 MR 切换和最终交付前的状态账本审计 |
@@ -50,6 +51,8 @@
 
 - Skill Pack 薄入口与组合路由：`skills/superCoder/SKILL.md` 与 `skills/superCoder-*/SKILL.md`
 - 多协议统一决策契约：`decision-contract.md`
+- 追溯对象、关系与状态：`trace-model.md`
+- 需求卡片与产品树格式：`knowledge-card-contract.md`、`product-tree-contract.md`
 - 分析、计划和 MR 拆分细则：`skills/superCoder-planning/references/planning.md`
 - BUG / 热修根因证据链：`skills/superCoder-bug-root-cause/references/bug-root-cause.md`
 - 状态账本审计：`skills/superCoder-ledger-audit/references/ledger-audit.md`

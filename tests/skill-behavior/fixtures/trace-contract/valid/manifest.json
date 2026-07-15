@@ -1,0 +1,36 @@
+{
+  "schema_version": "supercoder.trace/v1",
+  "repository_id": "demo-repo",
+  "development_project_id": "demo-20260715",
+  "resource": {"id":"req-1","type":"Requirement","revision":1,"digest":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","status":"DISCOVERED","owner":"analysis","ref":"sc://demo-repo/demo-20260715/requirement/req-1"},
+  "entities": [
+    {"id":"claim-1","type":"Claim","revision":1,"digest":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb","status":"ACTIVE","owner":"analysis","ref":"sc://demo-repo/demo-20260715/claim/claim-1"},
+    {"id":"arg-1","type":"Argument","revision":1,"digest":"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc","status":"ACTIVE","owner":"analysis","ref":"sc://demo-repo/demo-20260715/argument/arg-1"},
+    {"id":"evidence-1","type":"Evidence","revision":1,"digest":"dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd","status":"ACTIVE","owner":"review","ref":"sc://demo-repo/demo-20260715/evidence/evidence-1"},
+    {"id":"module-1","type":"Module","revision":1,"digest":"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee","status":"CANDIDATE","owner":"product-module-registry","ref":"sc://demo-repo/demo-20260715/module/module-1"},
+    {"id":"cap-1","type":"Capability","revision":1,"digest":"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff","status":"ACTIVE","owner":"product-module-registry","ref":"sc://demo-repo/demo-20260715/capability/cap-1"},
+    {"id":"change-1","type":"Change","revision":1,"digest":"1111111111111111111111111111111111111111111111111111111111111111","status":"EXPECTED","owner":"plan","ref":"sc://demo-repo/demo-20260715/change/change-1"},
+    {"id":"risk-1","type":"Risk","revision":1,"digest":"2222222222222222222222222222222222222222222222222222222222222222","status":"OPEN","owner":"decision","ref":"sc://demo-repo/demo-20260715/risk/risk-1"},
+    {"id":"rec-1","type":"Recommendation","revision":1,"digest":"3333333333333333333333333333333333333333333333333333333333333333","status":"PROPOSED","owner":"decision","ref":"sc://demo-repo/demo-20260715/recommendation/rec-1"},
+    {"id":"activity-1","type":"Activity","revision":1,"digest":"4444444444444444444444444444444444444444444444444444444444444444","status":"COMPLETED","owner":"execution","ref":"sc://demo-repo/demo-20260715/activity/activity-1"},
+    {"id":"agent-1","type":"Agent","revision":1,"digest":"5555555555555555555555555555555555555555555555555555555555555555","status":"ACTIVE","owner":"execution","ref":"sc://demo-repo/demo-20260715/agent/agent-1"},
+    {"id":"artifact-1","type":"Artifact","revision":1,"digest":"6666666666666666666666666666666666666666666666666666666666666666","status":"ACTIVE","owner":"execution","ref":"sc://demo-repo/demo-20260715/artifact/artifact-1"},
+    {"id":"validation-1","type":"Validation","revision":1,"digest":"7777777777777777777777777777777777777777777777777777777777777777","status":"PASSED","owner":"validation-record","ref":"sc://demo-repo/demo-20260715/validation/validation-1"}
+  ],
+  "relations": [
+    {"id":"rel-1","type":"REQUIREMENT_HAS_CLAIM","source_ref":"sc://demo-repo/demo-20260715/requirement/req-1","target_ref":"sc://demo-repo/demo-20260715/claim/claim-1","state":"ACTIVE"},
+    {"id":"rel-2","type":"CLAIM_SUPPORTED_BY_ARGUMENT","source_ref":"sc://demo-repo/demo-20260715/claim/claim-1","target_ref":"sc://demo-repo/demo-20260715/argument/arg-1","state":"ACTIVE"},
+    {"id":"rel-3","type":"ARGUMENT_SUPPORTED_BY_EVIDENCE","source_ref":"sc://demo-repo/demo-20260715/argument/arg-1","target_ref":"sc://demo-repo/demo-20260715/evidence/evidence-1","state":"ACTIVE"},
+    {"id":"rel-4","type":"REQUIREMENT_ALLOCATED_TO_MODULE","source_ref":"sc://demo-repo/demo-20260715/requirement/req-1","target_ref":"sc://demo-repo/demo-20260715/module/module-1","state":"ACTIVE"},
+    {"id":"rel-5","type":"MODULE_HAS_CAPABILITY","source_ref":"sc://demo-repo/demo-20260715/module/module-1","target_ref":"sc://demo-repo/demo-20260715/capability/cap-1","state":"ACTIVE"},
+    {"id":"rel-6","type":"CHANGE_SATISFIES_REQUIREMENT","source_ref":"sc://demo-repo/demo-20260715/change/change-1","target_ref":"sc://demo-repo/demo-20260715/requirement/req-1","state":"ACTIVE"},
+    {"id":"rel-7","type":"CHANGE_TOUCHES_MODULE","source_ref":"sc://demo-repo/demo-20260715/change/change-1","target_ref":"sc://demo-repo/demo-20260715/module/module-1","state":"ACTIVE"},
+    {"id":"rel-8","type":"VALIDATION_VERIFIES_CHANGE","source_ref":"sc://demo-repo/demo-20260715/validation/validation-1","target_ref":"sc://demo-repo/demo-20260715/change/change-1","state":"ACTIVE"},
+    {"id":"rel-9","type":"RISK_AFFECTS_RESOURCE","source_ref":"sc://demo-repo/demo-20260715/risk/risk-1","target_ref":"sc://demo-repo/demo-20260715/requirement/req-1","state":"ACTIVE"},
+    {"id":"rel-10","type":"RECOMMENDATION_TARGETS_RESOURCE","source_ref":"sc://demo-repo/demo-20260715/recommendation/rec-1","target_ref":"sc://demo-repo/demo-20260715/module/module-1","state":"ACTIVE"},
+    {"id":"rel-11","type":"ACTIVITY_USED","source_ref":"sc://demo-repo/demo-20260715/activity/activity-1","target_ref":"sc://demo-repo/demo-20260715/artifact/artifact-1","state":"ACTIVE"},
+    {"id":"rel-12","type":"ACTIVITY_ASSOCIATED_WITH","source_ref":"sc://demo-repo/demo-20260715/activity/activity-1","target_ref":"sc://demo-repo/demo-20260715/agent/agent-1","state":"ACTIVE"}
+  ],
+  "sections": [{"id":"summary","digest":"8888888888888888888888888888888888888888888888888888888888888888"}],
+  "source_digests": ["9999999999999999999999999999999999999999999999999999999999999999"]
+}

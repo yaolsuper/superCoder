@@ -28,3 +28,6 @@ description: 当 superCoder 需要在需求整体完成后生成最终落地摘�
 - 仅凭宽泛关键词确认需求关联。
 - 用最终摘要替代 analysis、plan、MR、执行记录、验证记录或 CP5。
 - 在最终摘要中写入文件、类、方法、命令、diff、Checkpoint 或产物索引等实施细节。
+## CLI-first 资源
+
+启用 Knowledge Trace 时，先读取 `references/knowledge-index.md`，并通过 `skills/superCoder/scripts/coder_knowledge.py` 做有界发现、查询和 completion materialization；不得直接把 `_index` 当事实源。

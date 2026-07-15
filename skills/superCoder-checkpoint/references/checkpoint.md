@@ -254,3 +254,10 @@ stage_epoch: int   # 与 coder-current-task.md / project-progress.md 必须相�
 | ID | 来源 | 阻塞原因 | 责任产物 | 处理建议 |
 |---|---|---|---|---|
 ```
+## Knowledge Trace Checkpoints
+
+- CP2-A 只审 Analysis 的结论/证据，不要求 Card。
+- CP2-A PASS 后生成 DISCOVERED provisional Card；CP2-K 独立检查 Card ref、digest、CAE 与 Analysis mapping，不重做 Analysis review。
+- CP3 要求每个 Plan/MR item 映射 Claim/EXPECTED Change/Module/Risk，缺失为 `PLAN_TRACE_GAP`。
+- CP4 同时核对 path scope、actual Change/Module scope、append-only Operation、Validation evidence；DONE Step 无 operation/evidence 必须 FAIL。
+- CP5 消费 Ledger Audit 的 graph/card/index/summary/governance 一致性结论；未收敛 Change、stale index 或非法治理提升不得 CLOSED。

@@ -190,6 +190,10 @@ PENDING -> READY -> RUNNING -> BLOCKED -> VERIFYING -> ACCEPTED -> MERGED
 
 | 术语 | 含义 |
 |---|---|
+| Trace Contract | `supercoder.trace/v1` 的资源、关系、ownership、状态与稳定错误码约束 |
+| 稳定资源引用 | `sc://<repository-id>/<development-project-id>/<resource-type>/<resource-id>`；不得由本地路径推导 |
+| Requirement Knowledge Card | 完成任务的本体化需求图载体，包含 canonical manifest 与按 digest 定位的 sections |
+| Product Tree | 由 Module/Capability 构成并连接需求、改动、验证、风险与建议的长期产品结构 |
 | 证据矩阵 | 分析报告中的结论追溯表，记录结论 ID、证据位置、置信度和开放问题 |
 | 根因证据矩阵 | BUG 修复任务 plan 的强制内容，记录故障现象、复现证据、根因定位 file:line、根因结论、修复范围、回归验证；作为 BUG 修复放行依据替代用户对方案的确认，是 pre-edit guard 在 BUG 场景的硬前置 |
 | 分析结论映射 | 实施计划中的映射表，说明阶段或 MR 来自哪些分析结论 |

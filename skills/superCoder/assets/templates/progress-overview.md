@@ -125,3 +125,9 @@
 
 - 
 ```
+## Knowledge Trace 摘要（启用时）
+
+Card ref / revision / digest：
+产品模块 refs：
+Expected / Actual Change reconciliation：
+Final Graph / index freshness / governance 状态：

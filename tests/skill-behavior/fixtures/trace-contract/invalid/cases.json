@@ -1,0 +1,11 @@
+{
+  "cases": [
+    {"name":"duplicate-id","mutation":"duplicate_entity_id","expected_code":"ID_DUPLICATE"},
+    {"name":"unresolved-ref","mutation":"unresolved_relation_target","expected_code":"REF_UNRESOLVED"},
+    {"name":"invalid-state","mutation":"invalid_claim_state","expected_code":"STATE_INVALID"},
+    {"name":"missing-repository-id","mutation":"remove_repository_id","expected_code":"REPOSITORY_ID_MISSING"},
+    {"name":"missing-cae","mutation":"remove_evidence_relation","expected_code":"CARDINALITY_VIOLATION"},
+    {"name":"invalid-ownership","mutation":"invalid_claim_owner","expected_code":"OWNERSHIP_VIOLATION"},
+    {"name":"unknown-schema","mutation":"unknown_schema","expected_code":"SCHEMA_UNSUPPORTED"}
+  ]
+}

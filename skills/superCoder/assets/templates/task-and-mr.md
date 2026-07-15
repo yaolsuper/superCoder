@@ -409,3 +409,8 @@ SCOPE_DEVIATION / ENV_BLOCKER / TEST_FAILURE / CROSS_MR_ISSUE / REQUIREMENT_CHAN
 ## 是否继续编码
 否
 ```
+## Trace Mapping（启用时）
+
+`claim_refs` / `expected_change_refs` / `module_refs` / `risk_refs` / `source_digest`：
+
+Operation 追加字段：`operation_id, activity_id, run_id, event_id, step_id, actor_ref, producer, inputs, outputs, parent_event_id, retry_of, result`。retry 必须新增行，不得覆盖旧事件。

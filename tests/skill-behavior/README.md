@@ -4,6 +4,13 @@
 
 结构化索引见 `scenarios.yaml`。Markdown 文件是可读规格，YAML manifest 给后续 runner 提供稳定 id、必经路由、预期阻断结论和禁止结果。
 
+可执行 runner 位于 `runner/run_scenarios.py`。当前确定性执行面覆盖 P16 package validation、P17-P26 Knowledge Trace contract/unit suite 与 P27 双 adapter E2E；P1-P15 未接入本 runner 的场景仍输出 `NOT_RUN`，不得被汇总为 PASS。示例：
+
+```bash
+python3 tests/skill-behavior/runner/run_scenarios.py --scenario P16 --format json
+python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P27 --format json
+```
+
 每次调整协议后，至少为受影响场景补一份 `results/<date>-<scenario-id>.md`，记录 RED/GREEN 证据：无新规则或旧规则下的失败表现、应用当前技能后的通过表现、模型/入口、判分结论和仍待补测项。只有场景规格没有执行结果时，只能说明“已有压力规格”，不能声称行为已验证。
 
 ## 场景索引
@@ -25,6 +32,14 @@
 | P13 plan/MR strategy and operation trace | `planning.md` / `execution.md` / `ledger-audit.md` | 单 MR 重复生成等价正文，或执行操作无法关联稳定 Step 和证据 |
 | P14 requirement delivery summary | `superCoder-requirement-traceability` / `checkpoint.md` / `ledger-audit.md` | 需求整体完成但缺最终落地摘要，或新需求未基于摘要做有证据的关联判断 |
 | P15 dated development project id | `planning.md` / `glossary.md` | 新项目 ID 缺创建日期、重复追加日期，或跨日恢复时重命名已有项目 |
+| P16 canonical discovery and registry consistency | `skills/superCoder/SKILL.md` / `validate_package.py` | 大小写错误入口、断链或 registry 漂移被静默接受 |
+| P17-P18 Trace / CAE | `trace-model.md` / `validate_trace_contract.py` | ID/ref 断链或 Claim→Argument→Evidence 不完整被接受 |
+| P19-P21 Card / Module / CLI | knowledge contracts / `coder_knowledge.py` | section 漂移、模块自动激活或 CLI 全量泄露 |
+| P22 derived index | `knowledge-index.md` | 失败重建覆盖旧索引或 index 反写事实源 |
+| P23 Analysis→Card→Plan | planning / checkpoint | CP2 循环或 Plan trace mapping 缺失 |
+| P24 operation lineage | execution / lineage validator | event 覆盖、断 parent/retry、无 evidence |
+| P25-P26 completion governance | materialize / traceability | 未收敛 Change 或非法提升 Risk/Recommendation/Module |
+| P27 cross-harness E2E | app-agent / opencode adapters | JSON/exit/scope 漂移或静态走查伪装执行 |
 
 ## 通过标准
 

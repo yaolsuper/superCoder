@@ -506,3 +506,8 @@ git status --short
 涉及密钥、令牌、CI/CD API、远程推送、部署、数据库变更或外部服务调用时，必须确认任务契约允许，并避免在日志或输出中暴露敏感信息。
 
 状态、偏差类型和字段名解释见 `../../superCoder/references/shared/glossary.md`。偏差记录模板见 `../../superCoder/assets/templates/task-and-mr.md`。
+## Operation Lineage
+
+新 Operation 必须追加 `operation_id, activity_id, run_id, event_id, step_id, actor_ref, producer{name,version,harness,model}, inputs, outputs, parent_event_id, retry_of, result`。inputs/outputs 各含 `ref,revision,digest`；retry 创建新 event 并保留原失败事件，禁止覆盖或重排。Operation 输出绑定 actual Change，planned EXPECTED Change 不等同实际实现。
+
+CP4 在路径守卫之外校验 Change/Module 语义范围；DONE Step 必须同时有 Operation 与 evidence。重复 event、断 parent/retry、未知 producer 或越界 target 阻断执行完成。
