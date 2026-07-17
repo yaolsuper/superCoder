@@ -10,6 +10,8 @@ description: 当 superCoder 任务要求分析、实施规划、迁移评估、�
 ## 必读文件
 
 - `references/planning.md`
+- 分析、澄清或计划前读取 `../superCoder/references/shared/human-confirmation-gate.md`
+- 生成阻塞问题、Scan Activity、Source Point、Evidence Gap 或 Decision 时读取 `../superCoder/assets/templates/human-confirmation.md`
 - 需要正式产物复核或 CP0-CP3 时读取 `../superCoder-checkpoint/references/checkpoint.md`
 - 编写 current-task 或 MR 产物时读取 `../superCoder/assets/templates/task-and-mr.md`
 - 需要项目进度总览卡片时读取 `../superCoder/assets/templates/progress-overview.md`
@@ -22,6 +24,7 @@ description: 当 superCoder 任务要求分析、实施规划、迁移评估、�
 - 进入本技能后，必须先读取 `references/planning.md` 再开始产物生成或最终判断。
 - 若 `references/planning.md` 中要求读取共享资源，只能读取主技能目录 `../superCoder/...` 下的资源；资源加载失败时停止为 `SKILL_RESOURCE_BLOCKED`，不得手搓替代模板继续。
 - 对用户明确要求“分析 / 调研 / 评估 / 排查”的任务，默认进入文件化 ANALYSIS 或 ANALYSIS_AND_PLANNING；不得只查代码并在聊天里给结论。
+- 进入计划生成前必须确认 Analysis Gate 已通过；扫描不完整或存在未解决 `BLOCKING` 问题时停在 `BLOCKED_HUMAN_CONFIRMATION`，不得生成计划草案。
 - 若用户明确要求轻量口头答复，最终回复必须标记这是非账本分析，并说明没有创建 `.coder` 产物；不得输出 readiness、提交范围、完成态或下一 MR 可执行判断。
 
 ## 职责
@@ -31,6 +34,8 @@ description: 当 superCoder 任务要求分析、实施规划、迁移评估、�
 - 在用户明确确认下一阶段前，计划保持草案状态。
 - 只基于已通过的分析和计划证据拆分 MR 范围。
 - 将不确定性记录为 blocker 或待确认项，而不是编造事实。
+- 在询问用户前优先扫描任务相关系统证据，并为每个阻塞问题保留 Source Point 或 Evidence Gap。
+- 将显式人工答案持久化为 Decision，并通过重新分析恢复流程。
 
 ## 禁止事项
 

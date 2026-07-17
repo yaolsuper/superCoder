@@ -8,7 +8,7 @@
 | 项 | 内容 |
 |---|---|
 | 项目 |  |
-| 当前阶段 | ANALYSIS / PLANNING / MR_SPLIT / RUNNING / VERIFYING / ACCEPTED / BLOCKED |
+| 当前阶段 | ANALYZING / BLOCKED_HUMAN_CONFIRMATION / HUMAN_INPUT_RECEIVED / ANALYSIS_READY / PLANNING / MR_SPLIT / RUNNING / VERIFYING / ACCEPTED / BLOCKED |
 | 当前 MR / 任务切片 |  |
 | 总体状态 | PENDING / READY / RUNNING / BLOCKED / VERIFYING / ACCEPTED / MERGED |
 | 执行模式 | 单 MR 执行 / 连续项目执行 |
@@ -17,6 +17,8 @@
 | 计划确认状态 | DRAFT_PENDING_CONFIRMATION / CONFIRMED / BLOCKED / N/A |
 | 阶段最近转换 | from -> to / 触发词或 Checkpoint PASS |
 | 分析报告 | `.coder/<development_project_id>/analysis/<task_id>-analysis.md` |
+| 证据扫描 / Analysis Gate | NOT_STARTED / IN_PROGRESS / COMPLETED；INCOMPLETE / SUFFICIENT；PASSED / FAILED |
+| 阻塞问题 / Decision | `Q-*` 清单 / `.coder/<development_project_id>/decisions/<decision-id>.md` / 无 |
 | 实施计划 | `.coder/<development_project_id>/plans/<task_id>-implementation-plan.md` |
 | 独立 MR 文件 | `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` / 待计划确认后生成 |
 | 当前任务文件 | `.coder/<development_project_id>/coder-current-task.md` |
@@ -104,6 +106,8 @@
 | 三文件 stage_epoch 一致（coder-current-task / project-progress / checkpoint-status） | PASS / FAIL |  |
 | 阶段转换有三文件同步写入证据，非语义事件 | PASS / FAIL / N/A |  |
 | 进入执行前 analysis -> plan -> MR -> current task 链路完整 | PASS / FAIL / N/A |  |
+| 扫描完成且覆盖充分，阻塞问题均有 Source Point 或 Evidence Gap | PASS / FAIL / N/A |  |
+| 人工答案已形成 Decision 并经过 HUMAN_INPUT_RECEIVED -> ANALYZING 重新分析 | PASS / FAIL / N/A |  |
 | 计划确认前未生成独立 MR 文件 | PASS / FAIL / N/A |  |
 | MR 进度表与当前阶段一致 | PASS / FAIL |  |
 | 最近执行摘要与验证摘要一致 | PASS / FAIL / N/A |  |
@@ -119,7 +123,7 @@
 | 命令输出和内容查询均有界过滤 | PASS / FAIL / N/A |  |
 | 本地测试值未写入产品默认配置 | PASS / FAIL / N/A |  |
 | 连续执行模式下下一 MR 自动启动依据完整 | PASS / FAIL / N/A | 当前 MR ACCEPTED、验证通过、CP4/CP5 PASS、状态回写完整、can_start_next=true、下一 MR READY |
-| 人工确认仅在明确要求或阻塞时触发 | PASS / FAIL / N/A |  |
+| 人工确认只用于系统证据无法解决的阻塞问题，未把可调查事实转给用户 | PASS / FAIL / N/A |  |
 
 ## 下一步
 

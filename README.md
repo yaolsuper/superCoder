@@ -22,6 +22,7 @@ superCoder 将 AI Coding 从 **"自由生成代码"** 升级为 **"可控的软�
 
 - **状态机** — `stage_epoch` 原子状态转换，三文件同步写入，不一致则禁止修改产品代码
 - **阶段门禁** — CP0-CP5 六级检查点，Blocker 阻断所有下游生成
+- **证据优先人工确认** — 分析先扫描代码、配置、Schema、测试与历史决策；只有系统证据无法解决的关键问题才进入 `BLOCKED_HUMAN_CONFIRMATION`，回答后返回分析复核
 - **变更边界** — `allowed_paths` / `forbidden_paths` 路径守卫，每次文件修改必须校验合规性
 - **审计记录** — 执行记录、偏差记录、验证结果全程留痕，任何变更可追溯到源头分析
 - **回滚机制** — 三级回滚策略（精确文件恢复、Git 辅助恢复、脚本回滚）+ 偏差升级策略（连续 3 次失败自动升级为 HIGH 风险）
@@ -113,6 +114,7 @@ analysis → implementation plan → MR files → coder-current-task → executi
   ├── context-summary.md        # 上下文摘要
   ├── task-state.md             # 任务状态快照
   ├── analysis/                 # 分析报告
+  ├── decisions/                # 人工答案形成的稳定 Decision
   ├── plans/                    # 实施方案
   ├── mrs/                      # MR 文件（每份含 18 个必填节）
   ├── reviews/                  # 代码审查记录
@@ -185,7 +187,7 @@ superCoder/
   │   ├── ops-agent/
   │   ├── deepseek/
   │   └── glm/
-  └── tests/skill-behavior/           # 行为压力测试规格、runner 与 RED/GREEN 结果 P1-P27
+  └── tests/skill-behavior/           # 行为压力测试规格、runner 与 RED/GREEN 结果 P1-P28
 ```
 
 `skills/*/SKILL.md` 只做薄 wrapper 和路由，不复制大段协议正文；详细规则由各子技能的 `references/` 承载。公共术语、模板和配置随主技能分发，统一位于 `skills/superCoder/`。

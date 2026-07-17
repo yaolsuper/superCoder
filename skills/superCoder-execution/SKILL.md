@@ -10,6 +10,7 @@ description: "当 superCoder 任务已准备进入实现、产品代码修改、
 ## 必读文件
 
 - `references/execution.md`
+- 启动或恢复执行前读取 `../superCoder/references/shared/human-confirmation-gate.md`
 - `STANDARD` / `CONTROLLED` 的恢复、下一 MR、提交范围或完成判断前读取 `../superCoder-ledger-audit/references/ledger-audit.md`；`LIGHT` 仅在升级时读取
 - BUG / hotfix / P0-P2 修改前读取 `../superCoder-bug-root-cause/references/bug-root-cause.md`
 - 需要 CP4/CP5 或产物复核时读取 `../superCoder-checkpoint/references/checkpoint.md`
@@ -25,6 +26,7 @@ description: "当 superCoder 任务已准备进入实现、产品代码修改、
 ## 职责
 
 - 在修改产品代码前运行 startup guard 和 pre-edit guard。
+- 拒绝在 Analysis Gate 未通过、扫描未完成或处于 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED` 时启动执行。
 - 强制执行 allowed / forbidden 路径规则。
 - 将实现限制在当前已批准的任务 / MR 范围内。
 - 在 `.coder/<development_project_id>/validation/` 记录验证命令和真实输出。
@@ -34,6 +36,7 @@ description: "当 superCoder 任务已准备进入实现、产品代码修改、
 ## 禁止事项
 
 - 在账本缺失或不一致时修改产品代码。
+- 绕过未解决人工确认问题，或把含糊语言当作显式答案。
 - 在已批准路径范围之外打补丁。
 - 仅凭编辑成功就声明完成。
 - 因命令“显然通过”而跳过验证记录。

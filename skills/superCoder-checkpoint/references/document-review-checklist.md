@@ -124,6 +124,11 @@
 | 目标和非目标明确 | 不把分析写成实施承诺 |
 | 证据矩阵完整 | 关键结论有文件、命令、用户输入或标明推断 |
 | 事实/推断/假设分离 | 未验证内容不写成事实 |
+| 证据扫描可复核 | 记录扫描入口、纳入/排除范围、revision、限制和 Scan Activity；`SCAN_INCOMPLETE` 不生成人工阻塞问题 |
+| 来源点完整 | 已确认事实引用稳定 Source Point；未找到来源时记录 Evidence Gap，不使用模糊“项目未说明”代替 |
+| 问题分级准确 | 只把会实质改变范围、验收或高风险边界的问题标为 `BLOCKING`；可由系统证据回答的问题标为 `INVALID` 并继续调查 |
+| Analysis Gate 一致 | 未解决 `BLOCKING` 问题时状态为 `BLOCKED_HUMAN_CONFIRMATION` 且禁止 planning/execution；清零后才可 `ANALYSIS_READY` |
+| 回答恢复可归因 | 人工答案显式、已形成 Decision，并经过 `HUMAN_INPUT_RECEIVED -> ANALYZING` 重新分析，不直接进入计划 |
 | 影响范围完整 | 覆盖代码、配置、数据、部署、测试、CI/CD |
 | 后续计划入口明确 | 只能指向计划生成，不直接进入编码 |
 | BUG 根因证据矩阵（BUG 修复任务） | 含故障现象、复现证据、根因定位 file:line、根因结论、修复范围、回归验证；根因缺失或只写模块名视为 Blocker |

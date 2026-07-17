@@ -78,6 +78,18 @@ knowledge_trace:
   legacy_policy: "read_only"
   product_module_maintainers: []
 
+# ===== 分析阶段人工确认门禁 =====
+# 状态与硬规则以 config/human-confirmation-gate.yaml 为准；这里只提供项目级扫描边界覆盖项。
+human_confirmation_gate:
+  enabled: true
+  scan_strategy: "TARGETED"
+  max_files: 50
+  max_depth: 4
+  require_repository_revision: true
+  require_source_point_or_evidence_gap: true
+  infer_answer_from_silence: false
+  resume_state_after_answer: "ANALYZING"
+
 # ===== 上下文加载配置 =====
 context_loading:
   # 默认读取深度。强约束和当前任务走显式文件；历史日志和资源默认只读摘要。

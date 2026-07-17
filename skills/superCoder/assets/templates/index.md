@@ -15,6 +15,7 @@
 | 代码审查、质量审核、回归风险评估、放行判断 | `skills/superCoder-review/references/review.md` |
 | 项目进度总览卡片 `project-progress.md` 和执行状态摘要 | `assets/templates/progress-overview.md` |
 | 当前任务结构、Plan/MR 产物策略、稳定 Step、operation ledger、handoff、状态维护、偏差记录 | `assets/templates/task-and-mr.md` |
+| 分析阶段 Scan Activity、Source Point、Evidence Gap、Blocking Question、Human Answer 和 Decision | `assets/templates/human-confirmation.md` |
 | 需求整体完成后的最终落地摘要、关联检索键和后续需求判断入口 | `assets/templates/requirement-delivery-summary.md` |
 
 示例任务和启动 Prompt 见 `assets/examples/protocol-examples.md`；术语含义见 `references/shared/glossary.md`；重试和回滚细节见 `skills/superCoder-execution/references/guides/error-recovery.md`；CI/CD 结果模板见 `skills/superCoder-execution/references/guides/cicd-integration.md`。

@@ -2,6 +2,8 @@
 
 当需要生成分析报告、实施计划、MR 文件、当前任务契约、执行记录、验收决策，或用户明确要求控制输出幻觉、目标偏移、步骤跳跃和依赖顺序时读取本文件。若需要按 BRD、PRD、ADD、LLD、DBD、MR 或 Coder 产物类型执行专项 Review，同时读取 `skills/superCoder-checkpoint/references/document-review-checklist.md`。若需要显式分离生成、审查、修复角色，分别读取 `skills/superCoder-checkpoint/references/prompts/generator.md`、`skills/superCoder-checkpoint/references/prompts/reviewer.md`、`skills/superCoder-checkpoint/references/prompts/fixer.md`。
 
+分析、计划或执行门禁涉及不确定项时读取 `skills/superCoder/references/shared/human-confirmation-gate.md`，并以 `skills/superCoder/config/human-confirmation-gate.yaml` 复核状态与允许动作。
+
 Checkpoint 的目标不是限制模型提出方案，而是在每个正式产物进入下游前做硬复核，确保输出有依据、符合目标、遵守计划顺序，并且依赖未满足时不会继续扩散错误。
 
 Checkpoint 对 `STANDARD` / `CONTROLLED` 的正式产物适用。`LIGHT` 的 `light-task.md` 不触发 CP0–CP5；若任务命中升级条件，先升级模式，再对新的正式产物应用对应 Checkpoint。
@@ -20,6 +22,8 @@ Checkpoint 对 `STANDARD` / `CONTROLLED` 的正式产物适用。`LIGHT` 的 `li
 - CP0 不通过时禁止生成正式文档，只允许输出缺失信息清单和待确认问题。
 - CP1 不通过时只允许修正大纲、结构或执行顺序，禁止生成正文、详细 MR 或下游产物。
 - 实施计划确认前禁止生成独立 MR 文件；计划 Checkpoint 通过只表示计划质量可接受，不等于用户已确认计划。
+- 证据扫描未完成、覆盖不足、阻塞问题缺 Source Point/Evidence Gap，或存在未解决 `BLOCKING` 问题时，Analysis Gate 与 CP2 必须 FAIL；不得生成计划。
+- `BLOCKED_HUMAN_CONFIRMATION` 和 `HUMAN_INPUT_RECEIVED` 均禁止 planning / execution；显式答案只有在持久化为 Decision、返回 `ANALYZING` 并重新通过 Analysis Gate 后才可解除阻塞。
 
 ## 状态与产物
 
@@ -61,11 +65,13 @@ CP0 的目标是防止上下文不完整时直接生成正式文档或下游产�
 | 约束条件 | 是否明确技术栈、环境、边界、时间、人力、路径守卫或验收限制 |
 | 上游文档 | 生成下游文档时是否存在对应上游依据；BRD -> PRD -> ADD -> LLD -> DBD -> MR 不得断链 |
 | 输出目标 | 是否明确本次要生成或复核的文档 / 产物类型和范围 |
+| 可调查事实 | 是否已确定有界扫描入口；能由代码、配置、Schema、测试、文档或历史决策回答的内容不得直接询问人工 |
 
 CP0 失败时：
 
 - 禁止生成正式文档、实施计划、MR、当前任务契约或执行记录。
 - 只能输出《缺失信息清单》和《待确认问题》。
+- 输出待确认问题前先完成有界证据扫描；扫描不完整时只记录 `SCAN_INCOMPLETE` 和下一步调查范围，不得过早转嫁给用户。
 - 若用户要求继续，必须先补齐输入或把缺失项写入阻塞状态，不得自行脑补。
 
 ## CP1 大纲结构与依赖细则
@@ -127,6 +133,7 @@ CP5 未 PASS 时：
 | 可追溯性 | 下游内容是否能追溯到上游编号、文件或结论 |
 | 状态一致性 | 当前任务、项目进度、Checkpoint 状态和最终回复是否一致 |
 | 文件化状态 | 进度、Checkpoint、handoff、执行记录是否真实落盘 |
+| 人工确认门禁 | 扫描已完成且覆盖充分；问题有 Source Point/Evidence Gap；显式答案已形成 Decision；恢复经过重新分析 |
 
 ## 风险等级
 
@@ -215,6 +222,7 @@ PASS / CONDITIONAL_PASS / FAIL
 ## 依赖顺序规则
 
 - `analysis` 未通过 CP2，不得生成实施计划。
+- `analysis_gate` 未通过、证据扫描未完成或存在未解决 `BLOCKING` 问题，不得生成实施计划；回答后未重新分析也不得放行。
 - `plan` 未通过 CP2/CP3，不得生成详细 MR 文件。
 - `plan` 未获用户确认或未绑定明确确认版本，不得生成详细 MR 文件。
 - MR 拆分未通过 CP1/CP4，不得把 MR 标记为 `READY`。

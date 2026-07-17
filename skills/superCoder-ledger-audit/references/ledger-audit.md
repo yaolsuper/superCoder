@@ -8,6 +8,8 @@ Ledger audit 只回答一个问题：当前 `.coder/<development_project_id>/` �
 
 Ledger Audit 是账本事实提供者，不负责 CP5 或最终质量放行。与其他协议组合时读取 `skills/superCoder/references/shared/decision-contract.md`，把非 PASS 审计结论写入 `protocol_codes`，并将 `decision` 映射为 `FAIL`；最终放行由调用方 Checkpoint 决定。
 
+恢复状态涉及 `BLOCKED_HUMAN_CONFIRMATION`、`HUMAN_INPUT_RECEIVED` 或人工 Decision 时，读取 `skills/superCoder/references/shared/human-confirmation-gate.md`。审计只核对文件事实，不从对话推断答案。
+
 不同 coding agent、ops 执行入口或底层模型（如 DeepSeek、GLM、GPT 系列等）都必须按同一规则判断，不得引入模型专属例外。
 
 ## 必需账本
@@ -39,6 +41,8 @@ source_chain =
 | 任一 `required_ledgers` 缺失 | `LEDGER_INCOMPLETE` | 只能状态修复 / legacy reconstruction |
 | 三文件 `stage_epoch` 不一致 | `STATUS_CONSISTENCY_FAIL` | 只能修复状态或记录偏差 |
 | `handoff.md` 缺失或滞后 | `RECOVERY_ENTRY_DRIFT` | 先补 handoff，再重跑恢复门禁 |
+| 分析状态、Analysis Gate、阻塞问题计数或允许动作不一致 | `HUMAN_CONFIRMATION_STATE_DRIFT` | 收敛分析、current task、progress、checkpoint、handoff、task-state 后重新分析 |
+| 问题已标记回答但缺 Decision，或回答后直接进入 planning/execution | `HUMAN_CONFIRMATION_DECISION_MISSING` | 补显式回答归因与 Decision，退回 `ANALYZING` |
 | 完成态缺真实 plan / MR | `SOURCE_CHAIN_FAIL` | 降回 `BLOCKED` 或补齐链路后复核 |
 | 完成态缺 records / validation / CP5 | `COMPLETION_EVIDENCE_FAIL` | 降回 `VERIFYING` / `BLOCKED` |
 | BUG / 热修使用 `HOTFIX`、`inline_hotfix_*` 或 ad-hoc 占位链路 | `INLINE_HOTFIX_FAIL` | 重建文件化根因链路 |
@@ -60,13 +64,14 @@ source_chain =
 | required_ledgers | PASS / FAIL |
 | stage_epoch 一致性 | PASS / FAIL / N/A |
 | handoff 可恢复 | PASS / FAIL |
+| human confirmation state | PASS / FAIL / N/A |
 | source_chain 真实文件 | PASS / FAIL / N/A |
 | completion evidence | PASS / FAIL / N/A |
 | inline hotfix 检查 | PASS / FAIL / N/A |
 | plan revision 一致性 | PASS / FAIL / N/A |
 | operation trace 完整性 | PASS / FAIL / N/A |
 | requirement delivery summary | PASS / FAIL / N/A |
-| 最终结论 | PASS / LEDGER_INCOMPLETE / STATUS_CONSISTENCY_FAIL / RECOVERY_ENTRY_DRIFT / SOURCE_CHAIN_FAIL / COMPLETION_EVIDENCE_FAIL / INLINE_HOTFIX_FAIL / PLAN_REVISION_MISMATCH / OPERATION_TRACE_INCOMPLETE / DELIVERY_SUMMARY_MISSING / DELIVERY_SUMMARY_DRIFT |
+| 最终结论 | PASS / LEDGER_INCOMPLETE / STATUS_CONSISTENCY_FAIL / RECOVERY_ENTRY_DRIFT / HUMAN_CONFIRMATION_STATE_DRIFT / HUMAN_CONFIRMATION_DECISION_MISSING / SOURCE_CHAIN_FAIL / COMPLETION_EVIDENCE_FAIL / INLINE_HOTFIX_FAIL / PLAN_REVISION_MISMATCH / OPERATION_TRACE_INCOMPLETE / DELIVERY_SUMMARY_MISSING / DELIVERY_SUMMARY_DRIFT |
 | 允许动作 | 进入启动门禁 / 状态修复 / 补验证 / 重建链路 / 停止等待用户 |
 ```
 

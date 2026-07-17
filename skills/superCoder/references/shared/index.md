@@ -10,6 +10,7 @@
 |---|---|---|
 | skill_pack | `skills/superCoder/SKILL.md` / `skills/superCoder-*/SKILL.md` | 薄入口 + 多技能组合；每个子技能只承载触发、职责和路由 |
 | decision_contract | `decision-contract.md` | Review、Ledger Audit、Checkpoint 等多协议组合时的统一决策字段、阻断映射和允许动作 |
+| human_confirmation_gate | `human-confirmation-gate.md` / `../../config/human-confirmation-gate.yaml` | 分析阶段的证据扫描、来源点、阻塞问题、显式回答归因和重新分析状态机 |
 | trace_contract | `trace-model.md` / `knowledge-card-contract.md` / `product-tree-contract.md` | 稳定资源引用、CAE/PROV 关系、Card manifest/section 与产品树治理 |
 | planning | `skills/superCoder-planning/references/planning.md` | 分析、迁移评估、实施计划、MR 拆分和来源链路 |
 | bug_root_cause | `skills/superCoder-bug-root-cause/references/bug-root-cause.md` | BUG、缺陷、回归、线上问题、热修和 P0/P1/P2 修复的根因证据链 |
@@ -38,9 +39,9 @@
 | 下游模块 | 依赖模块 | 原因 |
 |---|---|---|
 | skill_pack | planning, bug_root_cause, ledger_audit, review, execution, checkpoint, verification | Skill Pack 只负责路由和组合，详细规则来自各子技能 |
-| planning | checkpoint, templates, document_review, bug_root_cause | 正式分析和计划需要路径、产物结构、复核、场景化 Review 标准；BUG / 热修计划必须继承根因证据链规则 |
+| planning | human_confirmation_gate, checkpoint, templates, document_review, bug_root_cause | 正式分析和计划需要证据优先确认门禁、路径、产物结构、复核、场景化 Review 标准；BUG / 热修计划必须继承根因证据链规则 |
 | review | decision_contract, checkpoint, document_review, ledger_audit | 仅在显式选择 superCoder review 时启用；Review 提供 findings，组合决策使用统一契约 |
-| execution | planning, bug_root_cause, ledger_audit, checkpoint, templates, execution_guides | 编码执行必须继承任务链路、根因链、状态账本审计、路径守卫、验证门禁和偏差处理 |
+| execution | human_confirmation_gate, planning, bug_root_cause, ledger_audit, checkpoint, templates, execution_guides | 编码执行必须继承分析门禁、任务链路、根因链、状态账本审计、路径守卫、验证门禁和偏差处理 |
 | requirement_traceability | planning, execution, ledger_audit, checkpoint, templates | 在需求整体完成时生成最终落地摘要，并为新需求提供有证据的历史关联发现 |
 | checkpoint | decision_contract, ledger_audit, bug_root_cause, document_review, prompts | Checkpoint 消费领域协议结论并负责流程放行、产物类型识别和角色分离 |
 | verification | ledger_audit, checkpoint, execution, bug_root_cause | 完成声明必须基于新鲜验证、账本审计和场景化根因回归证据 |
@@ -51,6 +52,7 @@
 
 - Skill Pack 薄入口与组合路由：`skills/superCoder/SKILL.md` 与 `skills/superCoder-*/SKILL.md`
 - 多协议统一决策契约：`decision-contract.md`
+- 分析阶段证据优先人工确认：`human-confirmation-gate.md`、`../../config/human-confirmation-gate.yaml`
 - 追溯对象、关系与状态：`trace-model.md`
 - 需求卡片与产品树格式：`knowledge-card-contract.md`、`product-tree-contract.md`
 - 分析、计划和 MR 拆分细则：`skills/superCoder-planning/references/planning.md`
@@ -88,6 +90,7 @@
 | 新增或调整 harness 分发 | `harness/`、本文件、`skills/superCoder/config/module-map.yaml` |
 | 修改完成前验证规则 | `skills/superCoder-verification/SKILL.md`、ledger / checkpoint / execution / bug-root-cause 子技能、`tests/skill-behavior/` |
 | 修改产物目录或状态文件规则 | planning / execution / checkpoint 子技能、`../../assets/templates/` |
+| 修改人工确认状态、问题或恢复规则 | `human-confirmation-gate.md`、`../../config/human-confirmation-gate.yaml`、planning / execution / checkpoint / verification、`../../assets/templates/human-confirmation.md`、行为测试 |
 | 修改 Review 标准 | review 子技能、checkpoint checklist、reviewer prompt |
 | 修改 Generator / Reviewer / Fixer 边界 | checkpoint 子技能的 prompts、checkpoint 协议、document review checklist |
 | 修改模块映射规则 | `skills/superCoder/config/module-map.yaml`、本文件 |

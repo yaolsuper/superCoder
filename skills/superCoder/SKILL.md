@@ -48,6 +48,10 @@ description: 当开发任务可能需要 superCoder 规划、执行、账本恢�
 8. Skill 正文应以通用动作描述流程；harness 映射负责把动作转换为具体工具。
 9. `.coder/**` 正式产物默认使用中文；若用户、仓库规范或 `.coder-config.yaml` 明确指定其他语言，按更具体规则执行。代码标识、API 名称、字段名、路径、命令、错误码、日志和协议关键字保留原文。
 10. `STANDARD` / `CONTROLLED` 的需求整体完成前必须生成 `requirement-delivery-summary.md`；缺失或与实际实现漂移时不得声明需求完成。需要供后续需求做关联跟踪的任务至少使用 `STANDARD`。
+11. 创建人工阻塞问题前必须完成有界系统证据扫描；每个问题必须引用稳定 Source Point 或 Evidence Gap。可由代码、配置、Schema、测试、文档或历史决策可靠回答的问题不得转给用户。
+12. 存在未解决 `BLOCKING` 问题时必须写入 `BLOCKED_HUMAN_CONFIRMATION` 并禁止 planning、MR、产品代码修改、迁移、部署和提交范围；收到显式人工回答后必须先返回 `ANALYZING` 重新运行 Analysis Gate，不得直接进入 planning 或 execution。
+
+人工确认状态、动作和转换以 `config/human-confirmation-gate.yaml` 为机器契约；详细流程读取 `references/shared/human-confirmation-gate.md`，输出结构读取 `assets/templates/human-confirmation.md`。必需资源缺失时返回 `SKILL_RESOURCE_BLOCKED`。
 
 ## 渐进式模式选择
 
@@ -64,6 +68,7 @@ description: 当开发任务可能需要 superCoder 规划、执行、账本恢�
 ## 命中后门禁
 
 - 命中本入口后，必须先根据路由表选择子技能，并读取该子技能列出的必读引用；不得只读薄入口后直接查代码并用聊天总结收尾。
+- Router 路由前先检查人工确认状态。`BLOCKED_HUMAN_CONFIRMATION` 只允许继续有界只读调查、展示问题、接收显式答案或取消；任何要求“先规划”“先写代码”“先提交”的指令都不得绕过该状态。
 - 用户要求“分析”“排查”“失败原因”“是不是要改/加/删某项”等判断类任务时，若已进入 `superCoder-planning` 或 `superCoder-bug-root-cause`，必须按对应协议创建或更新 `.coder/<development_project_id>/` 产物和 Checkpoint；最终回复必须列出本轮创建或更新的全部规范产物路径，不得只列主报告。
 - 只有用户明确要求“只要口头结论”“不要落盘”“快速看一下”时，才可降级为轻量答复。降级答复必须说明未建立 `.coder` 链路，且不得声明任务完成、可执行、可提交或已验收。
 - 若因权限、路径不明或信息不足无法创建必需产物，必须返回 `BLOCKED` 结论，列出缺失输入和下一步；不得用最终回答替代 analysis、plan、fix-mr、handoff 或 checkpoint。

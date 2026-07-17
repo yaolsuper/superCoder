@@ -4,11 +4,11 @@
 
 结构化索引见 `scenarios.yaml`。Markdown 文件是可读规格，YAML manifest 给后续 runner 提供稳定 id、必经路由、预期阻断结论和禁止结果。
 
-可执行 runner 位于 `runner/run_scenarios.py`。当前确定性执行面覆盖 P16 package validation、P17-P26 Knowledge Trace contract/unit suite 与 P27 双 adapter E2E；P1-P15 未接入本 runner 的场景仍输出 `NOT_RUN`，不得被汇总为 PASS。示例：
+可执行 runner 位于 `runner/run_scenarios.py`。当前确定性执行面覆盖 P16 package validation、P17-P26 Knowledge Trace contract/unit suite 与 P27 双 adapter E2E；P28 使用隔离 fixture 做模型前向测试。未接入确定性 runner 的场景仍输出 `NOT_RUN`，不得被汇总为 PASS。示例：
 
 ```bash
 python3 tests/skill-behavior/runner/run_scenarios.py --scenario P16 --format json
-python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P27 --format json
+python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P28 --format json
 ```
 
 每次调整协议后，至少为受影响场景补一份 `results/<date>-<scenario-id>.md`，记录 RED/GREEN 证据：无新规则或旧规则下的失败表现、应用当前技能后的通过表现、模型/入口、判分结论和仍待补测项。只有场景规格没有执行结果时，只能说明“已有压力规格”，不能声称行为已验证。
@@ -40,6 +40,7 @@ python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P27 --format 
 | P24 operation lineage | execution / lineage validator | event 覆盖、断 parent/retry、无 evidence |
 | P25-P26 completion governance | materialize / traceability | 未收敛 Change 或非法提升 Risk/Recommendation/Module |
 | P27 cross-harness E2E | app-agent / opencode adapters | JSON/exit/scope 漂移或静态走查伪装执行 |
+| P28 evidence-first human confirmation gate | planning / execution / checkpoint / human confirmation contract | 未扫描就提问、问题无来源、阻塞态生成计划/代码、含糊回答或直接恢复到 planning |
 
 ## 通过标准
 

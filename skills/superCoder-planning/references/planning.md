@@ -4,6 +4,8 @@
 
 共享资源已经打包到主技能目录 `skills/superCoder/`。从本文件读取共享资源时，只使用 `../../superCoder/assets/...`、`../../superCoder/references/shared/...` 或 `../../superCoder/config/...`；不得读取包根 `shared/`、当前子技能 `shared/`、工作区同名目录或其他挂载目录。若必需共享模板或引用无法加载，停止并返回 `SKILL_RESOURCE_BLOCKED`，不得用记忆重造模板继续。
 
+分析、澄清和计划生成必须读取并遵守 `../../superCoder/references/shared/human-confirmation-gate.md`。需要写 Scan Activity、Source Point、Evidence Gap、Blocking Question、Human Answer 或 Decision 时读取 `../../superCoder/assets/templates/human-confirmation.md`；状态与转换以 `../../superCoder/config/human-confirmation-gate.yaml` 为准。
+
 需要项目进度总览卡片模板时，只读取 `../../superCoder/assets/templates/progress-overview.md`。需要当前任务或 MR 文件结构时，只读取 `../../superCoder/assets/templates/task-and-mr.md`。
 需要对分析报告、实施计划、MR 文件、当前任务契约或最终交付做专项复核时，读取 `../../superCoder-checkpoint/references/checkpoint.md`。
 需要处理 BUG、缺陷、回归、线上问题、热修、P0/P1/P2 修复时，读取 `../../superCoder-bug-root-cause/references/bug-root-cause.md`。
@@ -126,6 +128,24 @@ mr_generation_status: NOT_STARTED | READY_TO_SPLIT | GENERATED | BLOCKED
 Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能修复被 Review 标记的问题区域、记录阻塞或等待用户输入，不能继续生成下游产物。
 `handoff.md` 是跨模型和跨阶段恢复依据。每次完成 ANALYSIS、PLANNING 或 MR_SPLIT 后必须更新，至少记录当前阶段、当前 MR 或计划状态、关键输入文件、产物清单、Checkpoint 状态、Blocker 和下一步协议。对话总结不能替代 `handoff.md`。
 
+## 证据优先人工确认门禁
+
+分析阶段先执行有界系统证据扫描，再决定是否询问用户。扫描至少覆盖任务相关的用户输入、需求/Spec、代码、配置、API/Schema、测试和历史决策；运行证据或外部官方资料只在相关且可访问时纳入。记录扫描入口、纳入/排除范围、revision、限制、Source Point 和 Evidence Gap。
+
+证据状态为 `SCAN_INCOMPLETE` 时继续调查，不得生成人工问题。只有证据缺失、冲突、过期、间接、不可访问，或技术事实无法替代业务决策，并且不同答案会实质改变范围、验收、数据、安全、兼容、架构、合规、发布或资源约束时，才创建 `BLOCKING` 问题。每个问题必须引用 Source Point 或 Evidence Gap；可由系统证据可靠解决的问题分类为 `INVALID` 并撤回。
+
+分析报告必须在 Front Matter 写入 `analysis_status`、`analysis_state`、`analysis_gate`、`evidence_scan_status`、`evidence_scan_coverage`、`scan_activity_ids`、Source Point/Evidence Gap 计数、`blocking_question_count`、`blocking_question_ids`、`unresolved_critical_assumption_count`、`allowed_next_states` 和 `forbidden_next_states`。`task_state` 保留表示 `task-state.md` 路径，不得复用为状态值。
+
+存在未解决 `BLOCKING` 问题时固定执行：
+
+1. 写入 `analysis_state: BLOCKED_HUMAN_CONFIRMATION`、`analysis_gate: FAILED`。
+2. 同步更新分析报告、进度、current task、checkpoint、handoff 和 task-state；问题使用稳定 `Q-*` ID，并提供影响、选项、推荐与回答格式。
+3. 停止在分析阶段；禁止生成计划、MR、执行任务或 readiness 判断。
+4. 只接受显式且格式有效的人工回答。收到后创建 `D-*` Decision，状态先写 `HUMAN_INPUT_RECEIVED`，再返回 `ANALYZING`。
+5. 重新扫描受影响范围并重算假设、风险和验收；Analysis Gate 再次通过后才写 `ANALYSIS_READY`。
+
+Analysis Gate 只有在扫描完成且覆盖充分、所有事实有来源、每个阻塞问题有来源或缺口、未解决阻塞问题和关键假设均为零、验收可判定时才通过。人工确认阻塞与后文“计划确认门禁”是两个独立门禁：前者发生在计划前，后者发生在计划与 MR 之间，任一都不得替代另一个。
+
 ## 分析模式
 
 当用户要求分析时，必须生成分析报告，并同步创建或更新项目进度总览卡片：
@@ -147,8 +167,10 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 - 主要技术难点和验证难点
 - 风险与约束
 - 用户输入、代码事实、推断和假设清单
+- 系统证据扫描范围、排除范围、revision、限制和 Scan Activity
+- Source Point 索引、证据冲突与 Evidence Gap
 - 可行性验证路径
-- 需要进一步确认的问题
+- 分级确认问题、阻塞状态和恢复条件
 - 建议的后续计划入口
 - 历史关联需求及关系证据
 - 证据矩阵
@@ -161,7 +183,7 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 |---|---|---|---|---|
 | A1 |  | `path/to/file:line` / 命令摘要 / 用户输入 | HIGH / MEDIUM / LOW |  |
 
-如果只能基于推断，必须在证据列标明“推断”，并在开放问题中列出待确认项。不得把推断写成已验证事实。
+如果只能基于推断，必须在证据列标明“推断”，并把开放问题分类为 `BLOCKING`、`NON_BLOCKING`、`INFORMATIONAL` 或 `INVALID`。不得把推断写成已验证事实，也不得把所有推断自动升级为人工阻塞。
 
 如果结论来自产品判断、方案权衡或经验推理，必须标明当前证据覆盖范围和反例风险。不得因为局部模块、单个文件或单次日志现象，直接推导出全局结论。
 
@@ -194,7 +216,7 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 - `status` 为 `PENDING` 或 `BLOCKED`。
 - `source_chain.plan` 标记为待生成或明确为空。
 - `can_start_next` 为 `false`。
-- 下一步只能是生成待确认实施计划，不能直接生成详细 MR 文件或进入 `skills/superCoder-execution/references/execution.md`。
+- Analysis Gate 通过时下一步只能是生成待确认实施计划；若为 `BLOCKED_HUMAN_CONFIRMATION`，下一步只能是继续有界调查、展示/接收回答或取消。两种情况都不能直接生成详细 MR 文件或进入 `skills/superCoder-execution/references/execution.md`。
 
 ## 规划模式
 
@@ -203,6 +225,8 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 ```text
 .coder/<development_project_id>/analysis/*-analysis.md
 ```
+
+生成任何计划正文前必须验证最新分析产物为 `analysis_gate: PASSED`、`evidence_scan_status: COMPLETED`、`blocking_question_count: 0`，且任务状态不是 `BLOCKED_HUMAN_CONFIRMATION` 或 `HUMAN_INPUT_RECEIVED`。不满足时返回 `HUMAN_CONFIRMATION_REQUIRED` 或 `ANALYSIS_GATE_FAILED`，只更新阻塞状态，不生成计划草案。
 
 如果历史分析报告曾被生成在 `.coder` 外，例如项目根目录或业务目录中的 `*-analysis.md`，应把它作为输入上下文，并在实施计划中记录“外部分析文件来源”。如需要继续维护，应在 `.coder/<development_project_id>/analysis/` 下生成规范化分析摘要。
 
@@ -281,6 +305,7 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 - 用户第一次要求“生成实施计划”“分析并规划”“给出 MR 拆分建议”。
 - 用户正在对实施计划提出修改、补充、删减、重排或优化意见。
 - 计划 Checkpoint 仍有 Blocker，或计划中存在影响 MR 边界的待确认项。
+- 分析仍处于 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED`，或用户只回答了分析问题但尚未完成重新分析。
 
 计划确认前必须满足：
 
@@ -319,15 +344,16 @@ MR_SPLIT 模式必须基于已确认计划生成独立 MR，或原子激活 `INL
 
 1. 生成分析报告。
 2. 在分析报告中写入证据矩阵。
-3. 对分析报告执行 CP2，未通过则只修复分析报告。
-4. 基于通过复核的分析报告生成实施计划，并写入分析结论映射。
-5. 对实施计划执行 CP1/CP2/CP3，未通过则只修复实施计划。
-6. 将实施计划标记为 `DRAFT_PENDING_CONFIRMATION` 或 `BLOCKED`。
-7. 创建或更新 `project-progress.md`，并写入状态一致性检查。
-8. 创建或更新 `checkpoint-status.md`，并写入最近复核报告路径。
-9. 创建或更新 `handoff.md`，记录当前阶段、产物、Checkpoint 状态和下一步协议。
-10. 创建或更新 `task-state.md`，记录当前阶段、阻塞项、待确认项和下一步。
-11. 创建或更新 `coder-current-task.md`，记录待确认计划路径和下一步，不指向可执行 MR。
+3. 执行证据优先人工确认门禁；Analysis Gate 未通过时停止，不生成计划。
+4. 对 Analysis Gate 已通过的分析报告执行 CP2，未通过则只修复分析报告。
+5. 基于通过门禁和复核的分析报告生成实施计划，并写入分析结论映射。
+6. 对实施计划执行 CP1/CP2/CP3，未通过则只修复实施计划。
+7. 将实施计划标记为 `DRAFT_PENDING_CONFIRMATION` 或 `BLOCKED`。
+8. 创建或更新 `project-progress.md`，并写入状态一致性检查。
+9. 创建或更新 `checkpoint-status.md`，并写入最近复核报告路径。
+10. 创建或更新 `handoff.md`，记录当前阶段、产物、Checkpoint 状态和下一步协议。
+11. 创建或更新 `task-state.md`，记录当前阶段、阻塞项、待确认项和下一步。
+12. 创建或更新 `coder-current-task.md`，记录待确认计划路径和下一步，不指向可执行 MR。
 
 组合模式的最低产物：
 
@@ -430,6 +456,8 @@ MR 来源链路必须说明：
 - `reviews/*.md`：本轮关键产物必须有专项复核报告
 - 每份复核报告必须写明 `document_type` 和 `checklist_set`
 - 分析报告必须包含证据矩阵，关键结论必须有证据或标明推断
+- 分析报告必须记录扫描范围、revision、限制、Scan Activity、Source Point/Evidence Gap 和 Analysis Gate；`SCAN_INCOMPLETE` 或未解决 `BLOCKING` 问题时不得生成计划
+- 人工回答必须持久化为 Decision，并经过 `HUMAN_INPUT_RECEIVED -> ANALYZING -> ANALYSIS_READY`；不得直接恢复到规划或执行
 - 实施计划必须包含分析结论映射，所有 `READY` MR 必须能回溯到分析结论
 - 每个独立 MR 或内联执行层必须包含来源链路、`based_on_plan_revision` 和稳定 `step_id`
 - `project-progress.md` 必须包含状态一致性检查，且当前阶段、当前 MR、MR 进度表、当前任务契约状态不能相互矛盾

@@ -59,6 +59,13 @@ source_chain:
   analysis: .coder/<development_project_id>/analysis/<task_id>-analysis.md
   plan: .coder/<development_project_id>/plans/<task_id>-implementation-plan.md
   mr: .coder/<development_project_id>/mrs/<mr-id>-<slug>.md
+analysis_state:
+  state: ANALYZING | BLOCKED_HUMAN_CONFIRMATION | HUMAN_INPUT_RECEIVED | ANALYSIS_READY
+  evidence_scan_status: NOT_STARTED | IN_PROGRESS | COMPLETED
+  evidence_scan_coverage: INCOMPLETE | SUFFICIENT
+  analysis_gate: PASSED | FAILED
+  blocking_question_ids: []
+  decision_refs: []
 allowed_paths:
   - glob: string
 forbidden_paths:
@@ -317,6 +324,10 @@ review_profile:
 | task_id |  |
 | mr_id |  |
 | 当前状态 | PENDING / READY / RUNNING / BLOCKED / VERIFYING / ACCEPTED |
+| 分析状态 | ANALYZING / BLOCKED_HUMAN_CONFIRMATION / HUMAN_INPUT_RECEIVED / ANALYSIS_READY / N/A |
+| Analysis Gate | PASSED / FAILED / N/A |
+| 阻塞问题 | `Q-*` 清单 / 无 |
+| Decision | `.coder/<development_project_id>/decisions/<decision-id>.md` / 无 |
 | 当前 Step |  |
 | 最近 operation_id |  |
 | 最近恢复点 |  |

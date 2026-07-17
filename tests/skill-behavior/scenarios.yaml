@@ -320,3 +320,21 @@ scenarios:
       - CROSS_HARNESS_REQUIREMENT_GRAPH_E2E_PASS
     must_not:
       - mark_static_walkthrough_as_pass
+  - id: p28-evidence-first-human-confirmation-gate
+    markdown: p28-evidence-first-human-confirmation-gate.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder/references/shared/human-confirmation-gate.md
+      - skills/superCoder/config/human-confirmation-gate.yaml
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+    expected_verdicts:
+      - EVIDENCE_FIRST_CONFIRMATION_GATE_PASS
+      - BLOCKED_HUMAN_CONFIRMATION_ENFORCED
+      - HUMAN_CONFIRMATION_REANALYSIS_REQUIRED
+    must_not:
+      - ask_human_for_resolvable_system_fact
+      - generate_plan_while_human_confirmation_blocked
+      - infer_confirmation_from_ambiguous_language
+      - transition_human_input_directly_to_planning

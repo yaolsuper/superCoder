@@ -59,6 +59,7 @@ BRD -> PRD -> ADD -> LLD -> DBD -> MR 拆分 -> 分阶段实施 -> 回归 -> 验
   context-summary.md
   task-state.md
   analysis/
+  decisions/
   reviews/
   mrs/
   records/
@@ -79,6 +80,7 @@ BRD -> PRD -> ADD -> LLD -> DBD -> MR 拆分 -> 分阶段实施 -> 回归 -> 验
 | `context-summary.md` | 长任务恢复摘要，记录目标、边界、当前阶段、关键决策、下一步和最近恢复点 |
 | `task-state.md` | 当前任务状态机，记录 todo/doing/done/blocked、依赖和启动条件 |
 | `analysis/` | 分析报告、迁移评估、现状调研和规范化分析摘要 |
+| `decisions/` | 人工答案形成的稳定 Decision，关联阻塞问题、扫描活动、来源点或证据缺口 |
 | `reviews/` | Checkpoint 专项复核报告 |
 | `mrs/` | MR 拆分文件、Coder 任务卡、验收矩阵 |
 | `records/` | 每轮执行记录 |
@@ -120,6 +122,14 @@ PENDING -> READY -> RUNNING -> BLOCKED -> VERIFYING -> ACCEPTED -> MERGED
 | ACCEPTED | 已验收 | 允许进入下一 MR |
 | MERGED | 已合并 | 只允许归档 |
 
+分析与人工确认使用独立的前置状态链：
+
+```text
+ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> ANALYSIS_READY
+```
+
+`BLOCKED_HUMAN_CONFIRMATION` 只允许有界只读调查、展示问题、接收显式回答或取消；`HUMAN_INPUT_RECEIVED` 只允许校验答案、持久化 Decision 并返回分析。两者都不得进入 planning 或 execution。
+
 ## 偏差类型
 
 | 类型 | 含义 | 默认处理 |
@@ -153,6 +163,7 @@ PENDING -> READY -> RUNNING -> BLOCKED -> VERIFYING -> ACCEPTED -> MERGED
 | `handoff` | 跨模型恢复状态文件路径，默认 `.coder/<development_project_id>/handoff.md` |
 | `context_summary` | 长任务恢复摘要路径，默认 `.coder/<development_project_id>/context-summary.md` |
 | `task_state` | 当前任务状态文件路径，默认 `.coder/<development_project_id>/task-state.md` |
+| `analysis_state` | 分析前置状态：`ANALYZING` / `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED` / `ANALYSIS_READY`；不得与表示文件路径的 `task_state` 混用 |
 | `execution_record` | 当前任务或 MR 的执行记录路径，默认 `.coder/<development_project_id>/records/<task-or-mr-id>-execution-record.md` |
 | `validation_record` | 当前任务或 MR 的验证记录路径，默认 `.coder/<development_project_id>/validation/<task-or-mr-id>-validation.md` |
 | `deviation_record` | 偏差、阻塞或回退记录路径，默认 `.coder/<development_project_id>/deviations/<deviation-id>.md` |
@@ -182,6 +193,15 @@ PENDING -> READY -> RUNNING -> BLOCKED -> VERIFYING -> ACCEPTED -> MERGED
 | `can_start_next` | 是否允许进入下一 MR |
 | `execution_mode` | 执行模式：`single_mr` 表示只推进当前 MR；`continuous_project` 表示按状态账本连续推进完整项目需求 |
 | `manual_confirmation_required` | 是否要求 MR 启动前人工确认；只能由用户明确要求、启动阻塞、方案不唯一、范围变化等条件触发 |
+| `analysis_gate` | 分析门禁状态：`PASSED` / `FAILED`；扫描未完成或存在未解决阻塞问题时必须为 `FAILED` |
+| `evidence_scan_status` | 任务相关证据扫描状态：`NOT_STARTED` / `IN_PROGRESS` / `COMPLETED` |
+| `evidence_scan_coverage` | 扫描覆盖结论：`INCOMPLETE` / `SUFFICIENT`；`INCOMPLETE` 时继续调查，不得提前询问人工 |
+| `blocking_question_count` | 未解决 `BLOCKING` 问题数量；大于零时任务状态必须为 `BLOCKED_HUMAN_CONFIRMATION` |
+| `blocking_question_ids` | 当前未解决阻塞问题的稳定 `Q-*` ID 清单 |
+| `scan_activity_ids` | 本轮 Targeted Evidence Scan 的稳定 `SCAN-*` ID 清单 |
+| `source_point` | 带资源 URI、locator、revision、关系、置信度和扫描活动引用的稳定来源点 |
+| `evidence_gap` | 未找到可靠来源时记录期望来源、扫描范围、检索词、限制和覆盖结论的证据缺口 |
+| `decision_id` | 显式人工答案形成的稳定 `D-*` Decision ID |
 | `auto_start_next_allowed` | 当前 MR 验收后是否允许自动进入下一 MR 启动门禁；必须基于验证、Checkpoint、状态回写和下一 MR READY 证据 |
 | `stage_epoch` | 阶段版本号；`coder-current-task.md`、`project-progress.md`、`checkpoint-status.md` 三者必须相等，作为阶段转换原子性的可验证证据 |
 | `stage_last_transition` | 最近一次阶段转换记录：from / to / trigger（用户触发词或 Checkpoint 报告 PASS） |
@@ -212,6 +232,8 @@ PENDING -> READY -> RUNNING -> BLOCKED -> VERIFYING -> ACCEPTED -> MERGED
 | 阶段升级裁决 | 用户口头指令不得绕过 Markdown 状态账本升级阶段；阶段升级必须同时满足“当前阶段可升级 + stage_epoch 三文件写入 + 明确触发来源”。触发来源可以是用户确认、Checkpoint PASS、当前 MR 验收通过且 `can_start_next: true`。含糊指令（继续 / 接着做）仅在等待人工审核或计划确认态不构成升级信号 |
 | 连续项目执行 | 用户目标覆盖完整项目需求时，按 MR 依赖顺序串行推进；每个 MR 独立门禁、验证、Checkpoint 和状态回写，MR 之间默认不等人工确认 |
 | 人工确认例外 | 只有用户明确要求 MR 启动人工审核，或启动阻塞、方案不唯一、范围变化、未处理 Blocker 等无法安全自动推进的情况，才在 MR 启动前等待人工确认 |
+| 证据优先人工确认 | 在计划前扫描代码、配置、Schema、测试、文档和历史决策；只对系统证据无法解决的决策性未知信息阻塞，并要求每个问题引用 Source Point 或 Evidence Gap |
+| Analysis Gate | 扫描完成且覆盖充分、阻塞问题与关键假设清零、来源可复核、验收可判定时才允许从 ANALYZING 进入 ANALYSIS_READY 的硬门禁 |
 | pre-edit guard | 修改产品代码前的硬前置闸门：当前阶段为 RUNNING、三文件 stage_epoch 一致、source_chain.plan/mr 文件真实存在、路径守卫通过、CP4 无 Blocker；任一不满足禁止调用产品代码修改工具 |
 | Handoff | 跨模型和跨轮次恢复文件，下一模型必须优先读取它和状态文件，而不是依赖上一模型对话总结 |
 | Checkpoint | 正式产物或执行步骤进入下游前的专项复核关卡 |

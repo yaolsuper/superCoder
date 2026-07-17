@@ -118,6 +118,27 @@ class PackageValidatorTests(unittest.TestCase):
         )
         self.assertIn("REGISTRY_DRIFT", self.issue_codes(root))
 
+    def test_missing_human_confirmation_contract_is_detected(self) -> None:
+        root = self.fixture_root()
+        issues = self.validator.validate_human_confirmation_contract(root)
+        self.assertTrue(issues)
+        self.assertIn("REFERENCE_MISSING", {item["code"] for item in issues})
+
+    def test_invalid_human_confirmation_contract_is_detected(self) -> None:
+        root = self.fixture_root()
+        for relative, tokens in self.validator.HUMAN_CONFIRMATION_CONTRACT.items():
+            write(root / relative, "\n".join(tokens) + "\n")
+        config = root / "skills/superCoder/config/human-confirmation-gate.yaml"
+        config.write_text(
+            config.read_text(encoding="utf-8").replace(
+                "direct_transition_to_planning: false",
+                "direct_transition_to_planning: true",
+            ),
+            encoding="utf-8",
+        )
+        issues = self.validator.validate_human_confirmation_contract(root)
+        self.assertIn("HUMAN_CONFIRMATION_CONTRACT_INVALID", {item["code"] for item in issues})
+
     def test_repository_distribution_is_consistent(self) -> None:
         result = self.validator.validate_repository(REPOSITORY_ROOT)
         self.assertEqual("PASS", result["status"], result["issues"])

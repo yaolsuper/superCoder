@@ -4,6 +4,8 @@
 
 共享资源已经打包到主技能目录 `skills/superCoder/`。从本文件读取共享资源时，只使用 `../../superCoder/assets/...`、`../../superCoder/references/shared/...` 或 `../../superCoder/config/...`；不得读取包根 `shared/`、当前子技能 `shared/`、工作区同名目录或其他挂载目录。若必需共享模板、门禁表或引用无法加载，停止并返回 `SKILL_RESOURCE_BLOCKED`，不得凭记忆重造门禁表格继续执行。
 
+启动、恢复或 pre-edit guard 前必须读取 `../../superCoder/references/shared/human-confirmation-gate.md`，并以 `../../superCoder/config/human-confirmation-gate.yaml` 校验允许动作。需要展示问题或回写 Human Answer / Decision 时读取 `../../superCoder/assets/templates/human-confirmation.md`。
+
 需要标准门禁、验证、执行记录或验收表格时，只读取 `../../superCoder/assets/templates/gates.md`。需要项目进度总览卡片模板时，只读取 `../../superCoder/assets/templates/progress-overview.md`。需要当前任务、MR 或偏差模板时，只读取 `../../superCoder/assets/templates/task-and-mr.md`。需求整体完成并生成关联索引时读取 `../../superCoder-requirement-traceability/references/requirement-traceability.md`。需要输出专项复核、Step 依赖守卫或 Checkpoint 状态时，读取 `skills/superCoder-checkpoint/references/checkpoint.md`。需要恢复、进入下一 MR 或完成态审计时，读取 `skills/superCoder-ledger-audit/references/ledger-audit.md`。BUG / 热修执行前需要根因链路判断时，读取 `skills/superCoder-bug-root-cause/references/bug-root-cause.md`。需要按 MR、CURRENT_TASK、EXECUTION_RECORD 或 ACCEPTANCE_DECISION 做场景化 Review 时，读取 `skills/superCoder-checkpoint/references/document-review-checklist.md`。
 
 ## 编码能力与过程边界
@@ -212,6 +214,8 @@ BUG、缺陷、回归、线上问题、P0/P1/P2 修复和热修任务必须通�
 - 含糊指令在连续执行模式下可以作为恢复执行触发，但能否进入下一 MR 只看文件证据：当前 MR `ACCEPTED`、验证记录存在、CP4/CP5 PASS、状态回写完整、`can_start_next: true`、下一 MR `READY` 且启动条件满足。
 - 缺少触发来源、`stage_epoch` 未跳变、当前阶段不可升级、存在未处理 Blocker 或人工确认标记时，阶段不变，禁止据此调用产品代码修改工具。
 
+若当前状态为 `BLOCKED_HUMAN_CONFIRMATION`，只允许继续有界只读调查、展示问题、接收显式回答或取消。收到有效回答后，先持久化 Decision，并按 `HUMAN_INPUT_RECEIVED -> ANALYZING` 恢复；必须由 planning 协议重新运行 Analysis Gate。执行技能不得把答案直接解释为 planning / execution 授权，也不得在重新分析前修复产品代码。
+
 ## 连续 MR 执行恢复
 
 当用户要求“完整执行一个项目需求”“直到任务完成”或从已有 `.coder/<development_project_id>/` 继续时，按以下顺序恢复并推进，不在 MR 间默认等待人工确认：
@@ -234,6 +238,7 @@ BUG、缺陷、回归、线上问题、P0/P1/P2 修复和热修任务必须通�
 - 当前状态
 - 本轮唯一目标
 - 任务执行链路完整性：analysis / plan / MR / current task
+- 最新分析状态：`evidence_scan_status`、`analysis_gate`、`blocking_question_count`、人工确认状态和 Decision 引用
 - 启动条件和前置状态
 - 必须读取与已读取文件
 - 执行产物目录
@@ -249,7 +254,7 @@ BUG、缺陷、回归、线上问题、P0/P1/P2 修复和热修任务必须通�
 - 越界风险
 - 结论：开始或停止
 
-只有当当前状态允许执行、任务执行链路完整、启动条件满足、必要上下文已读取、允许/禁止路径明确、验证方式明确、当前 Step 前置依赖已满足、Checkpoint 无未处理 Blocker、`stage_epoch` 三文件一致且当前阶段为 `READY` 或 `RUNNING`、不存在未处理边界风险时，才允许继续。
+只有当当前状态允许执行、任务执行链路完整、最新分析为 `evidence_scan_status: COMPLETED` 与 `analysis_gate: PASSED`、`blocking_question_count: 0`、任务不处于 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED`、启动条件满足、必要上下文已读取、允许/禁止路径明确、验证方式明确、当前 Step 前置依赖已满足、Checkpoint 无未处理 Blocker、`stage_epoch` 三文件一致且当前阶段为 `READY` 或 `RUNNING`、不存在未处理边界风险时，才允许继续。
 
 启动门禁失败时，输出失败原因、缺失信息、风险等级、建议处理，并明确 `是否继续编码: 否`。
 
@@ -272,6 +277,8 @@ BUG、缺陷、回归、线上问题、P0/P1/P2 修复和热修任务必须通�
 - [ ] `coder-current-task.md`、`project-progress.md`、`checkpoint-status.md` 三者 `stage_epoch` 相等（不一致即 `status_consistency: FAIL`）。
 - [ ] `source_chain.plan` 非 null 且文件实际存在（已 Read 确认，非自证）。
 - [ ] `source_chain.mr` 非 null 且文件实际存在（已 Read 确认，非自证）。
+- [ ] 最新 analysis 的 `evidence_scan_status == COMPLETED`、`analysis_gate == PASSED`、`blocking_question_count == 0`，且 `analysis_state` 不是 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED`。
+- [ ] 所有曾阻塞当前范围的人工答案已持久化为 Decision，并完成重新分析；不存在从沉默、含糊语言或聊天记忆推断的批准。
 - [ ] BUG / 缺陷 / 回归 / 热修任务已通过 `skills/superCoder-bug-root-cause/references/bug-root-cause.md` 的 Pre-Edit Guard 扩展，且没有使用 `HOTFIX`、`inline_hotfix_*` 或 ad-hoc 占位链路。
 - [ ] plan / mr 内容真实对应当前任务，非空壳文件（已 Read 确认正文非空、章节齐全）。
 - [ ] 若当前任务为 BUG/缺陷/回归/热修：plan 必须含根因证据矩阵，fix-mr 来源链路标注根因结论 ID；任一缺失则 pre-edit guard 失败。详见 `skills/superCoder-bug-root-cause/references/bug-root-cause.md`。

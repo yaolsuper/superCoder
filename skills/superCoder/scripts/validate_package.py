@@ -15,6 +15,53 @@ SCHEMA_VERSION = "supercoder.package-validation/v1"
 CANONICAL_ENTRY = "skills/superCoder/SKILL.md"
 MODULE_MAP = "skills/superCoder/config/module-map.yaml"
 SCENARIO_REGISTRY = "tests/skill-behavior/scenarios.yaml"
+HUMAN_CONFIRMATION_SCENARIO = "p28-evidence-first-human-confirmation-gate"
+HUMAN_CONFIRMATION_CONTRACT: dict[str, tuple[str, ...]] = {
+    "skills/superCoder/config/human-confirmation-gate.yaml": (
+        'schema_version: "supercoder.human-confirmation-gate/v1"',
+        "BLOCKED_HUMAN_CONFIRMATION",
+        "HUMAN_INPUT_RECEIVED",
+        "ANALYSIS_READY",
+        "blocking_question_without_source_point_or_evidence_gap",
+        "infer_from_silence: false",
+        "direct_transition_to_planning: false",
+    ),
+    "skills/superCoder/references/shared/human-confirmation-gate.md": (
+        "证据优先扫描",
+        "Source Point",
+        "Evidence Gap",
+        "BLOCKED_HUMAN_CONFIRMATION",
+        "HUMAN_INPUT_RECEIVED",
+        "ANALYZING",
+        "Analysis Gate",
+        "analysis_state",
+    ),
+    "skills/superCoder/assets/templates/human-confirmation.md": (
+        "Scan Activity",
+        "Source Point",
+        "Evidence Gap",
+        "Blocking Question",
+        "Human Answer",
+        "Decision",
+        "analysis_state: BLOCKED_HUMAN_CONFIRMATION",
+    ),
+    "skills/superCoder-planning/references/planning.md": (
+        "evidence_scan_status",
+        "analysis_state",
+        "blocking_question_count",
+        "BLOCKED_HUMAN_CONFIRMATION",
+    ),
+    "skills/superCoder-execution/references/execution.md": (
+        "analysis_gate: PASSED",
+        "analysis_state",
+        "blocking_question_count: 0",
+        "HUMAN_INPUT_RECEIVED",
+    ),
+    "skills/superCoder-checkpoint/references/checkpoint.md": (
+        "Source Point/Evidence Gap",
+        "HUMAN_INPUT_RECEIVED",
+    ),
+}
 
 
 def issue(code: str, path: str, message: str) -> dict[str, str]:
@@ -300,6 +347,32 @@ def validate_openai_metadata(root: Path) -> list[dict[str, str]]:
     return issues
 
 
+def validate_human_confirmation_contract(root: Path) -> list[dict[str, str]]:
+    issues: list[dict[str, str]] = []
+    for relative, required_tokens in HUMAN_CONFIRMATION_CONTRACT.items():
+        path_issues = validate_exact_path(root, relative)
+        issues.extend(path_issues)
+        if path_issues:
+            continue
+        try:
+            content = (root / relative).read_text(encoding="utf-8")
+        except (OSError, UnicodeError) as error:
+            issues.append(
+                issue("HUMAN_CONFIRMATION_CONTRACT_INVALID", relative, f"cannot read contract: {error}")
+            )
+            continue
+        for token in required_tokens:
+            if token not in content:
+                issues.append(
+                    issue(
+                        "HUMAN_CONFIRMATION_CONTRACT_INVALID",
+                        relative,
+                        f"required gate token is missing: {token}",
+                    )
+                )
+    return issues
+
+
 def validate_repository(root: Path | str) -> dict[str, Any]:
     repository_root = Path(root).resolve()
     issues: list[dict[str, str]] = []
@@ -308,6 +381,14 @@ def validate_repository(root: Path | str) -> dict[str, Any]:
     module_issues, module_paths = validate_module_map(repository_root)
     issues.extend(module_issues)
     issues.extend(validate_scenario_registry(repository_root, module_paths))
+    scenario_registry = repository_root / SCENARIO_REGISTRY
+    if scenario_registry.is_file():
+        try:
+            scenario_content = scenario_registry.read_text(encoding="utf-8")
+        except (OSError, UnicodeError):
+            scenario_content = ""
+        if HUMAN_CONFIRMATION_SCENARIO in scenario_content:
+            issues.extend(validate_human_confirmation_contract(repository_root))
     issues.extend(validate_readme_links(repository_root))
     if (repository_root / "harness").is_dir():
         issues.extend(validate_harness_entries(repository_root))

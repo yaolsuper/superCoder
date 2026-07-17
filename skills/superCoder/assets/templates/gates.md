@@ -18,6 +18,10 @@
 | 人工确认触发原因 | 用户明确要求 / 启动阻塞 / 方案不唯一 / 不适用 |
 | 状态来源文件 | `coder-current-task.md` / `project-progress.md` / `checkpoint-status.md` / `handoff.md` / 当前 MR / Review |
 | 任务执行链路 | analysis / plan / MR / current task 均存在：是 / 否 |
+| 证据扫描 / Analysis Gate | COMPLETED / NOT_COMPLETED；SUFFICIENT / INCOMPLETE；PASSED / FAILED |
+| 人工确认状态 | ANALYSIS_READY / BLOCKED_HUMAN_CONFIRMATION / HUMAN_INPUT_RECEIVED / N/A |
+| 未解决阻塞问题 | 0 / `Q-*` 清单 |
+| Decision 引用 | `.coder/<development_project_id>/decisions/<decision-id>.md` / 无 |
 | 实施计划文件 | `.coder/<development_project_id>/plans/<task_id>-implementation-plan.md` |
 | 独立 MR 文件 | `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` |
 | 启动条件是否满足 | 是 / 否 |
@@ -71,6 +75,9 @@
 | 三文件 stage_epoch 相等 | 已 Read coder-current-task / project-progress / checkpoint-status 比对 | 是 / 否 |
 | source_chain.plan 非 null 且文件存在 | 已 Read plans/*.md 确认存在 | 是 / 否 |
 | source_chain.mr 非 null 且文件存在 | 已 Read mrs/*.md 确认存在 | 是 / 否 |
+| evidence scan 完成、覆盖充分且 analysis_gate == PASSED | 已 Read 最新 analysis Front Matter | 是 / 否 |
+| blocking_question_count == 0，状态不处于人工确认阻塞或回答处理中 | 已 Read analysis / current task / progress / checkpoint / handoff / task-state 比对 | 是 / 否 |
+| 已回答阻塞问题均有 Decision 且已重新分析 | 已 Read decisions/*.md 和最新 analysis revision | 是 / 否 / 不适用 |
 | plan/mr 内容真实非空壳 | 已 Read 正文确认非空、章节齐全 | 是 / 否 |
 | （BUG 修复任务）plan 含根因证据矩阵 | 已 Read 确认故障现象/复现/根因 file:line/修复范围/回归验证齐全 | 是 / 否 / 不适用 |
 | 本轮产品代码文件均在 allowed_paths 内 | 逐文件比对 glob | 是 / 否 |

@@ -17,6 +17,9 @@ modules:
       - "skills/superCoder/scripts/knowledge/lineage.py"
       - "skills/superCoder/scripts/knowledge/materialize.py"
       - "skills/superCoder/references/agent-usage-feedback.md"
+      - "skills/superCoder/references/shared/human-confirmation-gate.md"
+      - "skills/superCoder/config/human-confirmation-gate.yaml"
+      - "skills/superCoder/assets/templates/human-confirmation.md"
       - "skills/superCoder-planning/SKILL.md"
       - "skills/superCoder-bug-root-cause/SKILL.md"
       - "skills/superCoder-ledger-audit/SKILL.md"
@@ -43,6 +46,9 @@ modules:
     files:
       - "skills/superCoder-planning/SKILL.md"
       - "skills/superCoder-planning/references/planning.md"
+      - "skills/superCoder/references/shared/human-confirmation-gate.md"
+      - "skills/superCoder/config/human-confirmation-gate.yaml"
+      - "skills/superCoder/assets/templates/human-confirmation.md"
       - "skills/superCoder-bug-root-cause/references/bug-root-cause.md"
       - "skills/superCoder-checkpoint/references/checkpoint.md"
       - "skills/superCoder-checkpoint/references/document-review-checklist.md"
@@ -78,6 +84,9 @@ modules:
     files:
       - "skills/superCoder-execution/SKILL.md"
       - "skills/superCoder-execution/references/execution.md"
+      - "skills/superCoder/references/shared/human-confirmation-gate.md"
+      - "skills/superCoder/config/human-confirmation-gate.yaml"
+      - "skills/superCoder/assets/templates/human-confirmation.md"
       - "skills/superCoder-execution/references/guides/error-recovery.md"
       - "skills/superCoder-execution/references/guides/cicd-integration.md"
       - "skills/superCoder-ledger-audit/references/ledger-audit.md"
@@ -94,6 +103,7 @@ modules:
     files:
       - "skills/superCoder-ledger-audit/SKILL.md"
       - "skills/superCoder-ledger-audit/references/ledger-audit.md"
+      - "skills/superCoder/references/shared/human-confirmation-gate.md"
       - "skills/superCoder/references/shared/decision-contract.md"
       - "skills/superCoder-execution/references/execution.md"
 
@@ -101,6 +111,7 @@ modules:
     routed_by_skill: true
     files:
       - "skills/superCoder-verification/SKILL.md"
+      - "skills/superCoder/references/shared/human-confirmation-gate.md"
       - "skills/superCoder-ledger-audit/references/ledger-audit.md"
       - "skills/superCoder-checkpoint/references/checkpoint.md"
       - "skills/superCoder-execution/references/execution.md"
@@ -112,6 +123,8 @@ modules:
     files:
       - "skills/superCoder-checkpoint/SKILL.md"
       - "skills/superCoder-checkpoint/references/checkpoint.md"
+      - "skills/superCoder/references/shared/human-confirmation-gate.md"
+      - "skills/superCoder/config/human-confirmation-gate.yaml"
       - "skills/superCoder/references/shared/decision-contract.md"
       - "skills/superCoder-checkpoint/references/document-review-checklist.md"
       - "skills/superCoder-checkpoint/references/prompts/generator.md"
@@ -127,6 +140,7 @@ modules:
       - "skills/superCoder/assets/templates/index.md"
       - "skills/superCoder/assets/templates/progress-overview.md"
       - "skills/superCoder/assets/templates/task-and-mr.md"
+      - "skills/superCoder/assets/templates/human-confirmation.md"
       - "skills/superCoder/assets/templates/requirement-delivery-summary.md"
       - "skills/superCoder/assets/examples/protocol-examples.md"
 
@@ -136,11 +150,26 @@ modules:
       - "skills/superCoder/references/shared/index.md"
       - "skills/superCoder/references/shared/glossary.md"
       - "skills/superCoder/references/shared/decision-contract.md"
+      - "skills/superCoder/references/shared/human-confirmation-gate.md"
       - "skills/superCoder/references/shared/trace-model.md"
       - "skills/superCoder/references/shared/knowledge-card-contract.md"
       - "skills/superCoder/references/shared/product-tree-contract.md"
       - "skills/superCoder/config/coder-config-example.yaml"
+      - "skills/superCoder/config/human-confirmation-gate.yaml"
       - "skills/superCoder/config/module-map.yaml"
+
+  - id: human_confirmation_gate
+    routed_by_skill: true
+    files:
+      - "skills/superCoder/references/shared/human-confirmation-gate.md"
+      - "skills/superCoder/config/human-confirmation-gate.yaml"
+      - "skills/superCoder/assets/templates/human-confirmation.md"
+      - "skills/superCoder-planning/references/planning.md"
+      - "skills/superCoder-execution/references/execution.md"
+      - "skills/superCoder-checkpoint/references/checkpoint.md"
+      - "skills/superCoder-checkpoint/references/document-review-checklist.md"
+      - "skills/superCoder-verification/SKILL.md"
+      - "tests/skill-behavior/p28-evidence-first-human-confirmation-gate.md"
 
   - id: harness
     routed_by_skill: false
@@ -185,6 +214,7 @@ modules:
       - "tests/skill-behavior/p25-completion-graph-reconciliation.md"
       - "tests/skill-behavior/p26-risk-recommendation-classification.md"
       - "tests/skill-behavior/p27-cross-harness-requirement-graph-e2e.md"
+      - "tests/skill-behavior/p28-evidence-first-human-confirmation-gate.md"
       - "tests/skill-behavior/fixtures/trace-contract/valid/manifest.json"
       - "tests/skill-behavior/fixtures/trace-contract/invalid/cases.json"
       - "tests/skill-behavior/runner/run_scenarios.py"

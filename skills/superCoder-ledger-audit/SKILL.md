@@ -10,6 +10,7 @@ description: 当 superCoder 决策依赖 .coder 账本、恢复状态、下一 M
 ## 必读文件
 
 - `references/ledger-audit.md`
+- 恢复状态涉及分析阻塞或人工答案时读取 `../superCoder/references/shared/human-confirmation-gate.md`
 - 与 Review、Checkpoint 或验证协议组合时读取 `../superCoder/references/shared/decision-contract.md`
 - 当审计影响启动或产品代码修改时读取 `../superCoder-execution/references/execution.md`
 
@@ -17,6 +18,7 @@ description: 当 superCoder 决策依赖 .coder 账本、恢复状态、下一 M
 
 - 在继续执行、启动下一 MR、输出提交范围和声明完成前检查必需账本。
 - 比对必需状态文件中的 `stage_epoch`。
+- 校验分析门禁、阻塞问题、Decision 与恢复状态在账本间一致。
 - 验证 source-chain 引用确实存在为文件。
 - 判断下一步允许动作是状态修复、验证、执行、checkpoint 还是 handoff。
 - 输出明确审计结论，例如 `LEDGER_INCOMPLETE`、`STATUS_CONSISTENCY_FAIL` 或 `COMPLETION_EVIDENCE_FAIL`。
