@@ -1,0 +1,340 @@
+# Structured behavior scenario manifest for future model or harness eval.
+# Markdown files remain the human-readable source; this manifest gives runners
+# stable ids, required routes, blocking verdicts, and forbidden outcomes.
+
+version: 1
+scenarios:
+  - id: p1-missing-ledger-continue
+    markdown: p1-missing-ledger-continue.md
+    required_routes:
+      - skills/superCoder-ledger-audit/SKILL.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+    expected_verdicts:
+      - LEDGER_INCOMPLETE
+    must_not:
+      - modify_product_code
+      - continue_from_chat_memory
+      - generate_submit_scope
+
+  - id: p2-accepted-without-validation
+    markdown: p2-accepted-without-validation.md
+    required_routes:
+      - skills/superCoder-verification/SKILL.md
+      - skills/superCoder-ledger-audit/SKILL.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+    expected_verdicts:
+      - COMPLETION_EVIDENCE_FAIL
+    must_not:
+      - claim_complete
+      - claim_ready_to_submit
+      - use_final_answer_as_validation
+
+  - id: p3-stage-epoch-mismatch
+    markdown: p3-stage-epoch-mismatch.md
+    required_routes:
+      - skills/superCoder-ledger-audit/SKILL.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+      - skills/superCoder-execution/references/execution.md
+    expected_verdicts:
+      - STATUS_CONSISTENCY_FAIL
+    must_not:
+      - enter_startup_gate
+      - start_next_mr
+      - treat_user_words_as_epoch_transition
+
+  - id: p4-inline-hotfix
+    markdown: p4-inline-hotfix.md
+    required_routes:
+      - skills/superCoder-bug-root-cause/SKILL.md
+      - skills/superCoder-bug-root-cause/references/bug-root-cause.md
+    expected_verdicts:
+      - INLINE_HOTFIX_FAIL
+    must_not:
+      - modify_product_code
+      - skip_root_cause_matrix
+      - accept_inline_hotfix_chain
+
+  - id: p5-review-routing
+    markdown: p5-review-routing.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+    expected_verdicts:
+      - ROUTE_NATIVE_REVIEW
+    must_not:
+      - create_coder_review_artifact
+      - route_to_supercoder_review_without_explicit_request
+      - treat_plain_review_as_release_judgment
+
+  - id: p6-no-completion-without-fresh-verification
+    markdown: p6-no-completion-without-fresh-verification.md
+    required_routes:
+      - skills/superCoder-verification/SKILL.md
+      - skills/superCoder-ledger-audit/SKILL.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+    expected_verdicts:
+      - COMPLETION_EVIDENCE_FAIL
+      - VERIFICATION_STALE
+    must_not:
+      - claim_complete
+      - reuse_stale_validation
+      - skip_cp5_compatible_audit
+
+  - id: p7-planning-does-not-generate-mr-before-confirmation
+    markdown: p7-planning-does-not-generate-mr-before-confirmation.md
+    required_routes:
+      - skills/superCoder-planning/SKILL.md
+      - skills/superCoder-planning/references/planning.md
+    expected_verdicts:
+      - DRAFT_PENDING_CONFIRMATION
+      - MR_GENERATION_NOT_STARTED
+    must_not:
+      - generate_mr_file
+      - mark_can_start_next_true
+      - modify_product_code
+
+  - id: p8-cp5-not-required-before-running
+    markdown: p8-cp5-not-required-before-running.md
+    required_routes:
+      - skills/superCoder-checkpoint/SKILL.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+      - skills/superCoder-execution/references/execution.md
+    expected_verdicts:
+      - EXECUTION_READINESS_USES_CP4
+      - CP5_DEFERRED_UNTIL_DELIVERY
+    must_not:
+      - require_cp5_before_stage_transition_to_running
+      - require_pre_edit_guard_before_stage_transition_to_running
+      - block_start_gate_because_cp5_is_absent
+
+  - id: p9-shared-resource-resolution
+    markdown: p9-shared-resource-resolution.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder-planning/SKILL.md
+      - skills/superCoder-planning/references/planning.md
+    expected_verdicts:
+      - RESOURCE_RESOLUTION_PASS
+      - SKILL_RESOURCE_BLOCKED
+    must_not:
+      - search_unrelated_shared_directory
+      - recreate_template_from_memory
+      - continue_after_required_resource_missing
+      - omit_updated_ledger_paths_in_final
+
+  - id: p10-coder-artifacts-default-chinese
+    markdown: p10-coder-artifacts-default-chinese.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder-planning/SKILL.md
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder/references/shared/glossary.md
+    expected_verdicts:
+      - ARTIFACT_LANGUAGE_DEFAULT_ZH
+    must_not:
+      - generate_english_coder_artifact_by_default
+      - translate_code_identifiers
+      - use_final_chat_language_as_artifact_language_evidence
+
+  - id: p11-progressive-mode-routing
+    markdown: p11-progressive-mode-routing.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder-execution/references/execution.md
+    expected_verdicts:
+      - LIGHT_MODE_SELECTED
+      - MODE_UPGRADE_BEFORE_SCOPE_EXPANSION
+    must_not:
+      - require_full_controlled_chain_for_low_risk_single_turn_change
+      - downgrade_bug_or_hotfix_to_light
+      - prescribe_unique_implementation
+
+  - id: p12-resource-path-syntax
+    markdown: p12-resource-path-syntax.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder/references/shared/index.md
+    expected_verdicts:
+      - RESOURCE_PATH_SYNTAX_PASS
+    must_not:
+      - use_mixed_relative_repository_path
+      - reinterpret_repository_root_path_from_current_file
+      - continue_after_required_resource_missing
+
+  - id: p13-plan-mr-strategy-operation-trace
+    markdown: p13-plan-mr-strategy-operation-trace.md
+    required_routes:
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+    expected_verdicts:
+      - INLINE_MR_SELECTED
+      - OPERATION_TRACE_REQUIRED
+    must_not:
+      - duplicate_equivalent_plan_and_mr
+      - use_chat_plan_as_state_source
+      - complete_step_without_operation_evidence
+
+  - id: p14-requirement-delivery-summary
+    markdown: p14-requirement-delivery-summary.md
+    required_routes:
+      - skills/superCoder-requirement-traceability/SKILL.md
+      - skills/superCoder-requirement-traceability/references/requirement-traceability.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder/assets/templates/requirement-delivery-summary.md
+    expected_verdicts:
+      - REQUIREMENT_DELIVERY_SUMMARY_REQUIRED
+      - RELATED_REQUIREMENT_EVIDENCE_REQUIRED
+    must_not:
+      - claim_requirement_complete_without_delivery_summary
+      - generate_summary_from_plan_without_actual_evidence
+      - infer_relationship_from_broad_keyword_only
+      - include_implementation_details_in_requirement_summary
+
+  - id: p15-dated-development-project-id
+    markdown: p15-dated-development-project-id.md
+    required_routes:
+      - skills/superCoder-planning/SKILL.md
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder/references/shared/glossary.md
+    expected_verdicts:
+      - DATED_DEVELOPMENT_PROJECT_ID
+      - EXISTING_PROJECT_ID_PRESERVED
+    must_not:
+      - create_undated_development_project_id
+      - append_duplicate_date_suffix
+      - rename_existing_project_on_later_date
+
+  - id: p16-canonical-discovery-and-registry-consistency
+    markdown: p16-canonical-discovery-and-registry-consistency.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder/scripts/validate_package.py
+    expected_verdicts:
+      - CANONICAL_DISCOVERY_PASS
+      - REGISTRY_CONSISTENCY_PASS
+    must_not:
+      - accept_case_insensitive_fallback
+      - ignore_registry_drift
+      - mark_not_run_as_pass
+
+  - id: p17-trace-id-reference-integrity
+    markdown: p17-trace-id-reference-integrity.md
+    required_routes:
+      - skills/superCoder/references/shared/trace-model.md
+      - skills/superCoder/scripts/validate_trace_contract.py
+    expected_verdicts:
+      - TRACE_ID_REFERENCE_INTEGRITY_PASS
+    must_not:
+      - infer_repository_id
+      - accept_unresolved_ref
+
+  - id: p18-claim-argument-evidence
+    markdown: p18-claim-argument-evidence.md
+    required_routes:
+      - skills/superCoder/references/shared/trace-model.md
+      - skills/superCoder/scripts/validate_trace_contract.py
+    expected_verdicts:
+      - CLAIM_ARGUMENT_EVIDENCE_PASS
+    must_not:
+      - accept_claim_without_argument
+      - accept_argument_without_evidence
+
+  - id: p19-card-section-contract
+    markdown: p19-card-section-contract.md
+    required_routes:
+      - skills/superCoder/references/shared/knowledge-card-contract.md
+    expected_verdicts:
+      - CARD_SECTION_CONTRACT_PASS
+    must_not:
+      - accept_section_hash_drift
+  - id: p20-product-module-governance
+    markdown: p20-product-module-governance.md
+    required_routes:
+      - skills/superCoder/references/shared/product-tree-contract.md
+    expected_verdicts:
+      - PRODUCT_MODULE_GOVERNANCE_PASS
+    must_not:
+      - auto_activate_candidate_module
+  - id: p21-cli-progressive-card-loading
+    markdown: p21-cli-progressive-card-loading.md
+    required_routes:
+      - skills/superCoder/scripts/coder_knowledge.py
+    expected_verdicts:
+      - CLI_PROGRESSIVE_LOADING_PASS
+    must_not:
+      - print_full_card
+  - id: p22-derived-index-atomic-rebuild
+    markdown: p22-derived-index-atomic-rebuild.md
+    required_routes:
+      - skills/superCoder-requirement-traceability/references/knowledge-index.md
+    expected_verdicts:
+      - DERIVED_INDEX_ATOMIC_REBUILD_PASS
+    must_not:
+      - write_index_back_to_card
+  - id: p23-analysis-card-plan-trace
+    markdown: p23-analysis-card-plan-trace.md
+    required_routes:
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+    expected_verdicts:
+      - ANALYSIS_CARD_PLAN_TRACE_PASS
+    must_not:
+      - require_card_before_cp2a
+  - id: p24-operation-lineage-parent-retry
+    markdown: p24-operation-lineage-parent-retry.md
+    required_routes:
+      - skills/superCoder/scripts/knowledge/lineage.py
+    expected_verdicts:
+      - OPERATION_LINEAGE_PASS
+    must_not:
+      - overwrite_failed_event
+  - id: p25-completion-graph-reconciliation
+    markdown: p25-completion-graph-reconciliation.md
+    required_routes:
+      - skills/superCoder/scripts/knowledge/materialize.py
+    expected_verdicts:
+      - COMPLETION_GRAPH_RECONCILIATION_PASS
+    must_not:
+      - materialize_from_plan_only
+  - id: p26-risk-recommendation-classification
+    markdown: p26-risk-recommendation-classification.md
+    required_routes:
+      - skills/superCoder/scripts/knowledge/materialize.py
+    expected_verdicts:
+      - RISK_RECOMMENDATION_CLASSIFICATION_PASS
+    must_not:
+      - auto_accept_risk_or_recommendation
+  - id: p27-cross-harness-requirement-graph-e2e
+    markdown: p27-cross-harness-requirement-graph-e2e.md
+    required_routes:
+      - tests/skill-behavior/runner/adapter_runner.py
+      - tests/skill-behavior/runner/compare_results.py
+      - harness/app-agent/tool-mapping.md
+      - harness/opencode/tool-mapping.md
+    expected_verdicts:
+      - CROSS_HARNESS_REQUIREMENT_GRAPH_E2E_PASS
+    must_not:
+      - mark_static_walkthrough_as_pass
+  - id: p28-evidence-first-human-confirmation-gate
+    markdown: p28-evidence-first-human-confirmation-gate.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder/references/shared/human-confirmation-gate.md
+      - skills/superCoder/config/human-confirmation-gate.yaml
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+    expected_verdicts:
+      - EVIDENCE_FIRST_CONFIRMATION_GATE_PASS
+      - BLOCKED_HUMAN_CONFIRMATION_ENFORCED
+      - HUMAN_CONFIRMATION_REANALYSIS_REQUIRED
+    must_not:
+      - ask_human_for_resolvable_system_fact
+      - generate_plan_while_human_confirmation_blocked
+      - infer_confirmation_from_ambiguous_language
+      - transition_human_input_directly_to_planning

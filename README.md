@@ -22,6 +22,7 @@ superCoder 将 AI Coding 从 **"自由生成代码"** 升级为 **"可控的软�
 
 - **状态机** — `stage_epoch` 原子状态转换，三文件同步写入，不一致则禁止修改产品代码
 - **阶段门禁** — CP0-CP5 六级检查点，Blocker 阻断所有下游生成
+- **证据优先人工确认** — 分析先扫描代码、配置、Schema、测试与历史决策；只有系统证据无法解决的关键问题才进入 `BLOCKED_HUMAN_CONFIRMATION`，回答后返回分析复核
 - **变更边界** — `allowed_paths` / `forbidden_paths` 路径守卫，每次文件修改必须校验合规性
 - **审计记录** — 执行记录、偏差记录、验证结果全程留痕，任何变更可追溯到源头分析
 - **回滚机制** — 三级回滚策略（精确文件恢复、Git 辅助恢复、脚本回滚）+ 偏差升级策略（连续 3 次失败自动升级为 HIGH 风险）
@@ -33,15 +34,17 @@ superCoder 将 AI Coding 从 **"自由生成代码"** 升级为 **"可控的软�
 - 读取项目代码、判断实现方案
 - 修改产品代码
 - 运行测试 / 验证
-- 代码审查 / 检查未提交更改
+- 显式 superCoder review、质量审核、回归风险评估或放行判断
 - MR 拆分 / 推进
 - 生成本次需求相关的 git add / commit 范围
 
+普通代码审查优先使用当前 harness 的原生 review 能力；只有用户明确要求 superCoder review 或放行判断时才进入 `superCoder-review`。
+
 ## 版本
 
-**v2.0** — 当前版本，完整重构于 v1.x 系列。
+**v2.1** — 当前版本，在 v2.0 执行协议上增加 CLI-first Requirement Knowledge Card、Product Tree、派生索引、执行血缘与最终需求图。
 
-迁移指南见 [references/guides/migration.md](references/guides/migration.md)。
+模块边界见 [skills/superCoder/references/shared/index.md](skills/superCoder/references/shared/index.md)。
 
 ## 核心机制
 
@@ -111,8 +114,9 @@ analysis → implementation plan → MR files → coder-current-task → executi
   ├── context-summary.md        # 上下文摘要
   ├── task-state.md             # 任务状态快照
   ├── analysis/                 # 分析报告
+  ├── decisions/                # 人工答案形成的稳定 Decision
   ├── plans/                    # 实施方案
-  ├── mrs/                      # MR 文件（每份含 17 个必填节）
+  ├── mrs/                      # MR 文件（每份含 18 个必填节）
   ├── reviews/                  # 代码审查记录
   ├── records/                  # 执行记录
   ├── deviations/               # 偏差记录
@@ -120,7 +124,7 @@ analysis → implementation plan → MR files → coder-current-task → executi
   └── archive/                  # 已归档产出物
 ```
 
-`development_project_id` 优先级：任务/MR 合约字段 → `.coder-config.yaml` workspace 字段 → `.coder-config.yaml` project.name → 仓库目录名。
+新建项目的 `development_project_id` 基础名称优先级：任务/MR 合约字段 → `.coder-config.yaml` workspace 字段 → `.coder-config.yaml` project.name → 仓库目录名。生成时规范化为 `<base-name>-<YYYYMMDD>`（项目创建日的本地日期）；已有项目原样沿用既有 ID，不跨日重命名。
 
 ## 15 步执行流程
 
@@ -144,7 +148,7 @@ analysis → implementation plan → MR files → coder-current-task → executi
 
 ## 项目配置
 
-完整配置示例见 [config/coder-config-example.yaml](config/coder-config-example.yaml)，涵盖：
+完整配置示例见 [skills/superCoder/config/coder-config-example.yaml](skills/superCoder/config/coder-config-example.yaml)，涵盖：
 
 - 项目与工作空间配置
 - 上下文加载策略
@@ -160,38 +164,33 @@ analysis → implementation plan → MR files → coder-current-task → executi
 
 ```
 superCoder/
-  ├── SKILL.md                        # 技能入口与路由表
   ├── README.md                       # 本文件
   ├── LICENSE                         # MIT License
-  ├── assets/
-  │   ├── examples/
-  │   │   └── protocol-examples.md    # 启动提示词与 4 种技术栈任务示例
-  │   └── templates/
-  │       ├── gates.md                # 所有门/检查点/执行记录模板
-  │       ├── index.md                # 模板路由索引
-  │       ├── progress-overview.md    # 项目进度卡片模板
-  │       └── task-and-mr.md          # 当前任务/MR/交接/偏差模板
-  ├── config/
-  │   ├── coder-config-example.yaml   # 完整项目配置示例
-  │   └── module-map.yaml             # 模块依赖地图
-  └── references/
-      ├── index.md                    # 模块边界索引
-      ├── glossary.md                 # 术语表与 .coder 目录结构
-      ├── document-review-checklist.md # BRD/PRD/ADD/LLD/DBD/MR 审查清单
-      ├── protocols/
-      │   ├── planning.md             # 分析、方案生成、MR 拆分协议
-      │   ├── execution.md            # 15 步执行流程
-      │   ├── review.md               # 代码审查与质量审计协议
-      │   └── checkpoint.md           # 检查点产出审查协议
-      ├── prompts/
-      │   ├── generator.md            # Generator 角色提示词
-      │   ├── reviewer.md             # Reviewer 角色提示词
-      │   ├── fixer.md                # Fixer 角色提示词
-      └── guides/
-          ├── error-recovery.md       # 重试、回滚、状态恢复、升级策略
-          ├── cicd-integration.md     # CI/CD 集成（GitLab/GitHub/Jenkins）
-          ├── migration.md            # v1.0 → v2.0 版本迁移指南
+  ├── skills/                         # Skill Pack 薄入口
+  │   ├── superCoder/                 # 主入口与随包分发的公共资源
+  │   │   ├── agents/                 # UI / harness metadata
+  │   │   ├── assets/                 # 模板和示例
+  │   │   ├── config/                 # 配置示例与模块映射
+  │   │   ├── references/shared/      # 术语、决策契约和模块索引
+  │   │   └── scripts/                # 标准库校验工具
+  │   ├── superCoder-planning/        # 分析、计划、MR 拆分
+  │   ├── superCoder-bug-root-cause/  # BUG / 热修根因证据链
+  │   ├── superCoder-ledger-audit/    # .coder 状态账本审计
+  │   ├── superCoder-execution/       # 编码执行与恢复
+  │   ├── superCoder-checkpoint/      # CP0-CP5
+  │   ├── superCoder-review/          # 显式 superCoder review
+  │   ├── superCoder-requirement-traceability/ # 需求落地与历史关联
+  │   └── superCoder-verification/    # 完成前新鲜验证证据
+  ├── harness/                        # 跨 harness 分发映射
+  │   ├── app-agent/
+  │   ├── opencode/
+  │   ├── ops-agent/
+  │   ├── deepseek/
+  │   └── glm/
+  └── tests/skill-behavior/           # 行为压力测试规格、runner 与 RED/GREEN 结果 P1-P28
 ```
+
+`skills/*/SKILL.md` 只做薄 wrapper 和路由，不复制大段协议正文；详细规则由各子技能的 `references/` 承载。公共术语、模板和配置随主技能分发，统一位于 `skills/superCoder/`。
 
 ## 关键约束
 
@@ -203,10 +202,23 @@ superCoder/
 
 ## 快速开始
 
-1. 在项目根目录创建 `.coder-config.yaml`（参考 [config/coder-config-example.yaml](config/coder-config-example.yaml)）
+1. 在项目根目录创建 `.coder-config.yaml`（参考 [skills/superCoder/config/coder-config-example.yaml](skills/superCoder/config/coder-config-example.yaml)）
 2. 向 AI 提出开发需求（无需显式声明 "superCoder"，技能会自动触发）
 3. 执行产出物自动写入 `.coder/<development_project_id>/`
 4. 通过检查点门和验收决策逐步推进
+
+## v2.1 Knowledge Trace
+
+启用后，完成任务会形成 `.coder/<development_project_id>/requirement-knowledge-card.md`，长期产品模块位于 `.coder/_knowledge/product-modules/`，`.coder/_index/` 仅是可删除重建的查询投影。vibe coding 工具统一调用：
+
+```bash
+python3 skills/superCoder/scripts/coder_knowledge.py locate --repo . --project-id <id>
+python3 skills/superCoder/scripts/coder_knowledge.py metadata --repo . --project-id <id>
+python3 skills/superCoder/scripts/coder_knowledge.py section --repo . --project-id <id> --section changes
+python3 skills/superCoder/scripts/coder_knowledge.py rebuild-index --repo .
+```
+
+配置 `knowledge_trace.mode` 默认为 `disabled`；新 STANDARD/CONTROLLED 项目可选 `opt_in`，验证迁移后才改 `required`。`repository_id` 必须显式配置。v2.0/legacy 项目保持 `read_only`，不会强制回填；迁移需显式生成 Card、校验、重建索引。该模型是对 PROV/CAE/OSLC/Digital Thread/OpenLineage 的可映射子集，不宣称完整标准兼容。
 
 ## 许可
 

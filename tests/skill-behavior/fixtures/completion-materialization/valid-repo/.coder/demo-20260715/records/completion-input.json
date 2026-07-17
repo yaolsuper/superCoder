@@ -1,0 +1,14 @@
+{
+  "schema_version":"supercoder.completion-input/v1",
+  "why":"建立可审计的需求追溯能力",
+  "who":"产品、研发与验证责任人",
+  "what":"需求、产品模块、实际变更、验证、风险和建议形成最终需求图",
+  "claims":[],
+  "expected_changes":[],
+  "actual_changes":[{"ref":"sc://demo-repo/demo-20260715/change/change-actual-1","status":"ACTUAL","operation_event_ids":["event-1"]}],
+  "operations":[{"operation_id":"op-1","activity_id":"activity-1","run_id":"run-1","event_id":"event-1","step_id":"step-1","actor_ref":"sc://demo-repo/demo-20260715/agent/agent-1","producer":{"name":"codex","version":"1","harness":"cli","model":"gpt-5"},"inputs":[{"ref":"sc://demo-repo/demo-20260715/requirement/req-1","revision":1,"digest":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}],"outputs":[{"ref":"sc://demo-repo/demo-20260715/change/change-actual-1","revision":1,"digest":"1111111111111111111111111111111111111111111111111111111111111111"}],"parent_event_id":null,"retry_of":null,"result":"PASS"}],
+  "validations":[{"validation_id":"validation-1","ref":"sc://demo-repo/demo-20260715/validation/validation-1","target_refs":["sc://demo-repo/demo-20260715/change/change-actual-1"],"command":"unit-test","result":"PASSED","evidence_ref":"sc://demo-repo/demo-20260715/artifact/test-report-1","source_digest":"2222222222222222222222222222222222222222222222222222222222222222"}],
+  "risks":[{"risk_id":"risk-1","subject_ref":"sc://demo-repo/demo-20260715/requirement/req-1","state":"OPEN","decision_ref":null,"owner_ref":"sc://demo-repo/demo-20260715/agent/agent-1"}],
+  "recommendations":[{"recommendation_id":"rec-1","type":"ENGINEERING","subject_ref":"sc://demo-repo/demo-20260715/module/module-1","state":"PROPOSED","decision_ref":null}],
+  "module_proposals":[]
+}

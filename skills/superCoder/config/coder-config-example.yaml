@@ -1,0 +1,444 @@
+# Coder 开发执行技能 - 项目配置示例
+# 
+# 使用说明：
+# 1. 在项目根目录创建 `.coder-config.yaml` 文件
+# 2. 复制此配置并根据项目实际情况修改
+# 3. Skill 执行时会自动读取此配置进行适配
+#
+# 注意：此文件为参考模板，不要直接复制到项目中
+
+# ===== 基础配置 =====
+project:
+  # 项目名称
+  name: your-project-name
+  # 技术栈列表（用于加载对应技术栈的扩展配置）
+  tech_stack:
+    - java
+    - spring-boot
+    - maven
+  # 最小 skill 版本要求
+  min_skill_version: "2.1"
+
+# ===== Coder 工作区配置 =====
+workspace:
+  # Skill 生成的协议产物根目录。默认位于当前项目根目录。
+  artifact_root: ".coder"
+  # 开发项目粒度目录名。为空时按 project.name 或仓库目录名推导。
+  # 新建项目会以此为基础名称并追加创建日，例如 your-project-name-20260713。
+  # 已有项目恢复时填写并沿用完整 ID，不得跨日改名。
+  development_project_id: "your-project-name"
+  # 是否允许 Skill 自动创建 .coder/<development_project_id>/ 子目录。
+  auto_create: true
+  # .coder/** 正式产物默认语言。可按项目需要改为 en-US 等；未配置时 superCoder 默认中文。
+  artifact_language: "zh-Hans"
+  # 项目进度总览卡片文件名。每轮分析、规划、执行、验证或验收结束前必须创建或更新。
+  progress_overview_file: "project-progress.md"
+  # Checkpoint 状态文件名。每轮正式产物生成、执行或验收结束前必须创建或更新。
+  checkpoint_status_file: "checkpoint-status.md"
+  # 跨模型 / 跨轮次恢复状态文件名。每轮正式阶段结束前必须创建或更新。
+  handoff_file: "handoff.md"
+  # 长任务恢复摘要文件名。用于跨轮次恢复目标、边界、关键决策和下一步。
+  context_summary_file: "context-summary.md"
+  # 当前任务状态文件名。用于记录 todo/doing/done/blocked、依赖和最近恢复点。
+  task_state_file: "task-state.md"
+  # 单交付单元默认内联 plan/MR，多个交付单元或高风险任务使用独立 MR 文件。
+  artifact_strategy: "auto"
+  inline_mr_max_delivery_units: 1
+  # 当前 MR 的追加式操作账本文件名模板。
+  operation_ledger_template: "${mr_id}-operations.md"
+  # 需求整体完成后的最终落地摘要，供后续需求关联发现。
+  requirement_delivery_summary_file: "requirement-delivery-summary.md"
+  # 标准验证记录文件名模板。实际文件名可替换 task_or_mr_id。
+  validation_record_template: "${task_or_mr_id}-validation.md"
+  # 标准偏差记录文件名模板。实际文件名可替换 deviation_id。
+  deviation_record_template: "${deviation_id}.md"
+  # 标准子目录。可按项目需要扩展，但不建议改名。
+  subdirs:
+    current_task: ""
+    analysis: "analysis"
+    reviews: "reviews"
+    mrs: "mrs"
+    records: "records"
+    deviations: "deviations"
+    validation: "validation"
+    plans: "plans"
+    decisions: "decisions"
+    archive: "archive"
+  # 执行产物允许写入路径。该规则只适用于协议产物，不代表产品代码允许修改范围。
+  artifact_allowed_paths:
+    - ".coder/**"
+
+# ===== 需求知识追溯（默认不启用） =====
+knowledge_trace:
+  mode: "disabled" # disabled | opt_in | required
+  repository_id: null # sc:// 的权威仓库 ID；不得从路径或 remote 推导
+  required_modes:
+    - "STANDARD"
+    - "CONTROLLED"
+  legacy_policy: "read_only"
+  product_module_maintainers: []
+
+# ===== 分析阶段人工确认门禁 =====
+# 状态与硬规则以 config/human-confirmation-gate.yaml 为准；这里只提供项目级扫描边界覆盖项。
+human_confirmation_gate:
+  enabled: true
+  scan_strategy: "TARGETED"
+  max_files: 50
+  max_depth: 4
+  require_repository_revision: true
+  require_source_point_or_evidence_gap: true
+  infer_answer_from_silence: false
+  resume_state_after_answer: "ANALYZING"
+
+# ===== 上下文加载配置 =====
+context_loading:
+  # 默认读取深度。强约束和当前任务走显式文件；历史日志和资源默认只读摘要。
+  default_read_mode: "summary"
+  # 允许默认读取的上下文文件数量上限，避免无界加载。
+  max_default_files: 8
+  # 依赖任务默认只读取头信息。
+  dependency_read_mode: "header_only"
+  # 语义检索只作为辅助召回，不能替代任务契约、路径守卫和验收标准。
+  retrieval:
+    enabled: false
+    provider: "none"
+    max_hits: 5
+    require_source_path: true
+    require_confidence: true
+
+# ===== 命令输出与内容查询配置 =====
+command_output:
+  # 默认禁止全量输出，所有查询必须带路径、关键词、行数、时间窗口或文件类型过滤。
+  require_bounded_output: true
+  # 命令输出进入执行记录时只保留摘要。
+  record_summary_only: true
+  # 默认最大日志行数。
+  max_log_lines: 200
+  # 默认最大普通文件读取行数。
+  max_file_lines: 220
+  # 默认 diff 查看流程：先文件清单/统计，再按文件查看。
+  diff_strategy: "name-only_or_stat_then_path_diff"
+  forbidden_patterns:
+    - "docker logs -f"
+    - "docker logs without --tail or --since"
+    - "git diff without --name-only, --stat, --check, or path"
+    - "cat <large-file>"
+    - "grep -R without path or keyword"
+    - "find without maxdepth or name filter"
+
+# ===== 代码审查与质量审核配置 =====
+review:
+  require_scope_statement: true
+  require_file_line_evidence: true
+  require_reasoning_chain: true
+  require_validation_note: true
+  forbid_unbounded_generalization: true
+  require_checkpoint_review: true
+  checkpoint_status_file: "checkpoint-status.md"
+  checkpoint_reports_dir: "reviews"
+  require_document_type_checklist: true
+  require_generator_reviewer_fixer_separation: true
+  default_document_type: "CURRENT_TASK"
+  block_on_checkpoint_blocker: true
+  require_serial_steps_when_dependencies_exist: true
+  prompt_templates:
+    generator: "skills/superCoder-checkpoint/references/prompts/generator.md"
+    reviewer: "skills/superCoder-checkpoint/references/prompts/reviewer.md"
+    fixer: "skills/superCoder-checkpoint/references/prompts/fixer.md"
+  checkpoint_detail_rules:
+    cp0_require_input_completeness: true
+    cp1_require_outline_before_body: true
+    cp5_require_final_delivery_gate: true
+  checklist_sets:
+    brd: "BRD Checklist"
+    prd: "PRD Checklist"
+    add: "ADD Checklist"
+    lld: "LLD Checklist"
+    dbd: "DBD Checklist"
+    mr: "MR Checklist"
+    analysis: "Analysis Checklist"
+    plan: "Plan Checklist"
+    current_task: "Current Task Checklist"
+    execution_record: "Execution Record Checklist"
+    acceptance_decision: "Acceptance Checklist"
+  severity_order:
+    - "HIGH"
+    - "MEDIUM"
+    - "LOW"
+
+# ===== 路径配置 =====
+paths:
+  # 源码根目录
+  source_root: src/
+  # 测试根目录
+  test_root: test/
+  # 文档目录
+  docs_root: docs/
+  # 迁移脚本目录
+  migrations_root: migrations/
+  # 配置目录（排除在修改范围外）
+  config_root: config/
+
+# ===== MR 路径守卫配置 =====
+path_guards:
+  # 默认允许修改的路径（全局配置，MR 文件中可覆盖）
+  default_allowed:
+    - "src/main/java/**"
+    - "src/test/java/**"
+    - "src/main/resources/**"
+    - "src/test/resources/**"
+  
+  # 默认禁止修改的路径（全局配置，MR 文件中可覆盖）
+  default_forbidden:
+    - "pom.xml"
+    - "*.lock"
+    - "node_modules/**"
+    - "target/**"
+    - ".git/**"
+    - ".idea/**"
+    - "*.iml"
+  
+  # 特殊路径保护规则
+  special_rules:
+    # 是否允许修改数据库迁移文件
+    allow_migration_modification: false
+    # 是否允许修改配置文件
+    allow_config_modification: false
+    # 是否允许修改 CI/CD 配置
+    allow_cicd_modification: false
+    # 是否允许把本地测试地址、临时端口、个人机器 IP 或一次性验证值写入产品默认配置。
+    # 默认禁止；如确需修改，必须在当前任务或 MR 契约中明确授权。
+    allow_local_test_values_in_product_defaults: false
+
+# ===== 验证命令配置 =====
+validation:
+  # 构建命令
+  build:
+    command: "mvn clean compile -DskipTests"
+    timeout_seconds: 300
+    description: "Maven 编译验证"
+  
+  # 单元测试
+  unit_test:
+    command: "mvn test"
+    timeout_seconds: 600
+    description: "Maven 单元测试"
+  
+  # 静态代码检查
+  lint:
+    command: "mvn checkstyle:check"
+    timeout_seconds: 120
+    description: "Checkstyle 静态检查"
+  
+  # 代码格式化检查
+  format_check:
+    command: "mvn spotless:check"
+    timeout_seconds: 120
+    description: "代码格式检查"
+  
+  # 集成测试
+  integration_test:
+    command: "mvn verify -Pintegration-test"
+    timeout_seconds: 900
+    description: "集成测试验证"
+  
+  # 日志检查模式
+  log_patterns:
+    error_patterns:
+      - "ERROR"
+      - "Exception"
+      - "FATAL"
+      - "500"
+    warning_patterns:
+      - "WARN"
+      - "Deprecated"
+
+# ===== Docker/容器配置 =====
+docker:
+  # 是否使用 Docker
+  enabled: false
+  # Docker Compose 文件
+  compose_file: docker-compose.yaml
+  # 日志检查配置
+  log_check:
+    # 最大日志行数
+    max_lines: 200
+    # 检查的服务列表
+    services:
+      - api
+      - database
+    # 错误模式（继承 validation.log_patterns）
+
+# ===== 技术栈特定配置 =====
+tech_stack_config:
+  # Java/Maven 配置
+  java:
+    version: "17"
+    build_tool: "maven"
+    framework: "spring-boot"
+    package_manager:
+      settings_xml: "/path/to/settings.xml"
+      local_repo: "/path/to/repository"
+    test_framework: "junit5"
+    orm: "hibernate/mybatis"
+  
+  # Go 配置
+  go:
+    version: "1.21"
+    module_file: "go.mod"
+    test_command: "go test ./..."
+  
+  # Python 配置
+  python:
+    version: "3.11"
+    package_manager: "pip"
+    requirements_file: "requirements.txt"
+    test_framework: "pytest"
+  
+  # Node.js 配置
+  nodejs:
+    version: "18"
+    package_manager: "npm"
+    test_framework: "jest"
+
+# ===== 数据库配置 =====
+database:
+  # 主数据库类型
+  primary_type: "postgresql"
+  # 支持的数据库类型（多数据库适配项目）
+  supported_types:
+    - postgresql
+    - mysql
+    - dm  # 达梦数据库
+  
+  # 迁移工具
+  migration_tool: "flyway/liquibase/custom"
+  
+  # ORM 兼容性要求
+  orm_compatibility:
+    # 需要特别处理的类型
+    special_types:
+      - boolean
+      - json
+      - uuid
+      - array
+
+# ===== CI/CD 配置 =====
+cicd:
+  # CI/CD 平台
+  platform: "gitlab-ci/github-actions/jenkins"
+  # 流水线文件
+  pipeline_file: ".gitlab-ci.yml"
+  # 需要触发的流水线
+  triggers:
+    on_mr_complete: true
+    on_validation_pass: true
+  
+  # API 集成（可选）
+  api_integration:
+    enabled: false
+    # GitLab API 示例
+    base_url: "https://gitlab.example.com/api/v4"
+    # 认证方式
+    auth_type: "private_token"
+
+# ===== 偏差处理配置 =====
+deviation:
+  # 自动重试配置
+  retry:
+    enabled: true
+    max_retries: 2
+    retry_delay_seconds: 5
+    # 可重试的偏差类型
+    retryable_types:
+      - "TEST_FAILURE"
+      - "TOOLING_FAILURE"
+  
+  # 自动回滚配置
+  rollback:
+    enabled: true
+    # 回滚策略
+    strategy: "file_restore"  # file_restore / manual / script
+    # 回滚脚本路径（当 strategy=script 时）
+    rollback_script: "scripts/rollback.sh"
+  
+  # 升级策略（何时需要人工介入）
+  escalation:
+    # HIGH 风险立即升级
+    immediate_escalation_risks:
+      - "ENV_BLOCKER"
+      - "REQUIREMENT_CHANGE"
+      - "UNKNOWN_RISK"
+    # 连续失败次数触发升级
+    max_consecutive_failures: 3
+
+# ===== 日志配置 =====
+logging:
+  # 日志级别
+  level: "INFO"  # DEBUG / INFO / WARN / ERROR
+  # 是否记录详细命令输出。默认关闭，执行记录只保留有界摘要和精确命令。
+  record_command_output: false
+  # 最大日志文件大小（MB）
+  max_log_size_mb: 10
+  # 日志保留天数
+  retention_days: 30
+
+# ===== 扩展配置 =====
+extensions:
+  # 自定义钩子（在特定阶段执行）
+  hooks:
+    # 启动门禁后执行
+    post_startup_gate:
+      enabled: false
+      script: "scripts/post-startup.sh"
+    
+    # 实现完成后执行
+    post_implementation:
+      enabled: false
+      script: "scripts/post-impl.sh"
+    
+    # 验收通过后执行
+    post_acceptance:
+      enabled: false
+      script: "scripts/post-accept.sh"
+  
+  # 自定义验证器
+  custom_validators:
+    - name: "database-compatibility-check"
+      command: "scripts/check-db-compat.sh"
+      description: "数据库兼容性检查"
+    
+    - name: "api-contract-check"
+      command: "scripts/check-api-contract.sh"
+      description: "API 契约检查"
+
+# ===== 文档配置 =====
+documentation:
+  # 文档体系
+  doc_system:
+    BRD: "docs/brd/"
+    PRD: "docs/prd/"
+    ADD: "docs/add/"
+    LLD: "docs/lld/"
+    DBD: "docs/dbd/"
+  
+  # MR 文件目录
+  mr_root: "docs/mrs/"
+  
+  # 当前任务文件
+  current_task_file: "coder-current-task.md"
+
+  # 项目进度总览卡片
+  progress_overview: ".coder/${development_project_id}/project-progress.md"
+  
+  # 执行记录文件。可用 ${development_project_id} 表示 workspace.development_project_id。
+  execution_log: ".coder/${development_project_id}/records/execution-log.md"
+  # 当前任务或 MR 的标准执行记录文件。实际文件名可替换 task-or-mr-id。
+  execution_record: ".coder/${development_project_id}/records/${task_or_mr_id}-execution-record.md"
+  # 当前任务或 MR 的标准验证记录文件。
+  validation_record: ".coder/${development_project_id}/validation/${task_or_mr_id}-validation.md"
+  # 跨模型恢复入口。
+  handoff: ".coder/${development_project_id}/handoff.md"
+  
+  # 偏差记录文件
+  deviation_log: ".coder/${development_project_id}/deviations/deviations.md"
