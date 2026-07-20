@@ -23,6 +23,7 @@ Checkpoint 对 `STANDARD` / `CONTROLLED` 的正式产物适用。`LIGHT` 的 `li
 - CP1 不通过时只允许修正大纲、结构或执行顺序，禁止生成正文、详细 MR 或下游产物。
 - 实施计划确认前禁止生成独立 MR 文件；计划 Checkpoint 通过只表示计划质量可接受，不等于用户已确认计划。
 - 证据扫描未完成、覆盖不足、阻塞问题缺 Source Point/Evidence Gap，或存在未解决 `BLOCKING` 问题时，Analysis Gate 与 CP2 必须 FAIL；不得生成计划。
+- 语义决策矩阵存在适用但未决维度，或负向约束没有用户输入、权威证据或人工 Decision 时，Analysis Gate 与 CP2 必须 FAIL；高影响缺口必须进入 `BLOCKED_HUMAN_CONFIRMATION`，不得以产物间“内部一致”替代需求依据。
 - `BLOCKED_HUMAN_CONFIRMATION` 和 `HUMAN_INPUT_RECEIVED` 均禁止 planning / execution；显式答案只有在持久化为 Decision、返回 `ANALYZING` 并重新通过 Analysis Gate 后才可解除阻塞。
 
 ## 状态与产物
@@ -66,6 +67,7 @@ CP0 的目标是防止上下文不完整时直接生成正式文档或下游产�
 | 上游文档 | 生成下游文档时是否存在对应上游依据；BRD -> PRD -> ADD -> LLD -> DBD -> MR 不得断链 |
 | 输出目标 | 是否明确本次要生成或复核的文档 / 产物类型和范围 |
 | 可调查事实 | 是否已确定有界扫描入口；能由代码、配置、Schema、测试、文档或历史决策回答的内容不得直接询问人工 |
+| 业务语义 | 已识别数据类型与业务基数的区别；适用的空值、顺序、重复、运行态编码及并行/聚合合并冲突维度已进入调查或人工确认门禁 |
 
 CP0 失败时：
 
@@ -134,6 +136,8 @@ CP5 未 PASS 时：
 | 状态一致性 | 当前任务、项目进度、Checkpoint 状态和最终回复是否一致 |
 | 文件化状态 | 进度、Checkpoint、handoff、执行记录是否真实落盘 |
 | 人工确认门禁 | 扫描已完成且覆盖充分；问题有 Source Point/Evidence Gap；显式答案已形成 Decision；恢复经过重新分析 |
+| 语义决策闭合 | `Semantic Decision Matrix` 的适用维度均有 Source Point/Decision，未决项已阻断而非写成实现假设 |
+| 负向约束溯源 | 拒绝、截断、单选、最小/最大数量、多值失败、去重或冲突规则均有用户输入、权威证据或人工 Decision |
 
 ## 风险等级
 
@@ -148,6 +152,8 @@ CP5 未 PASS 时：
 | 风险 | 表现 | 处理规则 |
 |---|---|---|
 | 模型自行脑补 | 新增未声明需求、架构、字段、接口、路径或验证结果 | 标记为【待确认】或删除；若影响下游，按 Blocker 处理 |
+| 数据形状冒充业务语义 | 由数组推断多选、由单数文案推断单选、由相似结构继承基数或合并规则 | 记录 `SEMANTIC_DIMENSION_UNRESOLVED`，补语义决策矩阵；高影响时 CP2 FAIL 并人工阻断 |
+| 负向约束无来源 | 测试或校验断言“多值应失败”“只能一个”“至少一个”但无需求/协议/Decision | 记录 `NEGATIVE_CONSTRAINT_SOURCE_MISSING`，CP2/CP3 FAIL，删除该约束或取得人工确认 |
 | 文档职责混淆 | PRD 写技术、ADD 写字段、LLD 改架构、DBD 新增业务概念 | 回到职责边界修复；对应场景 checklist 必须 FAIL |
 | 下游断链 | PRD 找不到 BRD 依据、MR 找不到 PRD/LLD/DBD 依据 | CP3 FAIL，补可追溯矩阵（Traceability Matrix）后复审 |
 | Review 太泛 | 只写“建议优化”“整体可以”而无位置、风险和修复建议 | Review 无效，必须按标准输出格式重做 |

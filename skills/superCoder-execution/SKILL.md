@@ -26,7 +26,7 @@ description: "当 superCoder 任务已准备进入实现、产品代码修改、
 ## 职责
 
 - 在修改产品代码前运行 startup guard 和 pre-edit guard。
-- 拒绝在 Analysis Gate 未通过、扫描未完成或处于 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED` 时启动执行。
+- 拒绝在 Analysis Gate 未通过、扫描未完成、语义决策/负向约束计数未清零，或处于 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED` 时启动执行。
 - 强制执行 allowed / forbidden 路径规则。
 - 将实现限制在当前已批准的任务 / MR 范围内。
 - 在 `.coder/<development_project_id>/validation/` 记录验证命令和真实输出。

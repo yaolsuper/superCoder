@@ -130,11 +130,11 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 
 ## 证据优先人工确认门禁
 
-分析阶段先执行有界系统证据扫描，再决定是否询问用户。扫描至少覆盖任务相关的用户输入、需求/Spec、代码、配置、API/Schema、测试和历史决策；运行证据或外部官方资料只在相关且可访问时纳入。记录扫描入口、纳入/排除范围、revision、限制、Source Point 和 Evidence Gap。
+分析阶段先执行有界系统证据扫描，再决定是否询问用户。扫描至少覆盖任务相关的用户输入、需求/Spec、代码、配置、API/Schema、测试和历史决策；运行证据或外部官方资料只在相关且可访问时纳入。记录扫描入口、纳入/排除范围、revision、限制、Source Point 和 Evidence Gap。出现数组/集合、单复数文案、“固定对象”“与既有能力一致”、并行节点或聚合行为时，必须按人工确认协议建立 `semantic_decision_matrix`，分别审计数据形状、业务基数、空值、顺序、重复、运行态编码和合并/冲突语义；不得用其中一个维度替代其他维度。
 
-证据状态为 `SCAN_INCOMPLETE` 时继续调查，不得生成人工问题。只有证据缺失、冲突、过期、间接、不可访问，或技术事实无法替代业务决策，并且不同答案会实质改变范围、验收、数据、安全、兼容、架构、合规、发布或资源约束时，才创建 `BLOCKING` 问题。每个问题必须引用 Source Point 或 Evidence Gap；可由系统证据可靠解决的问题分类为 `INVALID` 并撤回。
+证据状态为 `SCAN_INCOMPLETE` 时继续调查，不得生成人工问题。只有证据缺失、冲突、过期、间接、不可访问，或技术事实无法替代业务决策，并且不同答案会实质改变范围、验收、数据、安全、兼容、架构、合规、发布或资源约束时，才创建 `BLOCKING` 问题。每个问题必须引用 Source Point 或 Evidence Gap；可由系统证据可靠解决的问题分类为 `INVALID` 并撤回。所有“只能一个”“至少一个”“最多 N 个”“多值应失败”、截断、去重、覆盖或冲突失败规则必须进入 `negative_constraint_inventory` 并给出用户输入、权威证据或人工 Decision；来源缺失且会改变交付结果时必须阻断，不得按实现便利写成契约或测试。
 
-分析报告必须在 Front Matter 写入 `analysis_status`、`analysis_state`、`analysis_gate`、`evidence_scan_status`、`evidence_scan_coverage`、`scan_activity_ids`、Source Point/Evidence Gap 计数、`blocking_question_count`、`blocking_question_ids`、`unresolved_critical_assumption_count`、`allowed_next_states` 和 `forbidden_next_states`。`task_state` 保留表示 `task-state.md` 路径，不得复用为状态值。
+分析报告必须在 Front Matter 写入 `analysis_status`、`analysis_state`、`analysis_gate`、`evidence_scan_status`、`evidence_scan_coverage`、`scan_activity_ids`、Source Point/Evidence Gap 计数、`blocking_question_count`、`blocking_question_ids`、`unresolved_critical_assumption_count`、`unresolved_semantic_decision_count`、`unsupported_negative_constraint_count`、`allowed_next_states` 和 `forbidden_next_states`。`task_state` 保留表示 `task-state.md` 路径，不得复用为状态值。
 
 存在未解决 `BLOCKING` 问题时固定执行：
 
@@ -144,7 +144,7 @@ Checkpoint 状态是阶段放行依据。存在 Blocker 时，当前模式只能
 4. 只接受显式且格式有效的人工回答。收到后创建 `D-*` Decision，状态先写 `HUMAN_INPUT_RECEIVED`，再返回 `ANALYZING`。
 5. 重新扫描受影响范围并重算假设、风险和验收；Analysis Gate 再次通过后才写 `ANALYSIS_READY`。
 
-Analysis Gate 只有在扫描完成且覆盖充分、所有事实有来源、每个阻塞问题有来源或缺口、未解决阻塞问题和关键假设均为零、验收可判定时才通过。人工确认阻塞与后文“计划确认门禁”是两个独立门禁：前者发生在计划前，后者发生在计划与 MR 之间，任一都不得替代另一个。
+Analysis Gate 只有在扫描完成且覆盖充分、所有事实有来源、每个阻塞问题有来源或缺口、未解决阻塞问题、关键假设和语义决策均为零、负向约束全部有来源、验收可判定时才通过。人工确认阻塞与后文“计划确认门禁”是两个独立门禁：前者发生在计划前，后者发生在计划与 MR 之间，任一都不得替代另一个。
 
 ## 分析模式
 
@@ -167,6 +167,8 @@ Analysis Gate 只有在扫描完成且覆盖充分、所有事实有来源、每
 - 主要技术难点和验证难点
 - 风险与约束
 - 用户输入、代码事实、推断和假设清单
+- 语义决策矩阵：数据形状、业务基数、空值、顺序、重复、运行态编码、单节点与并行/聚合合并冲突语义
+- 负向约束清单：约束内容、影响面、来源类型、Source Point/Decision、支持状态
 - 系统证据扫描范围、排除范围、revision、限制和 Scan Activity
 - Source Point 索引、证据冲突与 Evidence Gap
 - 可行性验证路径
@@ -207,7 +209,7 @@ Analysis Gate 只有在扫描完成且覆盖充分、所有事实有来源、每
 ```
 
 项目进度总览卡片记录本次分析状态、关键结论、下一步和更新时间；当前任务契约记录本次分析目标、已读取上下文、分析报告路径和下一步建议。分析模式不得修改产品代码。
-分析报告生成后必须执行 CP2 单产物质量复核，重点检查目标对齐、证据矩阵、推断/假设标注、幻觉内容和下游可用性。CP2 未通过时不得生成实施计划。
+分析报告生成后必须执行 CP2 单产物质量复核，重点检查目标对齐、证据矩阵、推断/假设标注、语义决策矩阵、负向约束来源、幻觉内容和下游可用性。任何适用语义维度为 `UNRESOLVED`，或测试/校验中的负向断言没有来源时，CP2 必须 FAIL；高影响缺口进入 `BLOCKED_HUMAN_CONFIRMATION`。CP2 未通过时不得生成实施计划。
 该 CP2 必须使用 `ANALYSIS Checklist`；若分析对象本身是 BRD/PRD/ADD/LLD/DBD，还必须叠加对应文档 checklist。
 如果当前只完成了代码阅读和口头结论，分析模式仍视为未完成；必须继续补齐分析报告、进度卡片、当前任务契约、checkpoint、handoff、task-state 和 CP2 review，或在最终回复中明确标记为轻量非账本答复。
 
@@ -226,7 +228,7 @@ Analysis Gate 只有在扫描完成且覆盖充分、所有事实有来源、每
 .coder/<development_project_id>/analysis/*-analysis.md
 ```
 
-生成任何计划正文前必须验证最新分析产物为 `analysis_gate: PASSED`、`evidence_scan_status: COMPLETED`、`blocking_question_count: 0`，且任务状态不是 `BLOCKED_HUMAN_CONFIRMATION` 或 `HUMAN_INPUT_RECEIVED`。不满足时返回 `HUMAN_CONFIRMATION_REQUIRED` 或 `ANALYSIS_GATE_FAILED`，只更新阻塞状态，不生成计划草案。
+生成任何计划正文前必须验证最新分析产物为 `analysis_gate: PASSED`、`evidence_scan_status: COMPLETED`、`blocking_question_count: 0`、`unresolved_semantic_decision_count: 0`、`unsupported_negative_constraint_count: 0`，且任务状态不是 `BLOCKED_HUMAN_CONFIRMATION` 或 `HUMAN_INPUT_RECEIVED`。不满足时返回 `HUMAN_CONFIRMATION_REQUIRED` 或 `ANALYSIS_GATE_FAILED`，只更新阻塞状态，不生成计划草案。
 
 如果历史分析报告曾被生成在 `.coder` 外，例如项目根目录或业务目录中的 `*-analysis.md`，应把它作为输入上下文，并在实施计划中记录“外部分析文件来源”。如需要继续维护，应在 `.coder/<development_project_id>/analysis/` 下生成规范化分析摘要。
 

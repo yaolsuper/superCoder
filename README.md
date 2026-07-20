@@ -187,7 +187,7 @@ superCoder/
   │   ├── ops-agent/
   │   ├── deepseek/
   │   └── glm/
-  └── tests/skill-behavior/           # 行为压力测试规格、runner 与 RED/GREEN 结果 P1-P28
+  └── tests/skill-behavior/           # 行为压力测试规格、runner 与 RED/GREEN 结果 P1-P29
 ```
 
 `skills/*/SKILL.md` 只做薄 wrapper 和路由，不复制大段协议正文；详细规则由各子技能的 `references/` 承载。公共术语、模板和配置随主技能分发，统一位于 `skills/superCoder/`。

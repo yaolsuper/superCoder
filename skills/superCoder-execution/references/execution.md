@@ -254,7 +254,7 @@ BUG、缺陷、回归、线上问题、P0/P1/P2 修复和热修任务必须通�
 - 越界风险
 - 结论：开始或停止
 
-只有当当前状态允许执行、任务执行链路完整、最新分析为 `evidence_scan_status: COMPLETED` 与 `analysis_gate: PASSED`、`blocking_question_count: 0`、任务不处于 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED`、启动条件满足、必要上下文已读取、允许/禁止路径明确、验证方式明确、当前 Step 前置依赖已满足、Checkpoint 无未处理 Blocker、`stage_epoch` 三文件一致且当前阶段为 `READY` 或 `RUNNING`、不存在未处理边界风险时，才允许继续。
+只有当当前状态允许执行、任务执行链路完整、最新分析为 `evidence_scan_status: COMPLETED` 与 `analysis_gate: PASSED`、`blocking_question_count: 0`、`unresolved_semantic_decision_count: 0`、`unsupported_negative_constraint_count: 0`、任务不处于 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED`、启动条件满足、必要上下文已读取、允许/禁止路径明确、验证方式明确、当前 Step 前置依赖已满足、Checkpoint 无未处理 Blocker、`stage_epoch` 三文件一致且当前阶段为 `READY` 或 `RUNNING`、不存在未处理边界风险时，才允许继续。旧分析产物缺少任一新增计数字段时按未验证处理，返回 planning 协议补充分析和 CP2，不得把缺失字段默认为零。
 
 启动门禁失败时，输出失败原因、缺失信息、风险等级、建议处理，并明确 `是否继续编码: 否`。
 
@@ -277,7 +277,7 @@ BUG、缺陷、回归、线上问题、P0/P1/P2 修复和热修任务必须通�
 - [ ] `coder-current-task.md`、`project-progress.md`、`checkpoint-status.md` 三者 `stage_epoch` 相等（不一致即 `status_consistency: FAIL`）。
 - [ ] `source_chain.plan` 非 null 且文件实际存在（已 Read 确认，非自证）。
 - [ ] `source_chain.mr` 非 null 且文件实际存在（已 Read 确认，非自证）。
-- [ ] 最新 analysis 的 `evidence_scan_status == COMPLETED`、`analysis_gate == PASSED`、`blocking_question_count == 0`，且 `analysis_state` 不是 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED`。
+- [ ] 最新 analysis 的 `evidence_scan_status == COMPLETED`、`analysis_gate == PASSED`、`blocking_question_count == 0`、`unresolved_semantic_decision_count == 0`、`unsupported_negative_constraint_count == 0`，且 `analysis_state` 不是 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED`；字段缺失不得按零处理。
 - [ ] 所有曾阻塞当前范围的人工答案已持久化为 Decision，并完成重新分析；不存在从沉默、含糊语言或聊天记忆推断的批准。
 - [ ] BUG / 缺陷 / 回归 / 热修任务已通过 `skills/superCoder-bug-root-cause/references/bug-root-cause.md` 的 Pre-Edit Guard 扩展，且没有使用 `HOTFIX`、`inline_hotfix_*` 或 ad-hoc 占位链路。
 - [ ] plan / mr 内容真实对应当前任务，非空壳文件（已 Read 确认正文非空、章节齐全）。

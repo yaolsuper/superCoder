@@ -170,6 +170,7 @@ modules:
       - "skills/superCoder-checkpoint/references/document-review-checklist.md"
       - "skills/superCoder-verification/SKILL.md"
       - "tests/skill-behavior/p28-evidence-first-human-confirmation-gate.md"
+      - "tests/skill-behavior/p29-semantic-cardinality-and-negative-constraint-gate.md"
 
   - id: harness
     routed_by_skill: false
@@ -215,6 +216,7 @@ modules:
       - "tests/skill-behavior/p26-risk-recommendation-classification.md"
       - "tests/skill-behavior/p27-cross-harness-requirement-graph-e2e.md"
       - "tests/skill-behavior/p28-evidence-first-human-confirmation-gate.md"
+      - "tests/skill-behavior/p29-semantic-cardinality-and-negative-constraint-gate.md"
       - "tests/skill-behavior/fixtures/trace-contract/valid/manifest.json"
       - "tests/skill-behavior/fixtures/trace-contract/invalid/cases.json"
       - "tests/skill-behavior/runner/run_scenarios.py"
