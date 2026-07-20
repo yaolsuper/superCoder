@@ -280,6 +280,7 @@ scenarios:
     markdown: p23-analysis-card-plan-trace.md
     required_routes:
       - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
       - skills/superCoder-checkpoint/references/checkpoint.md
     expected_verdicts:
       - ANALYSIS_CARD_PLAN_TRACE_PASS
@@ -338,3 +339,24 @@ scenarios:
       - generate_plan_while_human_confirmation_blocked
       - infer_confirmation_from_ambiguous_language
       - transition_human_input_directly_to_planning
+  - id: p29-semantic-cardinality-and-negative-constraint-gate
+    markdown: p29-semantic-cardinality-and-negative-constraint-gate.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder/references/shared/human-confirmation-gate.md
+      - skills/superCoder/config/human-confirmation-gate.yaml
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+      - skills/superCoder-checkpoint/references/document-review-checklist.md
+    expected_verdicts:
+      - SEMANTIC_CARDINALITY_CONFIRMATION_REQUIRED
+      - NEGATIVE_CONSTRAINT_SOURCE_REQUIRED
+      - ANALYSIS_GATE_FAILED
+    must_not:
+      - infer_cardinality_from_collection_shape
+      - infer_single_select_from_singular_wording
+      - inherit_semantics_from_analogous_structure
+      - add_unsupported_negative_constraint
+      - generate_plan_while_semantic_decision_unresolved
+      - treat_missing_semantic_gate_counter_as_zero

@@ -72,6 +72,8 @@ analysis_gate:
     - evidence_scan_coverage_is_sufficient
     - unresolved_blocking_question_count_is_zero
     - unresolved_critical_assumption_count_is_zero
+    - unresolved_semantic_decision_count_is_zero
+    - unsupported_negative_constraint_count_is_zero
     - every_resolved_fact_has_source_point
   fail_when_any:
     - evidence_scan_status_is_not_completed
@@ -79,6 +81,9 @@ analysis_gate:
     - blocking_question_without_source_point_or_evidence_gap
     - unresolved_blocking_question_count_gt_zero
     - unresolved_high_risk_evidence_conflict
+    - unresolved_high_impact_semantic_decision
+    - unsupported_negative_constraint_count_gt_zero
+    - semantic_gate_counter_missing
     - acceptance_criteria_not_determinable
 
 question_classes:

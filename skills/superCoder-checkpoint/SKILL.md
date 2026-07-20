@@ -23,6 +23,7 @@ description: 当 superCoder 任务需要 CP0-CP5 判断、正式产物复核、�
 - 基于证据输出 PASS / CONDITIONAL_PASS / FAIL。
 - 存在未解决 blocker 时阻断下游生成或执行。
 - 复核证据扫描覆盖、问题来源、显式回答归因和重新分析状态转换。
+- 复核语义维度是否逐项闭合，以及负向约束是否有用户输入、权威证据或人工 Decision 来源。
 - 保持 Reviewer 输出和 Fixer 输出分离。
 - 在 CP5 交付批准前要求 ledger-audit 结论。
 - 使用统一决策契约组合 Review findings、Ledger Audit facts 和 Checkpoint 门禁。

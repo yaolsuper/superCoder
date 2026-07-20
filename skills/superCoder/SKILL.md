@@ -50,6 +50,7 @@ description: 当开发任务可能需要 superCoder 规划、执行、账本恢�
 10. `STANDARD` / `CONTROLLED` 的需求整体完成前必须生成 `requirement-delivery-summary.md`；缺失或与实际实现漂移时不得声明需求完成。需要供后续需求做关联跟踪的任务至少使用 `STANDARD`。
 11. 创建人工阻塞问题前必须完成有界系统证据扫描；每个问题必须引用稳定 Source Point 或 Evidence Gap。可由代码、配置、Schema、测试、文档或历史决策可靠回答的问题不得转给用户。
 12. 存在未解决 `BLOCKING` 问题时必须写入 `BLOCKED_HUMAN_CONFIRMATION` 并禁止 planning、MR、产品代码修改、迁移、部署和提交范围；收到显式人工回答后必须先返回 `ANALYZING` 重新运行 Analysis Gate，不得直接进入 planning 或 execution。
+13. 数据结构、字段类型和单复数文案不得替代业务语义。遇到数组/集合、相似能力复用、固定对象选择或跨节点汇总时，必须分别核对基数、空值、顺序、去重、运行态编码及合并/冲突规则；任何“只能一个”“至少一个”“最多 N 个”“多值应失败”等负向约束必须追溯到用户原话、权威协议、明确要求保持的现状或显式人工 Decision，否则按影响等级进入人工确认门禁。
 
 人工确认状态、动作和转换以 `config/human-confirmation-gate.yaml` 为机器契约；详细流程读取 `references/shared/human-confirmation-gate.md`，输出结构读取 `assets/templates/human-confirmation.md`。必需资源缺失时返回 `SKILL_RESOURCE_BLOCKED`。
 

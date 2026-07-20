@@ -8,7 +8,7 @@
 
 ```bash
 python3 tests/skill-behavior/runner/run_scenarios.py --scenario P16 --format json
-python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P28 --format json
+python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P29 --format json
 ```
 
 每次调整协议后，至少为受影响场景补一份 `results/<date>-<scenario-id>.md`，记录 RED/GREEN 证据：无新规则或旧规则下的失败表现、应用当前技能后的通过表现、模型/入口、判分结论和仍待补测项。只有场景规格没有执行结果时，只能说明“已有压力规格”，不能声称行为已验证。
@@ -41,6 +41,7 @@ python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P28 --format 
 | P25-P26 completion governance | materialize / traceability | 未收敛 Change 或非法提升 Risk/Recommendation/Module |
 | P27 cross-harness E2E | app-agent / opencode adapters | JSON/exit/scope 漂移或静态走查伪装执行 |
 | P28 evidence-first human confirmation gate | planning / execution / checkpoint / human confirmation contract | 未扫描就提问、问题无来源、阻塞态生成计划/代码、含糊回答或直接恢复到 planning |
+| P29 semantic cardinality and negative constraint gate | planning / execution / checkpoint / human confirmation contract | 从数组、单数文案或相似结构推断业务基数，让无来源负向约束进入计划/校验/测试，或由旧分析恢复旁路 |
 
 ## 通过标准
 

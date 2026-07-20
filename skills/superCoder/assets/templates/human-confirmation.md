@@ -21,12 +21,46 @@ evidence_gap_count: 1
 blocking_question_count: 1
 blocking_question_ids: [Q-001]
 unresolved_critical_assumption_count: 0
+unresolved_semantic_decision_count: 1
+unsupported_negative_constraint_count: 0
 allowed_next_states: [BLOCKED_HUMAN_CONFIRMATION]
 forbidden_next_states: [PLANNING, EXECUTING]
 ---
 ```
 
 正文至少包含：扫描范围与限制、已确认事实、证据冲突与缺口、关键推断、人工待确认问题、非阻塞假设和恢复条件。
+
+## Semantic Decision Matrix
+
+```yaml
+semantic_decision:
+  id: SEM-001
+  subject: "<field-or-business-concept>"
+  trigger: COLLECTION_SHAPE | SINGULAR_PLURAL_WORDING | ANALOGOUS_FEATURE | PARALLEL_AGGREGATION
+  dimensions:
+    data_shape: {status: RESOLVED_BY_EVIDENCE, value: "array", source_refs: [SRC-001]}
+    cardinality: {status: UNRESOLVED, value: null, source_refs: [GAP-001]}
+    empty_behavior: {status: NOT_APPLICABLE, value: null, source_refs: []}
+    ordering: {status: UNRESOLVED, value: null, source_refs: [GAP-001]}
+    duplicates: {status: UNRESOLVED, value: null, source_refs: [GAP-001]}
+    runtime_encoding: {status: UNRESOLVED, value: null, source_refs: [GAP-001]}
+    merge_conflict: {status: UNRESOLVED, value: null, source_refs: [GAP-001]}
+  impact_if_unresolved: [API_CONTRACT, VALIDATION, RUNTIME, TESTS]
+  blocking_question_ids: [Q-001]
+```
+
+## Negative Constraint Inventory
+
+```yaml
+negative_constraint:
+  id: NC-001
+  statement: "<例如 values 必须且只能包含一个元素>"
+  enforcement_points: [SCHEMA, PUBLISH_VALIDATION, RUNTIME, TEST]
+  source_type: USER_INPUT | AUTHORITATIVE_SPEC | EXISTING_BEHAVIOR | HUMAN_DECISION | UNSUPPORTED
+  source_refs: []
+  status: SUPPORTED | UNSUPPORTED
+  blocking_question_id: Q-001
+```
 
 ## Scan Activity
 
@@ -84,7 +118,7 @@ evidence_gap:
 question:
   id: Q-001
   type: BLOCKING
-  category: ACCESS_CONTROL
+  category: ACCESS_CONTROL | CARDINALITY_AND_COLLECTION_SEMANTICS
   status: PENDING
   asks_about: TARGET_BEHAVIOR
   question: "<可直接回答的问题>"
