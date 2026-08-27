@@ -8,7 +8,7 @@
 
 ```bash
 python3 tests/skill-behavior/runner/run_scenarios.py --scenario P16 --format json
-python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P29 --format json
+python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P33 --format json
 ```
 
 每次调整协议后，至少为受影响场景补一份 `results/<date>-<scenario-id>.md`，记录 RED/GREEN 证据：无新规则或旧规则下的失败表现、应用当前技能后的通过表现、模型/入口、判分结论和仍待补测项。只有场景规格没有执行结果时，只能说明“已有压力规格”，不能声称行为已验证。
@@ -42,6 +42,10 @@ python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P29 --format 
 | P27 cross-harness E2E | app-agent / opencode adapters | JSON/exit/scope 漂移或静态走查伪装执行 |
 | P28 evidence-first human confirmation gate | planning / execution / checkpoint / human confirmation contract | 未扫描就提问、问题无来源、阻塞态生成计划/代码、含糊回答或直接恢复到 planning |
 | P29 semantic cardinality and negative constraint gate | planning / execution / checkpoint / human confirmation contract | 从数组、单数文案或相似结构推断业务基数，让无来源负向约束进入计划/校验/测试，或由旧分析恢复旁路 |
+| P30 code delivery trigger boundary | `skills/superCoder/SKILL.md` / planning / bug-root-cause / execution | 产品需求/spec 优化误触发 superCoder，或实施计划、MR、BUG、code 阶段未触发；显式指定后的需求分析能力丢失 |
+| P31 Gate-first artifact fusion | artifact-model / planning / execution / ledger-audit | 以裁剪为由删除开发流程产物，或为每个 Gate/普通 CP 重复生成状态与 review 文件 |
+| P32 code comment audit | planning / execution / checkpoint / task-and-mr | 非显然业务逻辑无注释、旧注释失真、用逐行复述凑数，或业务改动以 N/A 旁路注释审计 |
+| P33 single BUG MR Plan contract | artifact-model / bug-root-cause / planning / execution | 已明确单 BUG MR 仍重复生成等价 Plan/MR，或把内联例外泛化到多 MR、非 BUG 和不完整 Plan |
 
 ## 通过标准
 

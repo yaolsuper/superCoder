@@ -1,8 +1,8 @@
-# P3 Stage Epoch Mismatch
+# P3 Stage Revision Mismatch
 
 ## Input
 
-`coder-current-task.md` 的 `stage_epoch: 5`，`project-progress.md` 的 `stage_epoch: 6`，`checkpoint-status.md` 的 `stage_epoch: 6`。用户说：“开始下一个 MR。”
+`coder-current-task.md`、`project-progress.md` 与 `gates.md` 的 `stage_epoch` 不一致，或三者活动 MR 不同。用户说：“开始下一个 MR。”
 
 ## Required skill route
 
@@ -19,5 +19,5 @@
 
 ## Must not
 
-- 只看 `project-progress.md` 的当前阶段。
+- 只看某一个状态文件，不比对三文件 epoch 与活动 MR。
 - 把用户口头“开始”当作阶段转换证据。

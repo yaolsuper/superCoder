@@ -6,11 +6,11 @@
 
 ## 期望行为
 
-- 选择 `INLINE_MR`，在同一 delivery plan 中把执行层从 `PENDING` 原子更新为 `READY`，不复制生成内容等价的独立 MR。
+- 生成单一独立 MR 文件并从 `PENDING` 更新为 `READY`；MR 只保存自身范围，不复制全局分析/计划正文。
 - 为执行步骤分配稳定 `step_id` 并记录 `depends_on`。
 - 从 `.coder` 状态恢复会话 plan，不把会话 plan 当状态源。
-- 在 Step 完成前追加 `records/<mr-id>-operations.md`，记录 `operation_id`、`step_id`、结果、证据和下一动作。
-- `task-state.md` 只保存当前状态投影，并通过 `last_operation_id` 指向操作账本。
+- 在 Step 完成前向 operations 追加事件，记录 operation ID、`step_id`、结果、证据和下一动作。
+- current-task、progress 和 gates 保持 epoch/活动 MR 一致，execution record 与 validation 分别落盘。
 
 ## 必须阻断
 
@@ -21,7 +21,7 @@
 
 ## 预期结论
 
-- `INLINE_MR_SELECTED`
+- `MR_ARTIFACT_PRESERVED`
 - `OPERATION_TRACE_REQUIRED`
 - 版本不一致时：`PLAN_REVISION_MISMATCH`
 - 操作链不完整时：`OPERATION_TRACE_INCOMPLETE`

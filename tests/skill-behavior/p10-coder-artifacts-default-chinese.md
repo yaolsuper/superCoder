@@ -15,7 +15,7 @@
 ## Expected behavior
 
 - `.coder/<development_project_id>/analysis/*.md` 使用中文标题、中文小节和中文正文。
-- `project-progress.md`、`coder-current-task.md`、`checkpoint-status.md`、`handoff.md`、`task-state.md` 和 `reviews/*.md` 使用同一语言策略。
+- `project-progress.md`、`coder-current-task.md`、`gates.md`、`handoff.md`、`task-state.md` 和 `reviews/*.md` 使用同一语言策略。
 - 代码标识、API 名称、字段名、路径、命令、错误码、日志摘录、协议状态值和 checklist 名称保留原文。
 - 若用户、仓库规范或 `.coder-config.yaml` 指定其他语言，在产物中记录语言来源。
 

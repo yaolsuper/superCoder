@@ -31,39 +31,29 @@ workspace:
   auto_create: true
   # .coder/** 正式产物默认语言。可按项目需要改为 en-US 等；未配置时 superCoder 默认中文。
   artifact_language: "zh-Hans"
-  # 项目进度总览卡片文件名。每轮分析、规划、执行、验证或验收结束前必须创建或更新。
   progress_overview_file: "project-progress.md"
-  # Checkpoint 状态文件名。每轮正式产物生成、执行或验收结束前必须创建或更新。
-  checkpoint_status_file: "checkpoint-status.md"
-  # 跨模型 / 跨轮次恢复状态文件名。每轮正式阶段结束前必须创建或更新。
+  gate_ledger_file: "gates.md"
   handoff_file: "handoff.md"
-  # 长任务恢复摘要文件名。用于跨轮次恢复目标、边界、关键决策和下一步。
   context_summary_file: "context-summary.md"
-  # 当前任务状态文件名。用于记录 todo/doing/done/blocked、依赖和最近恢复点。
   task_state_file: "task-state.md"
-  # 单交付单元默认内联 plan/MR，多个交付单元或高风险任务使用独立 MR 文件。
-  artifact_strategy: "auto"
-  inline_mr_max_delivery_units: 1
-  # 当前 MR 的追加式操作账本文件名模板。
+  current_task_file: "coder-current-task.md"
+  # 单 BUG MR 可在满足完整合约与无独立边界时由 Plan 内联承载。
+  allow_single_bug_mr_plan: true
+  single_bug_mr_strategy: "SINGLE_MR_PLAN"
   operation_ledger_template: "${mr_id}-operations.md"
-  # 需求整体完成后的最终落地摘要，供后续需求关联发现。
-  requirement_delivery_summary_file: "requirement-delivery-summary.md"
-  # 标准验证记录文件名模板。实际文件名可替换 task_or_mr_id。
+  execution_record_template: "${mr_id}-execution-record.md"
   validation_record_template: "${task_or_mr_id}-validation.md"
-  # 标准偏差记录文件名模板。实际文件名可替换 deviation_id。
   deviation_record_template: "${deviation_id}.md"
-  # 标准子目录。可按项目需要扩展，但不建议改名。
+  requirement_delivery_summary_file: "requirement-delivery-summary.md"
   subdirs:
-    current_task: ""
     analysis: "analysis"
+    plans: "plans"
     reviews: "reviews"
     mrs: "mrs"
     records: "records"
-    deviations: "deviations"
     validation: "validation"
-    plans: "plans"
+    deviations: "deviations"
     decisions: "decisions"
-    archive: "archive"
   # 执行产物允许写入路径。该规则只适用于协议产物，不代表产品代码允许修改范围。
   artifact_allowed_paths:
     - ".coder/**"
@@ -134,7 +124,7 @@ review:
   require_validation_note: true
   forbid_unbounded_generalization: true
   require_checkpoint_review: true
-  checkpoint_status_file: "checkpoint-status.md"
+  checkpoint_status_file: "gates.md"
   checkpoint_reports_dir: "reviews"
   require_document_type_checklist: true
   require_generator_reviewer_fixer_separation: true
@@ -165,6 +155,18 @@ review:
     - "HIGH"
     - "MEDIUM"
     - "LOW"
+
+# ===== 代码注释策略 =====
+code_comments:
+  require_comment_audit: true
+  explain_why_not_what: true
+  require_for_non_obvious_business_rules: true
+  require_for_invariants_and_edge_cases: true
+  require_for_compatibility_and_workarounds: true
+  require_for_concurrency_security_and_performance: true
+  update_stale_comments: true
+  forbid_commented_out_code: true
+  allow_na_for_self_explanatory_changes_with_reason: true
 
 # ===== 路径配置 =====
 paths:
@@ -425,20 +427,13 @@ documentation:
   # MR 文件目录
   mr_root: "docs/mrs/"
   
-  # 当前任务文件
-  current_task_file: "coder-current-task.md"
-
-  # 项目进度总览卡片
+  current_task: ".coder/${development_project_id}/coder-current-task.md"
   progress_overview: ".coder/${development_project_id}/project-progress.md"
-  
-  # 执行记录文件。可用 ${development_project_id} 表示 workspace.development_project_id。
-  execution_log: ".coder/${development_project_id}/records/execution-log.md"
-  # 当前任务或 MR 的标准执行记录文件。实际文件名可替换 task-or-mr-id。
-  execution_record: ".coder/${development_project_id}/records/${task_or_mr_id}-execution-record.md"
-  # 当前任务或 MR 的标准验证记录文件。
+  gates: ".coder/${development_project_id}/gates.md"
+  execution_record: ".coder/${development_project_id}/records/${mr_id}-execution-record.md"
+  operation_ledger: ".coder/${development_project_id}/records/${mr_id}-operations.md"
   validation_record: ".coder/${development_project_id}/validation/${task_or_mr_id}-validation.md"
-  # 跨模型恢复入口。
   handoff: ".coder/${development_project_id}/handoff.md"
-  
-  # 偏差记录文件
-  deviation_log: ".coder/${development_project_id}/deviations/deviations.md"
+  context_summary: ".coder/${development_project_id}/context-summary.md"
+  task_state: ".coder/${development_project_id}/task-state.md"
+  deviation: ".coder/${development_project_id}/deviations/${deviation_id}.md"

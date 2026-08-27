@@ -1,18 +1,20 @@
 # 当前任务、MR 与偏差模板
 
+> 当前任务、MR、恢复、执行和验证产物模板。Gate 表格与 Checkpoint 状态统一引用 `gates.md`，不在本文件重复维护。
+
 本文件只在需要当前任务结构、MR 文件结构、状态维护或偏差记录模板时读取。门禁表格见同目录 `gates.md`，项目进度总览卡片见同目录 `progress-overview.md`。
 本文件位于主技能目录 `skills/superCoder/assets/templates/`；共享资源不得从包根 `shared/` 或工作区同名目录读取。
 
 ## 产物策略字段
 
 ```yaml
-artifact_strategy: INLINE_MR | SPLIT_MR
+artifact_strategy: SINGLE_MR_PLAN | SINGLE_MR_FILE | MULTI_MR
 delivery_unit_count: 1
 plan_revision: 1
 based_on_plan_revision: 1
 ```
 
-`INLINE_MR` 允许 plan 与 MR 指向同一 delivery plan；`SPLIT_MR` 必须使用独立 MR 文件。两种策略的执行层都必须使用稳定 `step_id`。
+`SINGLE_MR_PLAN` 仅用于 analysis 和 Plan 已通过的单 BUG MR；Plan 标记 `execution_contract: true` 并补齐 MR 合约字段，不创建等价 MR。其他单 MR 使用 `SINGLE_MR_FILE`，多个交付单元使用 `MULTI_MR`。
 
 ## 当前任务结构
 
@@ -22,14 +24,15 @@ based_on_plan_revision: 1
 task_id: string
 development_project_id: string
 mr_id: string
-artifact_strategy: INLINE_MR | SPLIT_MR
+artifact_strategy: SINGLE_MR_PLAN | SINGLE_MR_FILE | MULTI_MR
+execution_contract: true | false
 plan_revision: int
 based_on_plan_revision: int
 status: PENDING | READY | RUNNING | BLOCKED | VERIFYING | ACCEPTED | MERGED
 execution_mode: single_mr | continuous_project
 manual_confirmation_required: true | false
 manual_confirmation_reason: explicit_user_request | startup_blocker | ambiguous_safe_plan | scope_change | none
-stage_epoch: int                      # 单调递增阶段版本号，与 project-progress.md / checkpoint-status.md 必须相等
+stage_epoch: int                      # 单调递增阶段版本号，与 project-progress.md / gates.md 必须相等
 stage_last_transition:
   from: ANALYSIS | PLANNING | MR_SPLIT | READY | RUNNING | VERIFYING | ACCEPTED
   to: ANALYSIS | PLANNING | MR_SPLIT | READY | RUNNING | VERIFYING | ACCEPTED
@@ -37,7 +40,7 @@ stage_last_transition:
 objective: string
 artifact_root: .coder/<development_project_id>/
 progress_overview: .coder/<development_project_id>/project-progress.md
-checkpoint_status: .coder/<development_project_id>/checkpoint-status.md
+gate_ledger: .coder/<development_project_id>/gates.md
 handoff: .coder/<development_project_id>/handoff.md
 review_profile:
   document_type: MR | ANALYSIS | PLAN | CURRENT_TASK | EXECUTION_RECORD | ACCEPTANCE_DECISION
@@ -115,7 +118,7 @@ auto_start_next_allowed: true | false
 
 `handoff` 是跨模型、跨轮次和上下文压缩后的第一恢复入口。它必须保持短小，只记录目标、当前阶段、活动 MR、允许/禁止路径、已读文件、已改文件、验证状态、Checkpoint 状态、Blocker 和下一步协议，不粘贴完整日志、完整 diff 或完整 MR 正文。
 `context_summary` 和 `task_state` 是长任务恢复入口。它们应保持短小，只记录目标、边界、当前阶段、关键决策、未完成项、下一步和最近恢复点，不粘贴完整日志或完整 MR 正文。
-`checkpoint_status` 和 `review_reports` 是阶段放行入口。当前任务启动前只需读取状态摘要和当前 MR 相关复核报告；若存在未处理 Blocker，当前任务只能修复对应问题或记录阻塞，不得继续执行。
+`gate_ledger` 和 `review_reports` 是阶段放行入口。当前任务启动前只需读取 Gate 摘要和当前 MR 相关复核报告；若存在未处理 Blocker，当前任务只能修复对应问题或记录阻塞，不得继续执行。
 
 ## Markdown 状态源规则
 
@@ -136,14 +139,14 @@ auto_start_next_allowed: true | false
 
 ## 跨模型恢复结构
 
-当用户说“继续”“开始执行”“实施开发”“直到任务完成”，或当前模型不是生成上一阶段产物的模型时，先读取 `handoff`、`progress_overview`、`checkpoint_status`、`task_state` 和当前 MR，再输出恢复门禁。恢复结果必须写回：
+当用户说“继续”“开始执行”“实施开发”“直到任务完成”，或当前模型不是生成上一阶段产物的模型时，先读取 `handoff`、`progress_overview`、`gate_ledger`、`task_state` 和当前 MR，再输出恢复门禁。恢复结果必须写回：
 
 ```yaml
 resume_gate:
   source_files:
     - .coder/<development_project_id>/coder-current-task.md
     - .coder/<development_project_id>/project-progress.md
-    - .coder/<development_project_id>/checkpoint-status.md
+    - .coder/<development_project_id>/gates.md
     - .coder/<development_project_id>/handoff.md
   stage_epoch_consistency: PASS | FAIL   # 三文件 stage_epoch 必须相等
   current_stage: ANALYSIS | PLANNING | MR_SPLIT | READY | RUNNING | VERIFYING | ACCEPTED
@@ -158,7 +161,7 @@ resume_gate:
 
 ## MR 执行层结构
 
-`SPLIT_MR` 的每个 MR 必须是 `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` 下的独立文件，实施计划只能链接这些文件。`INLINE_MR` 使用 delivery plan 内的执行层，不创建内容等价的第二份文件。
+`SINGLE_MR_PLAN` 的 Plan 自身就是 MR 执行契约；其他策略下，每个 MR 是 `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` 独立文件。Plan 和 MR 通过引用分工，不复制正文。
 
 独立 MR 文件或内联执行层只能在计划确认后的 MR_SPLIT 阶段进入可执行状态。计划待确认时不得创建独立 MR 文件，也不得把任何候选或内联执行层标记为 `READY`。
 
@@ -277,6 +280,12 @@ MR 文件必须是详细落地指导和边界文件，不能只是执行摘要�
 |---|---|---|---|
 |  |  |  |  |
 
+## 代码注释计划
+
+| 文件 / 符号 | 动作（新增/保留/更新/删除/N/A） | 需解释的意图或约束 | 验证方式 |
+|---|---|---|---|
+|  |  |  |  |
+
 ## 质量检查清单
 
 - 不改变当前 MR 外接口或配置。
@@ -300,7 +309,7 @@ previous_required_status: ACCEPTED
 next_mr: MR-Y
 can_start_next: false
 auto_start_next_allowed: false
-checkpoint_status: .coder/<development_project_id>/checkpoint-status.md
+gate_ledger: .coder/<development_project_id>/gates.md
 current_checkpoint:
   id: CP4
   status: PASS | FAIL | N/A
@@ -415,7 +424,7 @@ SCOPE_DEVIATION / ENV_BLOCKER / TEST_FAILURE / CROSS_MR_ISSUE / REQUIREMENT_CHAN
 - `coder-current-task.md`：
 - `handoff.md`：
 - `task-state.md`：
-- `checkpoint-status.md`：
+- `gates.md`（只写 Gate/Checkpoint 结论，不写执行或验证正文）：
 
 ## 是否继续编码
 否

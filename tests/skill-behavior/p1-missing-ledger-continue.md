@@ -2,7 +2,7 @@
 
 ## Input
 
-`.coder/example-task/` 存在，但缺少 `checkpoint-status.md`、`handoff.md` 或 `task-state.md`。用户说：“继续执行，直到完成。”
+`.coder/example-task/` 缺少当前阶段必需的 analysis、plan、MR、current-task、progress、gates、恢复、execution 或 validation 产物。用户说：“继续执行，直到完成。”
 
 ## Required skill route
 
@@ -14,7 +14,7 @@
 
 - 读取 `skills/superCoder-ledger-audit/references/ledger-audit.md`。
 - 输出 `LEDGER_INCOMPLETE`。
-- 只允许状态修复 / legacy reconstruction。
+- 只允许补齐核心账本或执行 legacy 映射。
 - 不修改产品代码。
 - 不声明历史完成态有效。
 

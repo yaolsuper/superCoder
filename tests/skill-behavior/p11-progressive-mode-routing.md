@@ -8,7 +8,7 @@
 
 - 选择 `LIGHT`，只维护单一 `light-task.md`。
 - 保留目标、路径守卫、diff、验证和剩余风险。
-- 不要求 analysis / plan / MR / stage_epoch / CP0–CP5。
+- 不要求 analysis / plan / MR / compact core / CP0–CP5。
 - 任务扩大或出现未解释失败时，在继续修改前升级。
 
 ## 禁止

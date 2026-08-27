@@ -2,7 +2,7 @@
 
 ## 场景
 
-`.coder/example-task/` 已有完整 analysis、plan、MR 和 `coder-current-task.md`，当前阶段为 `READY`，三文件 `stage_epoch` 一致，CP4 无 Blocker。尚未发生 `READY -> RUNNING` 阶段转换，因此没有 pre-edit guard 通过记录，也没有 CP5 review。
+`.coder/example-task/` 已有可解析的 analysis、plan、MR、current-task、progress、gates 和恢复产物，当前阶段为 `READY`，CP4 无 Blocker。尚未发生 `READY -> RUNNING` transition，因此没有 pre-edit guard 通过记录，也没有 CP5 review。
 
 用户说：“开始执行当前 MR。”
 

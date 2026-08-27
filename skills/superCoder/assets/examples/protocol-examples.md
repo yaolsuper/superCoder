@@ -1,5 +1,7 @@
 # Coder 开发执行协议示例
 
+> 当前开发产物示例。Gate/Checkpoint 状态统一使用 `../templates/gates.md`，其他开发流程产物继续按本示例和 `../templates/task-and-mr.md` 生成。
+
 本文件只在需要示例、启动 Prompt 或多技术栈任务样例时读取。门禁表格见 `../templates/gates.md`；Checkpoint 细则见 `skills/superCoder-checkpoint/references/checkpoint.md`；场景 Review Checklist 见 `skills/superCoder-checkpoint/references/document-review-checklist.md`；Generator / Reviewer / Fixer 提示词见 `skills/superCoder-checkpoint/references/prompts/`；项目进度卡片见 `../templates/progress-overview.md`；当前任务和 MR 模板见 `../templates/task-and-mr.md`。
 
 ## 启动 Prompt
@@ -20,13 +22,13 @@
 10. Checkpoint 输出复核和状态文件
 11. 跨模型 / 跨轮次恢复必须先读取 handoff、当前任务、进度、Checkpoint、当前 MR 和相关 Review
 12. 偏差停止协议
-13. 分层推导链路：分析报告必须有证据矩阵，实施计划必须有分析结论映射，MR 文件必须有来源链路
+13. 分层推导链路：analysis 必须有证据矩阵，Plan 必须有结论映射，活动执行契约必须有来源链路
 14. 代码审查和质量审核必须有范围、证据、推理链和验证说明，不得无界泛化
 15. 正式编码执行必须满足 analysis -> implementation plan -> detailed MR -> coder-current-task -> execution 完整链路；`source_chain.plan:null` 启动门禁失败
-16. MR 文件必须是详细落地指导与边界文件，包含文件级变更计划、接口/方法契约、数据契约、实施步骤、测试矩阵和质量检查清单
-17. 实施计划默认先待确认，计划确认前不得生成独立 MR 文件、不得把 MR 标记为 READY、不得进入编码执行
-18. 阶段转换（计划确认、开始执行、进入下一 MR）必须以 coder-current-task / project-progress / checkpoint-status 三文件 stage_epoch 同步跳变为唯一证据；无 epoch 跳变不得声称阶段已变，不得据此修改产品代码
-19. 修改产品代码前必须通过 pre-edit guard：当前阶段 == RUNNING、三文件 stage_epoch 一致、source_chain.plan/mr 文件真实存在、路径守卫通过、CP4 无 Blocker；任一不满足禁止调用产品代码修改工具
+16. 执行契约必须包含文件级计划、接口/数据契约、实施步骤、测试矩阵和质量清单；SINGLE_MR_PLAN 由 Plan 承担，其他场景使用 MR 文件
+17. Plan 默认先待确认，确认前不得生成或激活执行契约、不得标记 READY、不得进入编码
+18. 阶段转换必须先在 `gates.md` 追加 Gate 记录，再同步更新 current-task 与 progress 的 `stage_epoch`；三者不一致不得推进
+19. 修改产品代码前必须通过 pre-edit guard：当前阶段 == RUNNING、transition evidence 一致、source chain 真实、路径守卫通过、CP4 无 Blocker
 20. 用户口头指令不得直接升级阶段；含糊指令（继续 / 接着做）在等待确认态只能原地或请求澄清；阶段升级需“可升级 + stage_epoch 写入 + 触发词明确”三者同时满足
 21. 有依赖关系的 Step 必须串行执行、逐项复核和逐项放行，不得合并并行生成
 22. 正式 Review 必须判定文档/产物类型，并使用对应场景 checklist；不得用通用 checkpoint 清单替代 BRD/PRD/ADD/LLD/DBD/MR 或 Coder 产物专项标准
@@ -61,7 +63,7 @@
 7. Checkpoint 状态更新结果
 8. 验收决策
 
-每轮结束前必须创建或更新 `.coder/<development_project_id>/project-progress.md`、`.coder/<development_project_id>/checkpoint-status.md` 和 `.coder/<development_project_id>/handoff.md`。修改产品代码的轮次还必须创建或更新 `.coder/<development_project_id>/records/<task-or-mr-id>-execution-record.md`。没有验证结果、执行记录、项目进度总览卡片、handoff，或存在未处理 Checkpoint Blocker，不得声明完成。
+每轮结束前更新 current-task、progress、gates、handoff/context/task-state、operations/execution record 和 validation。没有新鲜验证、账本不一致或存在未处理 Blocker 时不得声明完成；普通 Gate 结论不另建 checkpoint-status 或空 review。
 
 分析、规划或 MR 拆分完成前必须确认：证据矩阵、分析结论映射、计划确认门禁、MR 来源链路、专项复核报告、Checkpoint 状态和项目进度总览卡片的状态一致性检查都已生成。
 专项复核报告必须写明 document_type 和 checklist_set。
@@ -89,7 +91,7 @@ stage_last_transition:
 objective: 只完成当前模块的目标功能实现。
 artifact_root: .coder/example-platform/
 progress_overview: .coder/example-platform/project-progress.md
-checkpoint_status: .coder/example-platform/checkpoint-status.md
+gate_ledger: .coder/example-platform/gates.md
 handoff: .coder/example-platform/handoff.md
 review_profile:
   document_type: MR
@@ -156,7 +158,7 @@ objective: 完成用户服务的 CRUD API 实现
 tech_stack: [java, spring-boot, maven]
 artifact_root: .coder/example-java-service/
 progress_overview: .coder/example-java-service/project-progress.md
-checkpoint_status: .coder/example-java-service/checkpoint-status.md
+gate_ledger: .coder/example-java-service/gates.md
 handoff: .coder/example-java-service/handoff.md
 execution_record: .coder/example-java-service/records/java-mr-3-user-service-execution-record.md
 artifact_allowed_paths:
@@ -204,7 +206,7 @@ objective: 实现数据处理流水线
 tech_stack: [python, pytest]
 artifact_root: .coder/example-python-pipeline/
 progress_overview: .coder/example-python-pipeline/project-progress.md
-checkpoint_status: .coder/example-python-pipeline/checkpoint-status.md
+gate_ledger: .coder/example-python-pipeline/gates.md
 handoff: .coder/example-python-pipeline/handoff.md
 execution_record: .coder/example-python-pipeline/records/python-mr-2-data-pipeline-execution-record.md
 artifact_allowed_paths:
@@ -249,7 +251,7 @@ objective: 实现用户认证模块
 tech_stack: [nodejs, express, jest]
 artifact_root: .coder/example-node-api/
 progress_overview: .coder/example-node-api/project-progress.md
-checkpoint_status: .coder/example-node-api/checkpoint-status.md
+gate_ledger: .coder/example-node-api/gates.md
 handoff: .coder/example-node-api/handoff.md
 execution_record: .coder/example-node-api/records/node-mr-4-auth-module-execution-record.md
 artifact_allowed_paths:

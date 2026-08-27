@@ -11,18 +11,19 @@
 | skill_pack | `skills/superCoder/SKILL.md` / `skills/superCoder-*/SKILL.md` | 薄入口 + 多技能组合；每个子技能只承载触发、职责和路由 |
 | decision_contract | `decision-contract.md` | Review、Ledger Audit、Checkpoint 等多协议组合时的统一决策字段、阻断映射和允许动作 |
 | human_confirmation_gate | `human-confirmation-gate.md` / `../../config/human-confirmation-gate.yaml` | 分析阶段的证据扫描、来源点、阻塞问题、显式回答归因和重新分析状态机 |
+| artifact_model | `artifact-model.md` / `../../assets/templates/task-and-mr.md` / `../../assets/templates/gates.md` | 保留开发阶段产物，只融合 Gate/Checkpoint 重复记录 |
 | trace_contract | `trace-model.md` / `knowledge-card-contract.md` / `product-tree-contract.md` | 稳定资源引用、CAE/PROV 关系、Card manifest/section 与产品树治理 |
 | planning | `skills/superCoder-planning/references/planning.md` | 分析、迁移评估、实施计划、MR 拆分和来源链路 |
 | bug_root_cause | `skills/superCoder-bug-root-cause/references/bug-root-cause.md` | BUG、缺陷、回归、线上问题、热修和 P0/P1/P2 修复的根因证据链 |
 | ledger_audit | `skills/superCoder-ledger-audit/references/ledger-audit.md` | 跨模型 / 跨工具恢复、完成态、下一 MR 切换和最终交付前的状态账本审计 |
 | review | `skills/superCoder-review/references/review.md` | 用户明确要求 superCoder 时的代码审查、质量审核、回归风险评估和放行判断 |
-| execution | `skills/superCoder-execution/references/execution.md` | 恢复门禁、阶段升级裁决、阶段转换写入、pre-edit guard、启动门禁、路径守卫、实现、验证、handoff 和执行记录 |
+| execution | `skills/superCoder-execution/references/execution.md` | 恢复门禁、阶段转换、pre-edit guard、路径守卫、实现、验证和 Gate 状态回写 |
 | checkpoint | `skills/superCoder-checkpoint/references/checkpoint.md` | 正式产物复核、依赖顺序检查、Blocker 处理和状态一致性 |
 | verification | `skills/superCoder-verification/SKILL.md` | 声明完成、修复、通过、可提交前的新鲜验证证据门 |
 | document_review | `skills/superCoder-checkpoint/references/document-review-checklist.md` | BRD、PRD、ADD、LLD、DBD、MR 和 Coder 产物的场景化 Review 清单 |
 | prompts | `skills/superCoder-checkpoint/references/prompts/` | Generator、Reviewer、Fixer 三段式角色边界 |
 | execution_guides | `skills/superCoder-execution/references/guides/` | 错误恢复和 CI/CD 集成 |
-| main_skill_resources | `glossary.md` / `../../assets/templates/` / `../../config/` | 跨技能术语、门禁、任务/MR、进度和需求最终落地摘要模板、示例、配置和模块映射 |
+| main_skill_resources | `glossary.md` / `artifact-model.md` / `../../assets/templates/` / `../../config/` | 跨技能术语、Gate 融合模型、模板、配置和模块映射 |
 | harness | `harness/*/tool-mapping.md` | 将“读文件 / 写状态 / 运行验证 / 派发 review”等通用动作映射到具体执行环境 |
 | behavior_tests | `tests/skill-behavior/` | 行为压力测试规格与 RED/GREEN 结果，验证不同模型和 harness 是否遵守路由、阻断和完成前验证规则 |
 
@@ -53,6 +54,7 @@
 - Skill Pack 薄入口与组合路由：`skills/superCoder/SKILL.md` 与 `skills/superCoder-*/SKILL.md`
 - 多协议统一决策契约：`decision-contract.md`
 - 分析阶段证据优先人工确认：`human-confirmation-gate.md`、`../../config/human-confirmation-gate.yaml`
+- 开发产物职责和 Gate 融合：`artifact-model.md`、`../../assets/templates/task-and-mr.md`、`../../assets/templates/gates.md`
 - 追溯对象、关系与状态：`trace-model.md`
 - 需求卡片与产品树格式：`knowledge-card-contract.md`、`product-tree-contract.md`
 - 分析、计划和 MR 拆分细则：`skills/superCoder-planning/references/planning.md`

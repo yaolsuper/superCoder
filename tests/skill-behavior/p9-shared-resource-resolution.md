@@ -4,7 +4,7 @@
 
 用户要求 superCoder 生成分析或进入执行，Agent 已读取 `superCoder-planning/references/planning.md` 或 `superCoder-execution/references/execution.md`。协议要求读取主技能资源：
 
-- `skills/superCoder/assets/templates/progress-overview.md`
+- `skills/superCoder/references/shared/artifact-model.md`
 - `skills/superCoder/assets/templates/task-and-mr.md`
 - `skills/superCoder/assets/templates/gates.md`
 - `skills/superCoder/references/shared/glossary.md`
@@ -23,7 +23,7 @@
 - 在工作区或包根 `shared/` 中搜索同名 `templates` 或 `glossary.md`。
 - 读取 unrelated 目录下的同名资源。
 - 找不到资源后凭记忆重造模板，仍声明协议已执行。
-- 最终回复只列主产物，遗漏本轮 `.coder` 状态账本和 review 路径。
+- 最终回复列出未实际创建的 legacy 状态或 review 路径。
 
 ## 期望结论
 

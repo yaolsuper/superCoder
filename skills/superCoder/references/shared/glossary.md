@@ -48,52 +48,45 @@ BRD -> PRD -> ADD -> LLD -> DBD -> MR 拆分 -> 分阶段实施 -> 回归 -> 验
 
 已有 `.coder/` 项目或当前任务 / MR 契约已明确指向现存产物时，其 `development_project_id` 是恢复标识，必须原样沿用。不得为了补日期而重命名既有目录；需要迁移旧 ID 时必须作为独立迁移任务处理。
 
-推荐目录结构：
+新项目推荐目录结构：
 
 ```text
 .coder/<development_project_id>/
+  analysis/
+  plans/
+  mrs/
   coder-current-task.md
   project-progress.md
-  checkpoint-status.md
+  gates.md
   handoff.md
   context-summary.md
   task-state.md
-  analysis/
+  records/
+  validation/
+  deviations/
   decisions/
   reviews/
-  mrs/
-  records/
-  deviations/
-  validation/
-  plans/
-  archive/
+  requirement-delivery-summary.md
 ```
 
 | 路径 | 含义 |
 |---|---|
 | `.coder/` | 当前项目根目录下的 Coder 执行产物根目录 |
 | `.coder/<development_project_id>/` | 某个开发项目粒度的执行产物目录 |
-| `coder-current-task.md` | 当前唯一任务契约 |
-| `project-progress.md` | 项目进度总览卡片，记录项目阶段、MR 进度、最近执行、验证、偏差和下一步 |
-| `checkpoint-status.md` | Checkpoint 状态文件，记录各阶段复核结论、Blocker 和允许动作 |
-| `handoff.md` | 跨模型、跨轮次和跨阶段恢复入口，记录当前阶段、活动 MR、状态来源、验证、Checkpoint、Blocker 和下一步协议 |
-| `context-summary.md` | 长任务恢复摘要，记录目标、边界、当前阶段、关键决策、下一步和最近恢复点 |
-| `task-state.md` | 当前任务状态机，记录 todo/doing/done/blocked、依赖和启动条件 |
-| `analysis/` | 分析报告、迁移评估、现状调研和规范化分析摘要 |
+| `analysis/` | 开发分析、迁移评估或 BUG 根因矩阵 |
+| `plans/` | 全局实施计划与交付单元拆分 |
+| `mrs/` | SINGLE_MR_FILE、MULTI_MR 或独立审批场景的 MR 文件；SINGLE_MR_PLAN 不创建等价文件 |
+| `gates.md` | Gate/Checkpoint 当前摘要与追加决策历史，替代 checkpoint-status 和独立 Gate 文件 |
+| `records/` | operations 与 execution record |
+| `validation/` | 独立验证记录 |
 | `decisions/` | 人工答案形成的稳定 Decision，关联阻塞问题、扫描活动、来源点或证据缺口 |
-| `reviews/` | Checkpoint 专项复核报告 |
-| `mrs/` | MR 拆分文件、Coder 任务卡、验收矩阵 |
-| `records/` | 每轮执行记录 |
-| `deviations/` | 偏差、blocker、升级记录 |
-| `validation/` | 验证摘要、命令结果摘要、测试报告索引 |
-| `plans/` | 开发实施计划、变更计划、恢复计划 |
-| `archive/` | 已完成任务归档 |
+| `reviews/` | 显式 review、复杂 findings 或发布/CP5 裁决的条件性报告 |
 
 `.coder/**` 是执行产物区，不等同于产品代码修改范围。产物写入文件必须在门禁和执行记录中列出，并遵守 `artifact_allowed_paths`。不得把 `.coder/**` 当作产品代码修改范围来绕过 `allowed_paths` / `forbidden_paths`。
 
 ## 输出语言策略
 
-`.coder/**` 中的分析、计划、MR、复核、handoff、进度、任务状态、执行记录、验证摘要、偏差记录和归档摘要等正式产物默认使用中文。标题、章节名、正文、结论、状态说明、风险说明和 Review 意见都必须遵守该默认值，避免只在最终聊天回复中使用中文、而落盘产物沿用英文技术报告模板。
+`.coder/**` 中的分析、计划、MR、状态、Gate、执行、验证、Decision、复核和需求摘要等正式产物默认使用中文。标题、章节名、正文、结论、状态说明、风险说明和 Review 意见都必须遵守该默认值。
 
 语言选择优先级：
 
@@ -158,15 +151,11 @@ ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> 
 | `task_id` | 当前任务唯一标识 |
 | `development_project_id` | `.coder/` 下按开发项目粒度拆分的目录名 |
 | `artifact_root` | 当前开发项目的执行产物目录 |
-| `progress_overview` | 项目进度总览卡片路径，默认 `.coder/<development_project_id>/project-progress.md` |
-| `checkpoint_status` | Checkpoint 状态文件路径，默认 `.coder/<development_project_id>/checkpoint-status.md` |
-| `handoff` | 跨模型恢复状态文件路径，默认 `.coder/<development_project_id>/handoff.md` |
-| `context_summary` | 长任务恢复摘要路径，默认 `.coder/<development_project_id>/context-summary.md` |
-| `task_state` | 当前任务状态文件路径，默认 `.coder/<development_project_id>/task-state.md` |
+| `artifact_model` | `gate-first-v1`：保留开发流程产物，只融合 Gate/Checkpoint 记录 |
+| `gates` | Gate 单一账本，默认 `.coder/<development_project_id>/gates.md` |
+| `stage_epoch` | current-task、progress、gates 共享的单调递增阶段版本 |
+| `last_gate_id` | 产物指向 `gates.md` 最近适用 Gate 决策的引用 |
 | `analysis_state` | 分析前置状态：`ANALYZING` / `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED` / `ANALYSIS_READY`；不得与表示文件路径的 `task_state` 混用 |
-| `execution_record` | 当前任务或 MR 的执行记录路径，默认 `.coder/<development_project_id>/records/<task-or-mr-id>-execution-record.md` |
-| `validation_record` | 当前任务或 MR 的验证记录路径，默认 `.coder/<development_project_id>/validation/<task-or-mr-id>-validation.md` |
-| `deviation_record` | 偏差、阻塞或回退记录路径，默认 `.coder/<development_project_id>/deviations/<deviation-id>.md` |
 | `review_reports` | 当前任务相关 Checkpoint 专项复核报告路径清单 |
 | `review_profile` | 当前文档或产物的 Review 类型配置，至少包含 `document_type` 和 `checklist_set` |
 | `mr_id` | 当前 MR 标识 |
@@ -176,12 +165,12 @@ ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> 
 | `source_type` | 上下文来源类型：规则、任务、决策、日志、资源、代码或配置 |
 | `freshness` | 上下文当前性标记：当前、可能过期或历史参考 |
 | `source_chain` | 当前任务、计划项或 MR 的来源链路，记录分析报告、实施计划和 MR 文件之间的推导关系 |
-| `artifact_strategy` | 计划与 MR 的产物策略：单交付单元使用 `INLINE_MR`，多 MR/高风险使用 `SPLIT_MR` |
+| `artifact_strategy` | `SINGLE_MR_PLAN`（仅单 BUG MR）、`SINGLE_MR_FILE` 或 `MULTI_MR` |
 | `delivery_unit_count` | 当前确认计划中的独立交付单元数量 |
 | `plan_revision` | 已确认计划的单调递增版本；范围或关键契约变化时增加 |
 | `based_on_plan_revision` | MR 或执行层实际依据的计划版本，必须与当前计划一致 |
 | `step_id` | MR 内稳定的执行步骤标识，用于依赖、操作和证据关联 |
-| `operation_id` | 追加式操作账本中的单调递增操作标识 |
+| `gate_id` | `gates.md` 中追加式 Gate/Checkpoint 决策的稳定标识 |
 | `relation_keys` | 最终落地摘要中的业务关联检索键，包括领域、能力、角色、业务对象、场景和关键词 |
 | `allowed_paths` | 当前任务允许修改的产品代码路径 |
 | `artifact_allowed_paths` | 当前任务允许写入的协议产物路径，默认 `.coder/**` |
@@ -203,7 +192,6 @@ ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> 
 | `evidence_gap` | 未找到可靠来源时记录期望来源、扫描范围、检索词、限制和覆盖结论的证据缺口 |
 | `decision_id` | 显式人工答案形成的稳定 `D-*` Decision ID |
 | `auto_start_next_allowed` | 当前 MR 验收后是否允许自动进入下一 MR 启动门禁；必须基于验证、Checkpoint、状态回写和下一 MR READY 证据 |
-| `stage_epoch` | 阶段版本号；`coder-current-task.md`、`project-progress.md`、`checkpoint-status.md` 三者必须相等，作为阶段转换原子性的可验证证据 |
 | `stage_last_transition` | 最近一次阶段转换记录：from / to / trigger（用户触发词或 Checkpoint 报告 PASS） |
 
 ## 推导链路术语
@@ -217,25 +205,24 @@ ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> 
 | 证据矩阵 | 分析报告中的结论追溯表，记录结论 ID、证据位置、置信度和开放问题 |
 | 根因证据矩阵 | BUG 修复任务 plan 的强制内容，记录故障现象、复现证据、根因定位 file:line、根因结论、修复范围、回归验证；作为 BUG 修复放行依据替代用户对方案的确认，是 pre-edit guard 在 BUG 场景的硬前置 |
 | 分析结论映射 | 实施计划中的映射表，说明阶段或 MR 来自哪些分析结论 |
-| 来源链路 | MR 文件中的来源说明，记录来源分析结论、来源计划项、独立执行原因和继承开放问题 |
-| 任务执行链路 | 正式编码执行的固定链路：分析报告 -> 实施计划 -> 详细 MR 文件 -> 当前任务契约 -> 编码执行 |
-| 详细 MR 文件 | 具体落地指导与边界文件，必须包含文件级变更计划、接口/方法契约、数据契约、实施步骤、测试矩阵和质量检查清单 |
-| 状态一致性检查 | 项目进度总览卡片中的校验表，确认当前任务、当前 MR、进度表、验证摘要和推导链路状态一致 |
-| Markdown 状态源 | 项目内 `.coder/<development_project_id>/*.md` 和子目录下 Markdown 产物，是任务推进、恢复、干预和回退的唯一可信状态来源 |
-| 操作账本 | `records/<mr-id>-operations.md`，按发生顺序追加状态转换、修改、命令、验证、重试、Checkpoint、偏差和回退，不允许覆盖历史 |
-| 状态投影 | `task-state.md` 中对当前 MR、Step、状态、阻塞和最近操作的简短快照；历史事实以操作账本为准 |
+| 来源链路 | 执行契约中的来源说明，记录 analysis、Plan、执行原因和继承开放问题 |
+| 任务执行链路 | analysis → plan → 执行契约（Plan-as-MR 或 MR 文件）→ current-task → operations/execution → validation → acceptance |
+| 执行契约 | 独立 MR，或符合单 BUG MR 例外并标记 `execution_contract: true` 的 Plan |
+| 状态一致性检查 | current-task、progress 与 gates 的阶段、epoch 和活动 MR 一致性 |
+| Markdown 状态源 | 各流程产物按职责记录事实；gates 是 Gate/Checkpoint 唯一状态源 |
+| 操作账本 | `records/<mr-id>-operations.md`，按发生顺序追加修改、命令、重试和回退 |
+| 状态投影 | current-task、progress 与恢复文件按各自职责维护，并引用 `last_gate_id` |
 | 会话计划投影 | Codex/harness 的临时 plan，由 Markdown 状态源恢复，用于展示本轮动作，不是权威状态源 |
 | 需求最终落地摘要 | `.coder/<development_project_id>/requirement-delivery-summary.md`，在需求整体验收后记录最终实现和关联检索信息，供后续需求发现依赖、重叠、冲突和回归风险 |
-| 状态回写 | 将阶段、MR、Step、验证、偏差、回退和下一步写回 Markdown 状态源；未回写视为未完成 |
-| 阶段转换原子性 | 任何状态机阶段转换必须以 `coder-current-task.md`、`project-progress.md`、`checkpoint-status.md` 三文件 `stage_epoch` 同步跳变为唯一证据；无 epoch 跳变阶段不算转换，不得据此修改产品代码或推进下游 |
-| stage_epoch | 单调递增的阶段版本号，三文件必须相等；每发生一次合法阶段转换 +1；不一致即恢复门禁 / 启动门禁失败 |
-| 阶段升级裁决 | 用户口头指令不得绕过 Markdown 状态账本升级阶段；阶段升级必须同时满足“当前阶段可升级 + stage_epoch 三文件写入 + 明确触发来源”。触发来源可以是用户确认、Checkpoint PASS、当前 MR 验收通过且 `can_start_next: true`。含糊指令（继续 / 接着做）仅在等待人工审核或计划确认态不构成升级信号 |
+| 状态回写 | 更新 gates、current-task、progress 和恢复产物，并分别回写 MR、execution、validation；未回写视为未完成 |
+| 阶段转换原子性 | 先在 gates 追加 transition，再同步 current-task/progress 的 epoch；三者不一致即失败 |
+| 阶段升级裁决 | 当前阶段可升级、触发来源明确且 Gate 状态转换完成后才允许升级；含糊指令不能越过等待人工确认态 |
 | 连续项目执行 | 用户目标覆盖完整项目需求时，按 MR 依赖顺序串行推进；每个 MR 独立门禁、验证、Checkpoint 和状态回写，MR 之间默认不等人工确认 |
 | 人工确认例外 | 只有用户明确要求 MR 启动人工审核，或启动阻塞、方案不唯一、范围变化、未处理 Blocker 等无法安全自动推进的情况，才在 MR 启动前等待人工确认 |
 | 证据优先人工确认 | 在计划前扫描代码、配置、Schema、测试、文档和历史决策；只对系统证据无法解决的决策性未知信息阻塞，并要求每个问题引用 Source Point 或 Evidence Gap |
 | Analysis Gate | 扫描完成且覆盖充分、阻塞问题与关键假设清零、来源可复核、验收可判定时才允许从 ANALYZING 进入 ANALYSIS_READY 的硬门禁 |
-| pre-edit guard | 修改产品代码前的硬前置闸门：当前阶段为 RUNNING、三文件 stage_epoch 一致、source_chain.plan/mr 文件真实存在、路径守卫通过、CP4 无 Blocker；任一不满足禁止调用产品代码修改工具 |
-| Handoff | 跨模型和跨轮次恢复文件，下一模型必须优先读取它和状态文件，而不是依赖上一模型对话总结 |
+| pre-edit guard | 修改产品代码前的硬闸门：RUNNING epoch 一致、source chain、路径守卫和 CP4 均通过 |
+| Handoff | 独立 `handoff.md`，与 context-summary/task-state 共同承担跨轮次恢复 |
 | Checkpoint | 正式产物或执行步骤进入下游前的专项复核关卡 |
 | Checkpoint Blocker | 阻断下游生成、执行、验收或交付的复核问题 |
 | Step 顺序检查 | 检查当前 Step 前置依赖是否满足、是否被错误合并并行的复核项 |

@@ -2,7 +2,7 @@
 
 ## 最终落地摘要
 
-默认路径：
+需求整体完成时使用本协议；Knowledge Trace 启用时额外维护关联图。默认路径：
 
 ```text
 .coder/<development_project_id>/requirement-delivery-summary.md
@@ -10,7 +10,7 @@
 
 只有需求范围内全部交付单元均为 `ACCEPTED` / `MERGED` 且验证完成后才生成。正确顺序是：交付单元和验证完成 → 生成摘要 → ledger audit → CP5 → 最终状态回写和交付回复。
 
-摘要必须使用 `../superCoder/assets/templates/requirement-delivery-summary.md`。生成时可以读取实际 diff、执行记录、operations、验证记录、偏差和最终决策来确认事实，但这些技术证据不得写入摘要正文。
+摘要必须使用 `../superCoder/assets/templates/requirement-delivery-summary.md`。生成时读取实际 diff、analysis、plan、MR、execution record、validation、review、gates 和最终决策确认事实，但这些技术证据不得写入摘要正文。
 
 摘要正文严格遵循 3W：
 
@@ -20,7 +20,7 @@
 
 允许附加“关联需求线索”和“未纳入与后续”，但仍使用需求语言。禁止写入文件路径、类/方法、代码符号、diff、commit、MR 步骤、测试命令、Checkpoint、执行记录和产物索引。`How` 始终留在 plan、MR、execution、validation 中。
 
-摘要缺失返回 `DELIVERY_SUMMARY_MISSING`；摘要与实际 diff、验证或账本矛盾返回 `DELIVERY_SUMMARY_DRIFT`。两者都禁止声明需求整体完成，并要求修正后重新执行 ledger audit 和 CP5。
+需求整体完成时摘要缺失返回 `DELIVERY_SUMMARY_MISSING`；摘要与实际 diff、验证或账本矛盾返回 `DELIVERY_SUMMARY_DRIFT`。
 
 ## relation keys
 

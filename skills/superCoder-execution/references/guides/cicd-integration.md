@@ -1,5 +1,7 @@
 # CI/CD 集成指南
 
+> CI/CD 操作写入 operations/execution record，验证结果写入独立 validation 文件，Gate 结论写入 `gates.md`；不得把流水线日志和验证事实塞入 Gate 账本。
+
 本文档详细说明如何将 Coder 开发执行技能与 CI/CD 流水线集成，实现开发执行的自动化协同。
 
 示例中的 `DEVELOPMENT_PROJECT_ID` 应与 `.coder-config.yaml` 的 `workspace.development_project_id` 保持一致；执行记录默认位于 `.coder/${DEVELOPMENT_PROJECT_ID}/records/execution-log.md`。

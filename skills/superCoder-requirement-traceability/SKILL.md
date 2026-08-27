@@ -1,11 +1,11 @@
 ---
 name: superCoder-requirement-traceability
-description: 当 superCoder 需要在需求整体完成后生成最终落地摘要，或在新需求分析时发现、判断和记录历史关联需求时使用。
+description: 当已进入 superCoder 交付链的任务需要生成需求最终落地摘要，或在开发分析中发现、判断和记录历史关联需求时使用；不作为产品需求分析的独立触发入口。
 ---
 
 # superCoder 需求追踪
 
-本子技能负责需求级最终落地摘要和跨需求关联发现，不负责产品代码实现、MR 验收或替代 analysis / plan / execution 账本。
+本子技能负责 superCoder 交付链中的需求级最终落地摘要和跨需求关联发现，不负责产品代码实现、MR 验收、替代 analysis / plan / execution 账本，也不独立抢占产品需求或 spec 优化请求。
 
 ## 必读文件
 
@@ -16,10 +16,10 @@ description: 当 superCoder 需要在需求整体完成后生成最终落地摘�
 
 ## 职责
 
-- 在需求整体完成前生成最终落地摘要。
+- 仅在启用 Knowledge Trace、明确要求跨需求关联或仓库策略要求时，于需求整体完成前生成最终落地摘要。
 - 从最终验收事实中提炼符合 Why / Who / What 的业务需求内容。
 - 维护可检索的 `relation_keys` 和历史需求关系。
-- 在新需求分析时有界发现候选历史需求，并输出证据化关系判断。
+- 在开发分析，或显式指定由 superCoder 执行的新需求分析中，有界发现候选历史需求并输出证据化关系判断。
 
 ## 禁止事项
 

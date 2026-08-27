@@ -147,6 +147,7 @@ modules:
   - id: shared
     routed_by_skill: false
     files:
+      - "skills/superCoder/references/shared/artifact-model.md"
       - "skills/superCoder/references/shared/index.md"
       - "skills/superCoder/references/shared/glossary.md"
       - "skills/superCoder/references/shared/decision-contract.md"
@@ -171,6 +172,10 @@ modules:
       - "skills/superCoder-verification/SKILL.md"
       - "tests/skill-behavior/p28-evidence-first-human-confirmation-gate.md"
       - "tests/skill-behavior/p29-semantic-cardinality-and-negative-constraint-gate.md"
+      - "tests/skill-behavior/p30-code-delivery-trigger-boundary.md"
+      - "tests/skill-behavior/p31-compact-artifact-model.md"
+      - "tests/skill-behavior/p32-code-comment-audit.md"
+      - "tests/skill-behavior/p33-single-bug-mr-plan.md"
 
   - id: harness
     routed_by_skill: false
@@ -217,6 +222,10 @@ modules:
       - "tests/skill-behavior/p27-cross-harness-requirement-graph-e2e.md"
       - "tests/skill-behavior/p28-evidence-first-human-confirmation-gate.md"
       - "tests/skill-behavior/p29-semantic-cardinality-and-negative-constraint-gate.md"
+      - "tests/skill-behavior/p30-code-delivery-trigger-boundary.md"
+      - "tests/skill-behavior/p31-compact-artifact-model.md"
+      - "tests/skill-behavior/p32-code-comment-audit.md"
+      - "tests/skill-behavior/p33-single-bug-mr-plan.md"
       - "tests/skill-behavior/fixtures/trace-contract/valid/manifest.json"
       - "tests/skill-behavior/fixtures/trace-contract/invalid/cases.json"
       - "tests/skill-behavior/runner/run_scenarios.py"
@@ -245,6 +254,10 @@ modules:
       - "tests/skill-behavior/results/2026-07-10-p14-requirement-delivery-summary.md"
       - "tests/skill-behavior/results/2026-07-15-p16-canonical-discovery-and-registry-consistency.md"
       - "tests/skill-behavior/results/2026-07-15-p27-cross-harness-requirement-graph-e2e.md"
+      - "tests/skill-behavior/results/2026-08-25-p30-code-delivery-trigger-boundary.md"
+      - "tests/skill-behavior/results/2026-08-25-p31-compact-artifact-model.md"
+      - "tests/skill-behavior/results/2026-08-25-p32-code-comment-audit.md"
+      - "tests/skill-behavior/results/2026-08-26-p33-single-bug-mr-plan.md"
 
   - id: manifest
     routed_by_skill: false

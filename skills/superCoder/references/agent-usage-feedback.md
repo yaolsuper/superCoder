@@ -1,5 +1,7 @@
 # 多模型 Agent 使用反馈与压力场景
 
+> P1-P3 数据用于验证多产物恢复一致性。当前治理保留开发流程产物，只把 checkpoint-status 与 Gate 重复记录融合为 `gates.md`。
+
 本指南用于复盘不同 coding agent、ops 执行入口或底层模型（如 DeepSeek、GLM、GPT 系列等）使用 superCoder 的真实执行情况，并把常见协议漂移转成可验证的压力场景。维护或优化 superCoder 时读取；普通开发任务不需要默认加载。
 
 ## 2026-07 多模型执行情况摘要
@@ -24,13 +26,13 @@
 
 ### P1 缺状态账本但继续执行
 
-输入特征：`.coder/<dev_id>/` 下缺 `checkpoint-status.md`、`handoff.md`、`task-state.md` 中任一文件，用户说“继续”或“开始执行”。
+输入特征：`.coder/<dev_id>/` 下缺 `gates.md`、`handoff.md`、`task-state.md` 中任一文件，用户说“继续”或“开始执行”。
 
 正确行为：
 
 - 进入状态修复或 legacy reconstruction。
 - 只读取有限状态文件和当前任务相关产物。
-- 补齐最小 `handoff.md` / `task-state.md` / `checkpoint-status.md` 并标注证据来源。
+- 补齐 `handoff.md` / `task-state.md` / `gates.md` 并标注证据来源。
 - 在恢复门禁重新 PASS 前不得修改产品代码。
 
 失败行为：
@@ -94,7 +96,7 @@
 
 ### P6 Skill 命中后只给聊天结论
 
-输入特征：用户要求“分析 / 排查 / 失败原因 / 是不是要改某个前缀或配置”，Agent 已读取 `superCoder`、`superCoder-planning` 或 `superCoder-bug-root-cause`，随后只查代码并在最终回复给出结论，没有创建 `.coder/<dev_id>/analysis`、`project-progress.md`、`checkpoint-status.md`、`handoff.md`、`task-state.md` 或 review。
+输入特征：用户要求开发分析/排查，Agent 已读取 superCoder 规划或根因技能，却只查代码并在聊天给结论，没有创建 analysis、progress、gates、handoff、task-state 等阶段产物。
 
 正确行为：
 

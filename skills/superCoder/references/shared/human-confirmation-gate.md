@@ -2,6 +2,8 @@
 
 本协议定义分析阶段的证据优先澄清、`BLOCKED_HUMAN_CONFIRMATION` 状态、人工回答归因和重新分析规则。状态与动作的机器契约见 `../../config/human-confirmation-gate.yaml`；输出结构见 `../../assets/templates/human-confirmation.md`。
 
+`analysis_state` 的事实写入 analysis/task-state；当前 Gate 结论写入 `gates.md`。progress、current-task 与恢复产物保留各自职责，只引用最近 `gate_id`，不复制 Gate 表格。
+
 ## 适用边界
 
 只对无法由可靠系统证据解决、且会实质改变范围、验收、数据、安全、API 兼容、架构、合规、发布或资源约束的问题执行人工阻塞。不要对命名、格式、可逆低风险实现细节或当前阶段尚不需要的信息阻塞。
@@ -76,8 +78,8 @@
 
 存在一个或多个未解决 `BLOCKING` 问题时：
 
-- 将 `analysis_state` 写为 `BLOCKED_HUMAN_CONFIRMATION`，`analysis_gate` 写为 `FAILED`；`task_state` 继续表示 `task-state.md` 路径；
-- 同步更新分析报告、`coder-current-task.md`、`project-progress.md`、`checkpoint-status.md`、`handoff.md` 和 `task-state.md`；
+- 将 analysis/task-state 写为 `BLOCKED_HUMAN_CONFIRMATION`，在 `gates.md` 追加 `analysis_gate: FAILED` 和 blocker；同步更新 progress、current-task、handoff、context-summary 的恢复摘要与 `gate_id`；
+- 不再维护独立 `checkpoint-status.md`，也不在上述状态文件复制完整 Gate 表格；
 - 只允许继续只读调查、展示问题、接收显式答案或取消任务；
 - 禁止生成计划、生成或激活 MR、修改产品代码、迁移、部署、提交范围或调用执行技能。
 

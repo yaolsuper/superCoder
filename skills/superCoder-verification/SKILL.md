@@ -10,6 +10,7 @@ description: 在声明 superCoder 工作 complete、fixed、passing、accepted�
 ## 必读文件
 
 - `../superCoder/references/shared/human-confirmation-gate.md`
+- `../superCoder/references/shared/artifact-model.md`
 - `CONTROLLED` 或涉及恢复、提交范围、下一 MR 时读取 `../superCoder-ledger-audit/references/ledger-audit.md`
 - `CONTROLLED` 的 CP5 和最终交付决策需要 `../superCoder-checkpoint/references/checkpoint.md`
 - 验证记录要求需要 `../superCoder-execution/references/execution.md`
@@ -21,9 +22,9 @@ description: 在声明 superCoder 工作 complete、fixed、passing、accepted�
 - 确认 `analysis_state` 不是 `BLOCKED_HUMAN_CONFIRMATION` 或 `HUMAN_INPUT_RECEIVED`，`analysis_gate` 已通过且未解决 `BLOCKING` 问题为零。
 - 确认验证证据对当前代码和当前任务是新鲜的。
 - 确保验证记录包含真实命令、真实输出、时间戳或运行上下文，以及明确的 pass/fail 结论。
-- `CONTROLLED` 在交付声明前确保兼容 CP5 的账本审计通过；`STANDARD` / `LIGHT` 确保新鲜验证已写入各自状态产物。
+- `CONTROLLED` 在交付声明前确保兼容 CP5 的账本审计通过；STANDARD / CONTROLLED 确保新鲜验证已写入独立 validation 文件并被 execution record、MR 与 `gates.md` 引用，LIGHT 写入 `light-task.md`。
 - 如果证据缺失或过期，阻断完成声明，并说明下一步允许的验证动作。
-- 需求整体完成时确认最终落地摘要存在，并与实际 diff、验证、遗留项和关系检索键一致；单 MR 完成但需求未结束时不得提前生成。
+- 需求整体完成时确认最终落地摘要存在，并与实际 diff、验证、遗留项和关系检索键一致。
 
 ## 禁止事项
 
