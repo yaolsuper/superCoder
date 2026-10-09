@@ -6,7 +6,7 @@
 
 | 类型 | 处理 |
 |---|---|
-| 当前 Step 内可复现的小范围实现错误 | 记录失败 operation，最小修复后重验 |
+| 当前 MR Task 内可复现的小范围实现错误 | 记录失败 operation，最小修复后重验 |
 | 环境/工具失败 | 记录命令、环境、影响和可重试条件；不伪报代码失败或成功 |
 | 路径或范围越界 | 立即停止，保持 BLOCKED，先修订计划和路径边界 |
 | 需求、接口、数据、架构或依赖变化 | 增加 `plan_revision`，退回规划与 Checkpoint |
@@ -36,7 +36,7 @@
 
 - current-task、progress 与 gates 的 epoch 一致，失败 operation 可解析；
 - 阻塞原因与当前代码/环境仍一致；
-- 当前 Step、计划 revision、路径和验证方式未漂移；
+- 当前 MR Task、计划 revision、路径和验证方式未漂移；
 - 人工确认问题已形成 Decision 并重新分析；
 - 下一动作不会越过授权或扩大范围。
 

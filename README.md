@@ -117,7 +117,7 @@ development analysis → delivery plan → optional MR split → execution → v
   └── requirement-delivery-summary.md
 ```
 
-新建项目的 `development_project_id` 基础名称优先级：任务/MR 合约字段 → `.coder-config.yaml` workspace 字段 → `.coder-config.yaml` project.name → 仓库目录名。生成时规范化为 `<base-name>-<YYYYMMDD>`（项目创建日的本地日期）；已有项目原样沿用既有 ID，不跨日重命名。
+新建项目的 `development_project_id` 基础名称优先级：任务/MR 合约字段 → `.coder-config.yaml` workspace 字段 → `.coder-config.yaml` project.name → 仓库目录名。生成时规范化为 `<YYYYMMDD>-<base-name>`（项目创建日的本地日期）；已有项目原样沿用既有 ID，不跨日重命名。
 
 ## 精简执行流程
 

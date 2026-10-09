@@ -8,7 +8,7 @@
 |---|---|
 | 当前任务、MR、执行、验证与恢复产物 | `assets/templates/task-and-mr.md` |
 | 融合后的 Gate/Checkpoint 单一账本 | `assets/templates/gates.md` |
-| 输出专项复核、Checkpoint 状态、Step 依赖顺序检查 | `skills/superCoder-checkpoint/references/checkpoint.md` |
+| 输出专项复核、Checkpoint 状态、MR Task 依赖顺序检查 | `skills/superCoder-checkpoint/references/checkpoint.md` |
 | 按 BRD/PRD/ADD/LLD/DBD/MR 或 Coder 产物类型做场景化 Review | `skills/superCoder-checkpoint/references/document-review-checklist.md` |
 | 文档或产物生成角色提示词 | `skills/superCoder-checkpoint/references/prompts/generator.md` |
 | 文档或产物审查角色提示词 | `skills/superCoder-checkpoint/references/prompts/reviewer.md` |

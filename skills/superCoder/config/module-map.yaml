@@ -226,6 +226,7 @@ modules:
       - "tests/skill-behavior/p31-compact-artifact-model.md"
       - "tests/skill-behavior/p32-code-comment-audit.md"
       - "tests/skill-behavior/p33-single-bug-mr-plan.md"
+      - "tests/skill-behavior/p34-executable-mr-input-output-contract.md"
       - "tests/skill-behavior/fixtures/trace-contract/valid/manifest.json"
       - "tests/skill-behavior/fixtures/trace-contract/invalid/cases.json"
       - "tests/skill-behavior/runner/run_scenarios.py"

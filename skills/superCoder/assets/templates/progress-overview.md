@@ -93,7 +93,7 @@
 | 本轮实际读取上下文与 required_context 一致 | PASS / FAIL / N/A |  |
 | handoff.md 已更新且足以恢复下一轮 | PASS / FAIL / N/A |  |
 | 执行记录已落盘 | PASS / FAIL / N/A |  |
-| task-state.md 已记录当前 Step 和恢复点 | PASS / FAIL / N/A |  |
+| task-state.md 已记录当前 MR Task 和恢复点 | PASS / FAIL / N/A |  |
 | validation/*.md 已记录验证或跳过原因 | PASS / FAIL / N/A |  |
 | deviations/*.md 已记录阻塞/回退事项 | PASS / FAIL / N/A |  |
 | 关键决策仍有效 | PASS / FAIL / UNKNOWN |  |
@@ -120,7 +120,7 @@
 | Checkpoint 状态已更新且无未处理 Blocker | PASS / FAIL / N/A |  |
 | 正式 Review 已使用对应场景 Checklist | PASS / FAIL / N/A |  |
 | 下游产物未早于上游 Checkpoint PASS | PASS / FAIL / N/A |  |
-| 存在依赖的 Step 未合并并行执行 | PASS / FAIL / N/A |  |
+| 存在依赖的 MR Task 未合并并行执行 | PASS / FAIL / N/A |  |
 | 审查结论未超出审查范围 | PASS / FAIL / N/A |  |
 | 命令输出和内容查询均有界过滤 | PASS / FAIL / N/A |  |
 | 本地测试值未写入产品默认配置 | PASS / FAIL / N/A |  |

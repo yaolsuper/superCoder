@@ -436,3 +436,33 @@ scenarios:
       - omit_execution_or_validation
       - inline_multi_mr_or_independent_boundary
       - treat_unplanned_inline_hotfix_as_single_mr_plan
+  - id: p34-executable-mr-input-output-contract
+    markdown: p34-executable-mr-input-output-contract.md
+    required_routes:
+      - skills/superCoder/assets/templates/task-and-mr.md
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+      - skills/superCoder-checkpoint/references/document-review-checklist.md
+    expected_verdicts:
+      - MR_INPUT_OUTPUT_CONTRACT_REQUIRED
+      - IMPLEMENTATION_REASONING_SPACE_PRESERVED
+      - TASK_EXECUTABILITY_REQUIRED
+      - TASK_IMPLEMENTATION_DEFINITION_REQUIRED
+      - CODE_DESIGN_CONTRACT_REQUIRED
+      - TASK_COVERAGE_NOT_CLOSED
+      - BOUNDED_DISCOVERY_STEP_REQUIRED
+      - PARALLEL_CONDITION_NOT_MET
+    must_not:
+      - reduce_inputs_to_file_list
+      - use_vague_action_as_execution_contract
+      - over_prescribe_private_implementation
+      - fabricate_path_or_symbol
+      - infer_parallelism_from_missing_dependency
+      - accept_task_with_undefined_implementation_semantics
+      - accept_uncovered_output_or_orphan_task
+      - accept_named_but_undefined_object_or_protocol
+      - allow_task_to_redefine_code_design
+      - paste_requirement_prose_as_code_design
+      - ready_with_architecture_block_or_unresolved_design
+      - require_irrelevant_fixed_object_attributes

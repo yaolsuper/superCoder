@@ -50,7 +50,7 @@
 1. 任务是 BUG / defect / regression / hotfix，根因 analysis 已完成并通过 CP2；
 2. 实施 Plan 已通过 CP2/CP3，只有一个不可再拆的交付单元和一个提交边界；
 3. 不需要独立 MR 审批、跨团队交接、不同 owner、独立发布/回退或并行执行；
-4. Plan 已包含稳定 `mr_id`、根因/计划来源、允许/禁止路径、Step/依赖、代码注释计划、验证、验收、停止/回退条件和提交范围；
+4. Plan 已包含稳定 `mr_id`、根因/计划来源、允许/禁止路径、关键代码实现设计、MR Task/依赖、代码注释计划、验证、验收、停止/回退条件和提交范围；
 5. Plan 明确标记 `artifact_strategy: SINGLE_MR_PLAN`、`execution_contract: true`，current-task 将该 Plan 作为活动执行契约。
 
 任一条件不满足时使用 `SINGLE_MR_FILE`；两个及以上交付单元使用 `MULTI_MR`。执行中出现范围、owner、审批、发布或回退边界分裂时，先停止编码，把 Plan 执行契约物化为独立 MR 并重新通过 CP3/CP4。禁止同时维护内容等价的 Plan 与 MR。
@@ -66,7 +66,7 @@
 
 `gates.md` 包含当前 Gate 摘要、`stage_epoch`、活动产物及 revision、阻塞项、允许动作，以及 append-only Gate/Checkpoint 决策记录。其他文件只保存最近 `gate_id`、结论和 `gates.md` 路径。
 
-以下内容不得并入 `gates.md`：分析证据与根因矩阵；实施计划和 MR Step；产品代码操作历史与执行总结；验证命令、原始结果和覆盖说明；真实偏差；正式 review findings；handoff/context/task-state 的恢复职责。
+以下内容不得并入 `gates.md`：分析证据与根因矩阵；实施计划和 MR Task；产品代码操作历史与执行总结；验证命令、原始结果和覆盖说明；真实偏差；正式 review findings；handoff/context/task-state 的恢复职责。
 
 ## 权威职责
 
@@ -74,7 +74,7 @@
 |---|---|
 | 分析结论、证据、根因 | `analysis/*.md` |
 | 全局实施方案 | `plans/*.md` |
-| 执行契约的范围、Step、依赖、验收 | 通常为 `mrs/*.md`；`SINGLE_MR_PLAN` 时为已确认 `plans/*.md` |
+| 执行契约的范围、MR Task、依赖、验收 | 通常为 `mrs/*.md`；`SINGLE_MR_PLAN` 时为已确认 `plans/*.md` |
 | 当前执行契约与允许路径 | `coder-current-task.md` |
 | 项目/MR 进度 | `project-progress.md` |
 | Gate/Checkpoint 状态与决策历史 | `gates.md` |

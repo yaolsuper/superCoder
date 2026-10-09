@@ -8,7 +8,7 @@
 
 ```bash
 python3 tests/skill-behavior/runner/run_scenarios.py --scenario P16 --format json
-python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P33 --format json
+python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P34 --format json
 ```
 
 每次调整协议后，至少为受影响场景补一份 `results/<date>-<scenario-id>.md`，记录 RED/GREEN 证据：无新规则或旧规则下的失败表现、应用当前技能后的通过表现、模型/入口、判分结论和仍待补测项。只有场景规格没有执行结果时，只能说明“已有压力规格”，不能声称行为已验证。
@@ -46,6 +46,7 @@ python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P33 --format 
 | P31 Gate-first artifact fusion | artifact-model / planning / execution / ledger-audit | 以裁剪为由删除开发流程产物，或为每个 Gate/普通 CP 重复生成状态与 review 文件 |
 | P32 code comment audit | planning / execution / checkpoint / task-and-mr | 非显然业务逻辑无注释、旧注释失真、用逐行复述凑数，或业务改动以 N/A 旁路注释审计 |
 | P33 single BUG MR Plan contract | artifact-model / bug-root-cause / planning / execution | 已明确单 BUG MR 仍重复生成等价 Plan/MR，或把内联例外泛化到多 MR、非 BUG 和不完整 Plan |
+| P34 executable MR Task contract | planning / execution / checkpoint / task-and-mr | MR 输入输出、关键代码设计或 Task 覆盖不闭合，对象/请求响应不可编码，Task 缺少实现定义、虚构精确位置、实现自由度被过度限制或错误并行 |
 
 ## 通过标准
 

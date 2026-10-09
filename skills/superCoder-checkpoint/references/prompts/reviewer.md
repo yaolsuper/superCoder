@@ -33,6 +33,6 @@
 - Issues（问题清单）
 - Scenario Checklist Result（场景清单结果）
 - Traceability（可追溯性）
-- Step Order Check（步骤顺序检查）
+- MR Task Order Check（任务顺序检查）
 - Final Decision（最终决策）
 ```

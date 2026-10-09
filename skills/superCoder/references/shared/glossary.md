@@ -38,13 +38,13 @@ BRD -> PRD -> ADD -> LLD -> DBD -> MR 拆分 -> 分阶段实施 -> 回归 -> 验
 3. `.coder-config.yaml` 中的 `project.name`
 4. 当前仓库目录名
 
-将基础名称规范化为小写短横线命名后，追加项目创建日的本地日期，格式为 `YYYYMMDD`：
+将基础名称规范化为小写短横线命名后，将项目创建日的本地日期放在最前，格式为 `YYYYMMDD`：
 
 ```text
-<base-name>-<YYYYMMDD>
+<YYYYMMDD>-<base-name>
 ```
 
-例如在 2026-07-13 创建 Python 迁移项目时，生成 `python-migration-20260713`。若候选名称已以 `-YYYYMMDD` 结尾，不得重复追加日期。日期取首次创建 `.coder/<development_project_id>/` 时执行环境的本地日期；同一项目后续跨日恢复、规划、执行和验证必须继续使用原 ID，不得按当天日期改名。
+例如在 2026-07-13 创建 Python 迁移项目时，生成 `20260713-python-migration`。若候选名称已以 `YYYYMMDD-` 开头，不得重复追加日期。日期取首次创建 `.coder/<development_project_id>/` 时执行环境的本地日期；同一项目后续跨日恢复、规划、执行和验证必须继续使用原 ID，不得按当天日期改名。
 
 已有 `.coder/` 项目或当前任务 / MR 契约已明确指向现存产物时，其 `development_project_id` 是恢复标识，必须原样沿用。不得为了补日期而重命名既有目录；需要迁移旧 ID 时必须作为独立迁移任务处理。
 
@@ -169,7 +169,8 @@ ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> 
 | `delivery_unit_count` | 当前确认计划中的独立交付单元数量 |
 | `plan_revision` | 已确认计划的单调递增版本；范围或关键契约变化时增加 |
 | `based_on_plan_revision` | MR 或执行层实际依据的计划版本，必须与当前计划一致 |
-| `step_id` | MR 内稳定的执行步骤标识，用于依赖、操作和证据关联 |
+| `Task` | MR 内最小执行单元；具有稳定 ID、类型、依赖、实现定义、状态和完成证据。MR 是最小交付单元，不等同于单个 Task |
+| `step_id` | MR Task 的稳定机器标识，显示为 `T###`，用于依赖、操作、恢复和证据关联 |
 | `gate_id` | `gates.md` 中追加式 Gate/Checkpoint 决策的稳定标识 |
 | `relation_keys` | 最终落地摘要中的业务关联检索键，包括领域、能力、角色、业务对象、场景和关键词 |
 | `allowed_paths` | 当前任务允许修改的产品代码路径 |
@@ -225,7 +226,7 @@ ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> 
 | Handoff | 独立 `handoff.md`，与 context-summary/task-state 共同承担跨轮次恢复 |
 | Checkpoint | 正式产物或执行步骤进入下游前的专项复核关卡 |
 | Checkpoint Blocker | 阻断下游生成、执行、验收或交付的复核问题 |
-| Step 顺序检查 | 检查当前 Step 前置依赖是否满足、是否被错误合并并行的复核项 |
+| MR Task 顺序检查 | 检查当前 Task 前置依赖是否满足、是否被错误合并并行的复核项 |
 | 场景 Checklist | 按 BRD/PRD/ADD/LLD/DBD/MR 或 Coder 产物类型选择的专项 Review 标准 |
 | document_type | 被 Review 对象的文档或产物类型，例如 PRD、MR、ANALYSIS、PLAN |
 | checklist_set | 本次 Review 实际使用的专项 checklist 名称 |

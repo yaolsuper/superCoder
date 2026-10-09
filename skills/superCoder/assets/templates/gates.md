@@ -59,8 +59,22 @@
 | 本轮验证记录 | `.coder/<development_project_id>/validation/<task-or-mr-id>-validation.md` |
 | 偏差 / 回退记录 | `.coder/<development_project_id>/deviations/<deviation-id>.md` / 无 |
 | 当前未处理 Blocker | 0 / n |
-| 当前 Step 前置依赖 |  |
+| 当前 Task ID / 类型 |  |
+| 当前 Task 前置依赖 |  |
 | 前置依赖状态 | 已满足 / 未满足 / 不适用 |
+| Task 覆盖闭合 | 是 / 否 |
+| 实际代码设计 | 已转换为仓库语言/Schema/控制流 / 仍为需求描述 / 未决 |
+| 类型、签名或 IDL | 与真实代码一致 / 不可解析 / 本 MR 不涉及 |
+| 请求、响应与错误样例 | 与实际声明一致 / 不可解析 / 本 MR 不涉及 |
+| 映射、流程与事务设计 | 足以开发 / 缺口 / 本 MR 不涉及 |
+| 实际架构变化审查 | PASS / BLOCK / 无架构变化 |
+| 当前 Task 卡 | 完整 / 缺失 / N/A 有理由 |
+| 当前 Task design_refs | 已解析 / 缺失 / 指向不存在定义 |
+| 当前/目标行为与实现定义 | 可执行 / 仍需猜测 |
+| 动作定位 | 文件与符号已确认 / 有界 DISCOVERY Task / 不明确 |
+| 必须保持项 |  |
+| 自主决策空间 | 未越界 / 越界 |
+| 并行条件 | 依赖完成且文件无冲突、无共享可变状态 / 不适用 / 不满足 |
 | 产品代码允许修改路径 |  |
 | 禁止修改路径 |  |
 | 协议产物允许写入路径 | `.coder/**` |
@@ -167,7 +181,7 @@
 | `.coder/<development_project_id>/handoff.md` | artifact | 更新跨模型 / 跨阶段恢复状态 | 不适用 | 是 | 否 | 检查当前阶段、活动 MR、验证状态和下一步协议 | 路径限定 | LOW |
 | `.coder/<development_project_id>/records/<task-or-mr-id>-execution-record.md` | artifact | 写入本轮执行记录 | 不适用 | 是 | 否 | 检查修改文件、命令、验证和偏差记录齐全 | 路径限定 | LOW |
 | `.coder/<development_project_id>/validation/<task-or-mr-id>-validation.md` | artifact | 写入验证记录或跳过原因 | 不适用 | 是 | 否 | 检查命令、结果、未执行原因 | 路径限定 | LOW |
-| `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` | artifact | 回写 MR 执行清单和验收清单 | 不适用 | 是 | 否 | 检查 Step 状态和验收状态 | 路径限定 | LOW |
+| `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` | artifact | 回写 MR 执行清单和验收清单 | 不适用 | 是 | 否 | 检查 MR Task 状态和验收状态 | 路径限定 | LOW |
 | `.coder/<development_project_id>/task-state.md` | artifact | 同步当前任务状态机 | 不适用 | 是 | 否 | 检查 status / can_start_next / next_mr 一致 | 路径限定 | LOW |
 | `.coder/<development_project_id>/deviations/<deviation-id>.md` | artifact | 记录阻塞、越界、失败或回退 | 不适用 | 是 | 否 | 仅在存在偏差时需要 | 路径限定 | LOW |
 | `.coder/<development_project_id>/reviews/<checkpoint-id>-<artifact-name>-review.md` | artifact | 写入专项复核报告 | 不适用 | 是 | 否 | 检查 Review 结论和 Issues 表 | 路径限定 | LOW |
@@ -223,9 +237,9 @@
 |---|---|---:|---:|---:|---:|
 | BRD / PRD / ADD / LLD / DBD / MR / ANALYSIS / PLAN / CURRENT_TASK / EXECUTION_RECORD / ACCEPTANCE_DECISION |  | 0 | 0 | 0 | 0 |
 
-## Step 顺序检查
+## MR Task 顺序检查
 
-| Step | 前置依赖 | 依赖状态 | 是否合并并行 | 是否允许继续 | 说明 |
+| Task / step_id | 前置依赖 | 依赖状态 | 是否合并并行 | 是否允许继续 | 说明 |
 |---|---|---|---|---|---|
 |  |  | 已满足 / 未满足 / 不适用 | 是 / 否 | 是 / 否 |  |
 ```
