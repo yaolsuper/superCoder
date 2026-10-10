@@ -7,6 +7,10 @@ description: "当 superCoder 任务已准备进入实现、产品代码修改、
 
 本可组合技能用于规划和账本门禁允许执行后的实现工作。它负责编排执行，但不重新定义账本或根因规则。
 
+## 执行产物位置
+
+创建、读取或恢复账本前，读取 `../superCoder/references/shared/artifact-root.md` 并解析产物根目录；本技能所有 `.coder` 路径均按该规则替换。
+
 ## 必读文件
 
 - `references/execution.md`

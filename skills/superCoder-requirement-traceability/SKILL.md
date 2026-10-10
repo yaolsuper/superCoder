@@ -7,6 +7,10 @@ description: 当已进入 superCoder 交付链的任务需要生成需求最终�
 
 本子技能负责 superCoder 交付链中的需求级最终落地摘要和跨需求关联发现，不负责产品代码实现、MR 验收、替代 analysis / plan / execution 账本，也不独立抢占产品需求或 spec 优化请求。
 
+## 执行产物位置
+
+创建、读取或恢复账本前，读取 `../superCoder/references/shared/artifact-root.md` 并解析产物根目录；本技能所有 `.coder` 路径均按该规则替换。
+
 ## 必读文件
 
 - `references/requirement-traceability.md`

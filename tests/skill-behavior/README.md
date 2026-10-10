@@ -46,7 +46,9 @@ python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P34 --format 
 | P31 Gate-first artifact fusion | artifact-model / planning / execution / ledger-audit | 以裁剪为由删除开发流程产物，或为每个 Gate/普通 CP 重复生成状态与 review 文件 |
 | P32 code comment audit | planning / execution / checkpoint / task-and-mr | 非显然业务逻辑无注释、旧注释失真、用逐行复述凑数，或业务改动以 N/A 旁路注释审计 |
 | P33 single BUG MR Plan contract | artifact-model / bug-root-cause / planning / execution | 已明确单 BUG MR 仍重复生成等价 Plan/MR，或把内联例外泛化到多 MR、非 BUG 和不完整 Plan |
+| P35 shared artifact root | artifact-root / all skill entries / knowledge CLI | 指定根目录后仍读写本地 .coder、跨 worktree 验证混用或路径守卫失效 |
 | P34 executable MR Task contract | planning / execution / checkpoint / task-and-mr | MR 输入输出、关键代码设计或 Task 覆盖不闭合，对象/请求响应不可编码，Task 缺少实现定义、虚构精确位置、实现自由度被过度限制或错误并行 |
+| P36 adversarial mechanism review | review / document-review-checklist / reviewer | 核心机制无有效消融仍放行、无区分力实验被当成贡献证据、设计计划冒充实测或风格偏好驱动重构 |
 
 ## 通过标准
 

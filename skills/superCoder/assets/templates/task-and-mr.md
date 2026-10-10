@@ -38,7 +38,10 @@ stage_last_transition:
   to: ANALYSIS | PLANNING | MR_SPLIT | READY | RUNNING | VERIFYING | ACCEPTED
   trigger: string                      # 用户触发词或 Checkpoint 报告 PASS
 objective: string
-artifact_root: .coder/<development_project_id>/
+repo_root: <absolute-code-repo-root>
+artifact_base: <absolute-resolved-artifact-base>
+artifact_base_source: user | workspace.artifact_root | default
+artifact_root: <artifact_base>/<development_project_id>/
 progress_overview: .coder/<development_project_id>/project-progress.md
 gate_ledger: .coder/<development_project_id>/gates.md
 handoff: .coder/<development_project_id>/handoff.md

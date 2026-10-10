@@ -21,10 +21,11 @@ project:
 
 # ===== Coder 工作区配置 =====
 workspace:
-  # Skill 生成的协议产物根目录。默认位于当前项目根目录。
+  # 协议产物根目录，替代 .coder 这一层；相对路径基于当前仓库根目录。
+  # worktree 共享时改为同一绝对路径，例如 /workspace/app-ledger/.coder。
   artifact_root: ".coder"
   # 开发项目粒度目录名。为空时按 project.name 或仓库目录名推导。
-  # 新建项目会以此为基础名称并追加创建日，例如 your-project-name-20260713。
+  # 新建项目会以此为基础名称并追加创建日，例如 20260713-your-project-name。
   # 已有项目恢复时填写并沿用完整 ID，不得跨日改名。
   development_project_id: "your-project-name"
   # 是否允许 Skill 自动创建 .coder/<development_project_id>/ 子目录。
@@ -54,7 +55,8 @@ workspace:
     validation: "validation"
     deviations: "deviations"
     decisions: "decisions"
-  # 执行产物允许写入路径。该规则只适用于协议产物，不代表产品代码允许修改范围。
+  # 执行产物允许写入路径；换根时同步修改为实际根目录的 glob。
+  # 不配置该字段时默认为解析后的 artifact_base/**；不代表产品代码允许修改范围。
   artifact_allowed_paths:
     - ".coder/**"
 
@@ -427,13 +429,13 @@ documentation:
   # MR 文件目录
   mr_root: "docs/mrs/"
   
-  current_task: ".coder/${development_project_id}/coder-current-task.md"
-  progress_overview: ".coder/${development_project_id}/project-progress.md"
-  gates: ".coder/${development_project_id}/gates.md"
-  execution_record: ".coder/${development_project_id}/records/${mr_id}-execution-record.md"
-  operation_ledger: ".coder/${development_project_id}/records/${mr_id}-operations.md"
-  validation_record: ".coder/${development_project_id}/validation/${task_or_mr_id}-validation.md"
-  handoff: ".coder/${development_project_id}/handoff.md"
-  context_summary: ".coder/${development_project_id}/context-summary.md"
-  task_state: ".coder/${development_project_id}/task-state.md"
-  deviation: ".coder/${development_project_id}/deviations/${deviation_id}.md"
+  current_task: "${artifact_base}/${development_project_id}/coder-current-task.md"
+  progress_overview: "${artifact_base}/${development_project_id}/project-progress.md"
+  gates: "${artifact_base}/${development_project_id}/gates.md"
+  execution_record: "${artifact_base}/${development_project_id}/records/${mr_id}-execution-record.md"
+  operation_ledger: "${artifact_base}/${development_project_id}/records/${mr_id}-operations.md"
+  validation_record: "${artifact_base}/${development_project_id}/validation/${task_or_mr_id}-validation.md"
+  handoff: "${artifact_base}/${development_project_id}/handoff.md"
+  context_summary: "${artifact_base}/${development_project_id}/context-summary.md"
+  task_state: "${artifact_base}/${development_project_id}/task-state.md"
+  deviation: "${artifact_base}/${development_project_id}/deviations/${deviation_id}.md"

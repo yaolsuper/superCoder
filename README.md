@@ -95,9 +95,24 @@ development analysis → delivery plan → optional MR split → execution → v
 | Reviewer | 仅审查，不重写 | 输出 FAIL / CONDITIONAL_PASS / PASS |
 | Fixer | 仅修复标记的 Issues，不扩展范围 | 不全量重写，等待 Reviewer 复审 |
 
+## 指定产物目录与 worktree 共享
+
+在每个代码仓库 / worktree 根目录的 `.coder-config.yaml` 中设置：
+
+```yaml
+workspace:
+  artifact_root: "/workspace/app-ledger/.coder"
+  artifact_allowed_paths:
+    - "/workspace/app-ledger/.coder/**"
+```
+
+此路径就是产物根目录，项目写入其 `<development_project_id>/` 子目录，不再追加 `.coder`。多个 worktree 使用同一绝对路径即可共享未纳入 Git 的账本。未配置时仍使用当前仓库的 `.coder`；相对路径基于当前 worktree 根目录解析。也可在任务中直接指定目录覆盖配置。
+
+技能读取配置后，知识 CLI 的每个命令都传入 `--artifact-root`；CLI 不自行读取 YAML。恢复时沿用目录和项目 ID，同一项目串行写入。详细规则见 [产物根目录协议](skills/superCoder/references/shared/artifact-root.md)。
+
 ## .coder 目录结构
 
-所有执行产出物存放于 `.coder/<development_project_id>/`，新项目默认结构：
+所有执行产出物默认存放于 `.coder/<development_project_id>/`，可通过 `workspace.artifact_root` 指定替代根目录。新项目默认结构：
 
 ```
 .coder/<dev_id>/
@@ -189,7 +204,7 @@ superCoder/
 
 1. 在项目根目录创建 `.coder-config.yaml`（参考 [skills/superCoder/config/coder-config-example.yaml](skills/superCoder/config/coder-config-example.yaml)）
 2. 提出开发实施计划、MR 拆分、BUG 修复或代码实现请求，技能会在 code delivery 阶段自动触发；产品需求/spec 分析需显式指定 superCoder 才由本技能接管
-3. 执行产出物自动写入 `.coder/<development_project_id>/`
+3. 执行产出物自动写入 `<artifact_base>/<development_project_id>/`（默认 `.coder`）
 4. 通过检查点门和验收决策逐步推进
 
 ## v2.1 Knowledge Trace

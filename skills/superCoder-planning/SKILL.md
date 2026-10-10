@@ -7,6 +7,10 @@ description: 当 superCoder 任务要求开发实现分析、实施规划、迁�
 
 本可组合技能用于开发实现分析、实施计划、迁移评估和 MR 拆分。它只负责规划行为，不执行产品代码修改。产品需求或 spec 优化默认由产品分析技能处理；仅当用户或上游启动技能显式指定 `superCoder` 时，本技能才保留并执行该阶段的需求分析能力。
 
+## 执行产物位置
+
+创建、读取或恢复账本前，读取 `../superCoder/references/shared/artifact-root.md` 并解析产物根目录；本技能所有 `.coder` 路径均按该规则替换。
+
 ## 必读文件
 
 - `references/planning.md`

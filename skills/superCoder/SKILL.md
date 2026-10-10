@@ -47,6 +47,10 @@ description: 当任务已进入开发分析与实施阶段，涉及实施计划�
 
 产物职责与 Gate 融合边界统一读取 `references/shared/artifact-model.md`；任务/MR 模板读取 `assets/templates/task-and-mr.md`，融合 Gate 模板读取 `assets/templates/gates.md`。
 
+## 执行产物位置
+
+进入任一子技能前读取 `references/shared/artifact-root.md`，按用户指定 → `workspace.artifact_root` → 仓库 `.coder` 解析产物根目录。所有 `.coder` 路径都是默认示例，实际读写、恢复与路径守卫必须使用解析后的目录；worktree 可使用同一绝对目录共享账本。
+
 ## 全局硬约束
 
 1. `STANDARD` / `CONTROLLED` 必须保留 analysis、plan、执行契约、current-task、progress、handoff/context/task-state、execution、validation 等阶段产物；执行契约通常为独立 MR。仅 BUG 分析与计划已明确且只有一个交付单元时，可由 Plan 内联承担单 MR 执行契约。`LIGHT` 使用单一 `light-task.md`。聊天记忆不是账本。

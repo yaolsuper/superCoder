@@ -7,6 +7,10 @@ description: 在声明 superCoder 工作 complete、fixed、passing、accepted�
 
 在说工作 complete、fixed、passing、accepted、ready to submit 或 safe to hand off 前，立即使用本可组合技能。
 
+## 执行产物位置
+
+创建、读取或恢复账本前，读取 `../superCoder/references/shared/artifact-root.md` 并解析产物根目录；本技能所有 `.coder` 路径均按该规则替换。
+
 ## 必读文件
 
 - `../superCoder/references/shared/human-confirmation-gate.md`

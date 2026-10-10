@@ -7,6 +7,10 @@ description: 当 superCoder 任务需要 CP0-CP5 判断、正式产物复核、�
 
 本可组合技能用于 CP0-CP5 复核、正式产物门禁，以及 Generator / Reviewer / Fixer 分离。
 
+## 执行产物位置
+
+创建、读取或恢复账本前，读取 `../superCoder/references/shared/artifact-root.md` 并解析产物根目录；本技能所有 `.coder` 路径均按该规则替换。
+
 ## 必读文件
 
 - `references/checkpoint.md`

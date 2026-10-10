@@ -7,6 +7,10 @@ description: 当 superCoder 决策依赖 .coder 账本、恢复状态、下一 M
 
 当决策依赖 `.coder/<development_project_id>/` 状态时，使用本可组合技能。它检查完整开发产物链、阶段 epoch、Gate 状态与完成证据。
 
+## 执行产物位置
+
+创建、读取或恢复账本前，读取 `../superCoder/references/shared/artifact-root.md` 并解析产物根目录；本技能所有 `.coder` 路径均按该规则替换。
+
 ## 必读文件
 
 - `references/ledger-audit.md`

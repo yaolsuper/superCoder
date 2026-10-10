@@ -22,6 +22,25 @@ def inside(repo: Path, path: Path) -> bool:
     try: path.resolve().relative_to(repo.resolve()); return True
     except ValueError: return False
 
+def artifact_directory(repo: Path, artifact_root: Path | str | None = None) -> Path:
+    """Resolve the selected artifact root independently of the process cwd."""
+    if artifact_root is not None and not str(artifact_root).strip():
+        raise KnowledgeError("INVALID_SCOPE", "artifact root must not be empty")
+    root = Path(artifact_root) if artifact_root is not None else Path(".coder")
+    return (root if root.is_absolute() else repo.resolve() / root).resolve()
+
+def scoped_path(root: Path, relative: str) -> Path:
+    path = root / relative
+    # A shared root may be outside the code checkout; descendants may not escape it.
+    if not inside(root, path):
+        raise KnowledgeError("INVALID_SCOPE", "artifact path escapes the selected root")
+    return path
+
+def display_path(repo: Path, path: Path, *, absolute: bool=False) -> str:
+    if absolute: return path.as_posix()
+    try: return path.relative_to(repo.resolve()).as_posix()
+    except ValueError: return path.as_posix()
+
 def parse_card(path: Path) -> Card:
     text = path.read_text(encoding="utf-8")
     if text.count("<!-- sc:manifest -->") != 1 or text.count("<!-- /sc:manifest -->") != 1:
@@ -44,15 +63,18 @@ def parse_card(path: Path) -> Card:
         if sections[item["id"]]["digest"] != item.get("digest"): raise KnowledgeError("SECTION_HASH_DRIFT", item["id"])
     return Card(path, manifest, sections)
 
-def locate(repo: Path, *, project_id: str | None=None, requirement_id: str | None=None, module_id: str | None=None) -> Path:
-    repo = repo.resolve()
+def locate(repo: Path, *, project_id: str | None=None, requirement_id: str | None=None, module_id: str | None=None, artifact_root: Path | str | None=None) -> Path:
+    root = artifact_directory(repo, artifact_root)
+    for value in (project_id, module_id):
+        if value is not None and (not value or value in (".", "..") or "/" in value or "\\" in value):
+            raise KnowledgeError("INVALID_SCOPE", "selector must be a single directory or file name")
     if module_id:
-        candidates = [repo / ".coder/_knowledge/product-modules" / f"{module_id}.md"]
+        candidates = [scoped_path(root, f"_knowledge/product-modules/{module_id}.md")]
     elif project_id:
-        candidates = [repo / ".coder" / project_id / "requirement-knowledge-card.md"]
+        candidates = [scoped_path(root, f"{project_id}/requirement-knowledge-card.md")]
     else:
-        candidates = sorted(repo.glob(".coder/*/requirement-knowledge-card.md"))
-    candidates = [p for p in candidates if p.is_file() and inside(repo, p)]
+        candidates = sorted(root.glob("*/requirement-knowledge-card.md"))
+    candidates = [p for p in candidates if p.is_file() and inside(root, p)]
     if requirement_id:
         candidates = [p for p in candidates if parse_card(p).manifest.get("resource", {}).get("id") == requirement_id]
     if not candidates: raise KnowledgeError("NOT_FOUND", "canonical resource was not found")

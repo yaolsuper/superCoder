@@ -7,6 +7,10 @@ description: 当 superCoder 任务涉及 BUG、缺陷、回归、生产事故、
 
 本可组合技能用于所有 BUG、缺陷、回归、生产事故、hotfix 和 P0-P2 修复流程。它是根因证据要求的单一事实来源。
 
+## 执行产物位置
+
+创建、读取或恢复账本前，读取 `../superCoder/references/shared/artifact-root.md` 并解析产物根目录；本技能所有 `.coder` 路径均按该规则替换。
+
 ## 必读文件
 
 - `references/bug-root-cause.md`

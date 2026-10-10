@@ -466,3 +466,37 @@ scenarios:
       - paste_requirement_prose_as_code_design
       - ready_with_architecture_block_or_unresolved_design
       - require_irrelevant_fixed_object_attributes
+  - id: p35-shared-artifact-root
+    markdown: p35-shared-artifact-root.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder/references/shared/artifact-root.md
+      - skills/superCoder-ledger-audit/SKILL.md
+      - skills/superCoder-execution/SKILL.md
+    expected_verdicts:
+      - SHARED_ARTIFACT_ROOT_RESOLVED
+      - SHARED_LEDGER_RESUMED
+      - ARTIFACT_SCOPE_BLOCKED
+    must_not:
+      - fallback_to_local_ledger
+      - append_extra_coder_directory
+      - reuse_other_worktree_validation
+      - expand_product_code_scope
+      - escape_selected_artifact_root
+  - id: p36-adversarial-mechanism-review
+    markdown: p36-adversarial-mechanism-review.md
+    required_routes:
+      - skills/superCoder-review/SKILL.md
+      - skills/superCoder-review/references/review.md
+      - skills/superCoder-checkpoint/references/document-review-checklist.md
+    expected_verdicts:
+      - FAIL
+      - CONDITIONAL_PASS
+      - PASS
+    must_not:
+      - replace_ablation_with_full_suite_or_plan
+      - approve_unverified_core_mechanism
+      - infer_no_contribution_from_inactive_fixture
+      - report_impossible_counterexample_as_defect
+      - change_plain_review_routing
+      - mutate_product_or_production_for_ablation
