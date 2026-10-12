@@ -7,6 +7,10 @@ description: 仅当用户明确要求 superCoder review、质量审核、回归�
 
 仅对明确的 superCoder review、质量审核、回归风险评估、发布判断或 handoff 批准使用本可组合技能。普通 code review 在当前环境存在原生 review 能力时，应优先使用该能力。
 
+## 执行产物位置
+
+创建、读取或恢复账本前，读取 `../superCoder/references/shared/artifact-root.md` 并解析产物根目录；本技能所有 `.coder` 路径均按该规则替换。
+
 ## 必读文件
 
 - `references/review.md`
@@ -19,6 +23,7 @@ description: 仅当用户明确要求 superCoder review、质量审核、回归�
 
 - 确认用户明确选择了 superCoder review。
 - 在判断前定义 review 范围和证据来源。
+- 从目标、约束和不变量重新推导最小方案，对当前方案做对抗性审查；按 `references/review.md` 验证核心机制的消融证据、复杂度必要性和模块边界。
 - 按严重程度报告 findings；review 代码时提供文件和行号引用。
 - 区分代码正确性、回归风险、流程合规性和发布 readiness。
 - 返回明确的批准、条件批准或阻断决策。

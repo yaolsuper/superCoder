@@ -2,7 +2,7 @@ from __future__ import annotations
 import hashlib, json, os, re, tempfile
 from pathlib import Path
 from typing import Any
-from knowledge.core import KnowledgeError, MANIFEST_RE, locate, parse_card, validate_card
+from knowledge.core import KnowledgeError, artifact_directory, scoped_path, MANIFEST_RE, locate, parse_card, validate_card
 from knowledge.index import rebuild
 from knowledge.lineage import validate_lineage
 
@@ -21,10 +21,10 @@ def validate_summary(data):
         value=data.get(field)
         if not isinstance(value,str) or not value.strip(): raise KnowledgeError("DELIVERY_SUMMARY_DRIFT",f"{field} is required")
         if forbidden.search(value): raise KnowledgeError("DELIVERY_SUMMARY_DRIFT",f"{field} contains implementation detail")
-def propose(repo:Path,project_id:str):
-    card=parse_card(locate(repo,project_id=project_id)); issues=validate_card(card)
+def propose(repo:Path,project_id:str,artifact_root=None):
+    card=parse_card(locate(repo,project_id=project_id,artifact_root=artifact_root)); issues=validate_card(card)
     if issues: raise KnowledgeError("CARD_DRIFT",canonical(issues))
-    input_path=repo/".coder"/project_id/"records/completion-input.json"
+    input_path=scoped_path(artifact_directory(repo,artifact_root),f"{project_id}/records/completion-input.json")
     try: data=json.loads(input_path.read_text(encoding="utf-8"))
     except (OSError,json.JSONDecodeError) as exc: raise KnowledgeError("LEDGER_INCOMPLETE",str(exc)) from exc
     lineage=validate_lineage(data.get("operations",[]),data.get("validations",[]))
@@ -57,14 +57,14 @@ def atomic_write(path:Path,text:str):
     try: tmp.write_text(text,encoding="utf-8"); os.replace(tmp,path)
     finally:
         if tmp.exists(): tmp.unlink()
-def materialize(repo:Path,project_id:str,dry_run:bool=False):
-    card,data,result=propose(repo,project_id)
+def materialize(repo:Path,project_id:str,dry_run:bool=False,artifact_root=None):
+    card,data,result=propose(repo,project_id,artifact_root)
     if dry_run:return result
-    original=card.path.read_bytes(); summary=repo/".coder"/project_id/"requirement-delivery-summary.md"; old_summary=summary.read_bytes() if summary.exists() else None
+    original=card.path.read_bytes(); summary=scoped_path(artifact_directory(repo,artifact_root),f"{project_id}/requirement-delivery-summary.md"); old_summary=summary.read_bytes() if summary.exists() else None
     try:
         atomic_write(card.path,render(card,result["graph"])); parsed=parse_card(card.path); issues=validate_card(parsed)
         if issues: raise KnowledgeError("CARD_DRIFT",canonical(issues))
-        body=f"# 需求最终落地摘要\n\n## Why\n\n{data['why']}\n\n## Who\n\n{data['who']}\n\n## What\n\n{data['what']}\n"; atomic_write(summary,body); rebuild(repo)
+        body=f"# 需求最终落地摘要\n\n## Why\n\n{data['why']}\n\n## Who\n\n{data['who']}\n\n## What\n\n{data['what']}\n"; atomic_write(summary,body); rebuild(repo,artifact_root)
     except Exception:
         card.path.write_bytes(original)
         if old_summary is None and summary.exists(): summary.unlink()

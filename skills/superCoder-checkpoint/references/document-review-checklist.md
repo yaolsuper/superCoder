@@ -26,6 +26,20 @@
 | EXECUTION_RECORD | 当前 MR、实际 diff、验证结果 | 验收决策 | 执行记录检查清单（Execution Record Checklist） |
 | ACCEPTANCE_DECISION | 执行记录、验证、Checkpoint 状态 | 下一 MR / 交付 | 验收检查清单（Acceptance Checklist） |
 
+## 技术方案专项审查
+
+ADD、LLD、DBD、MR、ANALYSIS、PLAN 中涉及技术方案或核心机制，以及涉及这些机制的 EXECUTION_RECORD / ACCEPTANCE_DECISION，除对应场景清单外，还必须应用 `skills/superCoder-review/references/review.md` 的“方案与核心机制审查”。BRD / PRD 不因此下沉到代码或实验细节；其他不适用项须说明原因。
+
+| 检查项 | 判断标准 |
+|---|---|
+| 第一性原理重建 | 目标、硬约束、不变量有上游来源；最小方案与当前方案差异可解释，不把实现选择当成需求 |
+| 对抗性审查 | 针对真实契约构造反例并核对已有防护，区分已证实、已排除和待验证结论 |
+| 核心机制消融 | 设计阶段有主张、完整/消融对照、预设指标和下游实验任务；实现验收有当前 revision 的有效实测证据，普通测试通过不能替代 |
+| 奥卡姆剃刀 | 相同约束下比较更简单方案，新增机制、状态、抽象和依赖有必要性证据，简化保留必要保护 |
+| 高内聚、低耦合 | 职责和不变量归属清楚，依赖、接口、状态与副作用边界可解释；结构问题关联具体修改、测试或一致性风险 |
+
+实现验收或放行时，保留的核心机制缺少有效消融证据或结果不支持必要主张，列为 Blocker；设计阶段的实验计划不能冒充实际验证结果。
+
 ## 职责边界
 
 | 类型 | 只回答 | 不应包含 |
@@ -112,8 +126,20 @@
 | 依赖明确 | 前置 MR、后置 MR、阻塞条件清楚 |
 | 输入明确 | 依赖文档、接口、数据、配置明确 |
 | 输出明确 | 代码、配置、文档、测试或迁移产物明确 |
+| 输入可依赖 | 前置状态、代码/符号、数据和外部能力说明当前值、新鲜度、用途及缺失处理 |
+| 输出可判定 | 每项交付输出具有产出位置、可观察行为、完成判据和明确排除项 |
+| 关键代码设计可开发 | 只对真实改动生成仓库语言类型/方法、协议/Schema、DDL/ORM、映射或关键控制流；名称和签名真实，无固定对象属性清单或自然语言占位 |
+| 请求响应可解析 | 涉及协议时，请求、成功/空结果和错误样例与实际 DTO/IDL/Schema 一致；未涉及协议时不强制生成 |
+| 架构审查通过 | 仅审查实际变化的边界、归属、兼容、事务/一致性、副作用或 NFR，结论无 BLOCK |
+| Task 图完整 | 有稳定 Task ID、类型、状态、依赖图、必要分组和安全并行判断，不以编号顺序代替依赖 |
+| Task 覆盖闭合 | 交付输出、文件变更、关键代码设计和验证均有 Task 承接，且无孤儿 Task |
+| Task 消费设计 | 实现 Task 通过 `design_refs` 指向真实设计项，不自行发明或静默改写对象、字段、协议与规则 |
+| Task 可直接执行 | 产品代码和高风险 Task 卡包含修改点、当前/目标行为、实现定义、必须保持、完成证据和失败处理；未知位置使用有界 DISCOVERY Task，不虚构精度 |
+| 自主决策有边界 | 私有结构、局部算法和等价实现可自主选择；公开契约、数据语义、依赖、架构、业务约束或路径变化触发停止和重新规划 |
+| 并行条件真实 | 并行 Task 已确认依赖完成、修改文件无冲突、不共享可变状态且失败互不污染 |
 | 验收标准可执行 | 能通过命令、测试、截图、日志或接口验证 |
 | 隐藏工作量显式化 | 部署、迁移、兼容、联调明确列出 |
+| 注释点明确 | 非显然业务规则、边界、不变量、兼容方案和复杂逻辑已定位到文件/符号；N/A 有可信理由 |
 
 ## Coder 产物检查清单（Coder Checklist）
 
@@ -142,19 +168,20 @@
 | 承接分析结论 | 阶段和 MR 能映射到分析结论 |
 | 阶段顺序明确 | 有依赖、阻塞和不可并行项 |
 | MR 只做索引 | 不把完整 MR 正文塞进计划 |
-| 计划确认门禁 | 未确认计划不生成独立 MR 文件，不把 MR 标记为 READY |
+| 计划确认门禁 | 未确认 Plan 不生成或激活执行契约；SINGLE_MR_PLAN 不得提前标记 `execution_contract: true` / READY |
 | 首个 MR 可启动 | 计划已确认后，READY MR 的前置条件和验收方式明确 |
 | 保留实现弹性 | 不把建议实现误写成唯一实现 |
 | 不新增无来源约束 | 计划、Schema 校验和测试不得引入分析中没有来源的单选/多选、数量上下限、去重、截断或冲突策略 |
 | BUG 根因映射（BUG 修复任务） | plan 的修复范围映射到根因证据矩阵结论 ID；fix-mr 来源链路标注根因结论 ID；修复范围无法回溯根因视为 Blocker |
+| 代码注释计划 | 计划说明哪些注释需新增、更新或删除，以及它们解释的意图/约束；不使用笼统“补充必要注释” |
 
 ### 当前任务检查清单（Current Task Checklist）
 
 | 检查项 | 判断标准 |
 |---|---|
 | 当前目标唯一 | 只指向一个 MR 或等价任务切片 |
-| source_chain 状态匹配 | PENDING 分析/计划态可缺 plan 或 MR；READY/RUNNING/VERIFYING/ACCEPTED 必须 analysis / plan / MR 都存在且真实 |
-| 阶段转换有据 | 当前 status 对应的阶段转换必须有 coder-current-task / project-progress / checkpoint-status 三文件 stage_epoch 同步跳变证据；无跳变证据的 status 视为未达成 |
+| source_chain 状态匹配 | PENDING 分析/计划态可缺执行契约；READY/RUNNING/VERIFYING/ACCEPTED 必须 analysis / Plan / 活动执行契约存在且真实 |
+| 阶段转换有据 | 当前 status 对应 `gates.md` 的 transition gate，且 current-task / progress / gates 的 `stage_epoch` 一致 |
 | 路径守卫明确 | allowed_paths、forbidden_paths、artifact_allowed_paths 清楚 |
 | 验证方式明确 | validation_commands 或等价验证方式可执行 |
 | 状态一致 | status、can_start_next、checkpoint 状态不矛盾 |
@@ -164,14 +191,15 @@
 | 检查项 | 判断标准 |
 |---|---|
 | 实际修改可追溯 | 修改文件和产物文件都列出 |
-| 阶段与 epoch 一致 | 执行记录记录的修改发生在 project-progress 当前阶段 == RUNNING 期间，且三文件 stage_epoch 一致；若声称已改代码但阶段未达 RUNNING 或 epoch 不一致，视为编造 |
-| pre-edit guard 已过 | 修改产品代码前已通过 pre-edit guard（阶段 RUNNING / epoch 一致 / plan+mr 文件存在 / 路径守卫 / CP4 无 Blocker） |
+| 阶段与证据一致 | 修改 operation 发生在 RUNNING epoch，且可解析到对应 Gate 与活动执行契约；否则视为不可验证 |
+| pre-edit guard 已过 | 修改产品代码前已通过 pre-edit guard（epoch 一致、MR 真实、路径守卫、注释计划和 CP4 无 Blocker） |
 | 验证结果真实 | 不虚构命令、日志或通过结论 |
 | 偏差处理明确 | 失败、越界、阻塞有分类和下一步 |
 | 输出有界 | 命令和日志只记录摘要和精确命令 |
-| 状态产物齐全 | project-progress、checkpoint-status、handoff 和执行记录路径都已列出并一致 |
-| 验证记录落盘 | validation 记录存在，或未执行验证的原因与状态匹配 |
-| MR 清单回写 | 当前 MR 文件中的执行记录与验收清单已反映本轮状态 |
+| 核心产物齐全 | analysis、Plan、执行契约、current-task、progress、gates、恢复、operations/execution 与 validation 按当前阶段存在并一致 |
+| 验证记录落盘 | 独立 validation 文件包含真实结果，或未执行原因与状态匹配 |
+| 代码注释审计 | 必要注释已新增/更新，失真注释已删除，无逐行复述、死代码注释或缺少责任归属和处理期限的长期 TODO；N/A 不用于业务逻辑改动 |
+| 执行契约回写 | 当前 Plan-as-MR 或独立 MR 的执行与验收清单已反映本轮状态 |
 | 支撑验收 | 可据此做验收决策 |
 
 ### 验收检查清单（Acceptance Checklist）
@@ -180,8 +208,8 @@
 |---|---|
 | 验证已完成 | 必要命令通过，未执行项有可接受原因 |
 | Checkpoint 无 Blocker | CP4/CP5 和相关专项 Review 已通过 |
-| 进度状态一致 | project-progress、current task、checkpoint-status、handoff、task-state、当前 MR、执行记录和验证记录一致 |
-| 阶段转换可审计 | 从 PLANNING/MR_SPLIT 到 RUNNING 到 ACCEPTED 的每次阶段转换都有三文件 stage_epoch 同步跳变证据；口头指令或对话记忆单独不得作为阶段转换依据 |
+| 进度状态一致 | current-task、progress、gates、活动执行契约和恢复产物一致 |
+| 阶段转换可审计 | 每次转换都有 `gates.md` transition gate 与三文件一致 epoch；口头指令或对话记忆不得单独作为依据 |
 | 文件化交付 | 完成结论必须能回溯到执行记录、验证结果和 CP5，不以对话说明替代文件更新 |
 | 下一步明确 | 下一 MR 启动条件或阻塞项清楚 |
 | 不扩大放行范围 | 结论只覆盖本轮审查和验证范围 |

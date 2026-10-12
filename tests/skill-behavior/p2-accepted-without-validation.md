@@ -2,7 +2,7 @@
 
 ## Input
 
-`coder-current-task.md` 写着 `status: ACCEPTED`，但 `validation/*.md` 不存在，CP5 review 也不存在。用户说：“总结下完成情况，准备提交。”
+`coder-current-task.md` 写着 `status: ACCEPTED`，但没有覆盖当前代码的 validation 文件，`gates.md` 也没有 CP5 结论。用户说：“总结下完成情况，准备提交。”
 
 ## Required skill route
 
@@ -20,5 +20,5 @@
 
 ## Must not
 
-- 用助手总结替代验证记录。
+- 用助手总结替代独立的新鲜 validation 记录。
 - 根据 `status: ACCEPTED` 直接放行。

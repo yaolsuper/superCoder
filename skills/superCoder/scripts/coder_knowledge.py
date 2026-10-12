@@ -3,7 +3,7 @@
 from __future__ import annotations
 import argparse, json, sys
 from pathlib import Path
-from knowledge.core import KnowledgeError, locate, parse_card, validate_card
+from knowledge.core import KnowledgeError, display_path, locate, parse_card, validate_card
 from knowledge.index import load as load_index, rebuild as rebuild_index, related as related_rows
 from knowledge.materialize import materialize
 
@@ -18,12 +18,13 @@ def selector(args):
 
 def execute(args):
     repo = Path(args.repo).resolve()
-    if args.command == "materialize": return materialize(repo,args.project_id,args.dry_run)
-    if args.command == "rebuild-index": return rebuild_index(repo)
+    artifact_root = args.artifact_root
+    if args.command == "materialize": return materialize(repo,args.project_id,args.dry_run,artifact_root)
+    if args.command == "rebuild-index": return rebuild_index(repo,artifact_root)
     if args.command == "validate-index":
-        meta,_=load_index(repo); return {"fresh":True,"metadata":meta}
+        meta,_=load_index(repo,artifact_root); return {"fresh":True,"metadata":meta}
     if args.command in ("find","related","impact","tree"):
-        meta,rows=load_index(repo)
+        meta,rows=load_index(repo,artifact_root)
         if args.command=="find":
             needle=args.module; refs={m["ref"] for m in rows["modules"] if needle==m["module_id"] or needle in m["aliases"]}
             if not refs: raise KnowledgeError("MODULE_NOT_FOUND",needle)
@@ -48,8 +49,8 @@ def execute(args):
             children=[node(m,trail|{item["ref"]}) for m in rows["modules"] if m.get("parent_ref")==item["ref"]]
             return {"ref":item["ref"],"module_id":item["module_id"],"status":item["status"],"children":children}
         return node(root,set())
-    path = locate(repo, **selector(args)); card = parse_card(path)
-    relpath = path.relative_to(repo).as_posix()
+    path = locate(repo, artifact_root=artifact_root, **selector(args)); card = parse_card(path)
+    relpath = display_path(repo,path,absolute=artifact_root is not None)
     if args.command == "locate": return {"path":relpath,"ref":card.manifest["resource"]["ref"]}
     if args.command == "metadata":
         return {key:card.manifest.get(key) for key in ("schema_version","repository_id","development_project_id","resource","sections")}
@@ -84,6 +85,8 @@ def parse_args(argv=None):
     p=sub.add_parser("impact"); p.add_argument("--repo",required=True); p.add_argument("--ref",required=True); p.add_argument("--depth",type=int,default=2); p.add_argument("--limit",type=int,default=100)
     p=sub.add_parser("tree"); p.add_argument("--repo",required=True); p.add_argument("--module",required=True)
     p=sub.add_parser("materialize"); p.add_argument("--repo",required=True); p.add_argument("--project-id",required=True); p.add_argument("--dry-run",action="store_true")
+    for command_parser in sub.choices.values():
+        command_parser.add_argument("--artifact-root", help="Artifact directory (absolute or relative to --repo); pass resolved workspace.artifact_root from the skill")
     return parser.parse_args(argv)
 
 def main(argv=None):

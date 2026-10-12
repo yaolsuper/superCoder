@@ -169,7 +169,7 @@ scenarios:
       - skills/superCoder-execution/references/execution.md
       - skills/superCoder-ledger-audit/references/ledger-audit.md
     expected_verdicts:
-      - INLINE_MR_SELECTED
+      - MR_ARTIFACT_PRESERVED
       - OPERATION_TRACE_REQUIRED
     must_not:
       - duplicate_equivalent_plan_and_mr
@@ -360,3 +360,143 @@ scenarios:
       - add_unsupported_negative_constraint
       - generate_plan_while_semantic_decision_unresolved
       - treat_missing_semantic_gate_counter_as_zero
+  - id: p30-code-delivery-trigger-boundary
+    markdown: p30-code-delivery-trigger-boundary.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder-planning/SKILL.md
+      - skills/superCoder-bug-root-cause/SKILL.md
+      - skills/superCoder-execution/SKILL.md
+    expected_verdicts:
+      - ROUTE_PRODUCT_ANALYSIS_BY_DEFAULT
+      - EXPLICIT_SUPERCODER_REQUIREMENT_ANALYSIS_ALLOWED
+      - ROUTE_SUPERCODER_CODE_DELIVERY
+    must_not:
+      - auto_trigger_supercoder_for_product_spec_optimization
+      - treat_generic_analysis_word_as_code_delivery_signal
+      - reject_explicit_supercoder_requirement_analysis
+      - skip_supercoder_for_implementation_plan_mr_bug_or_code_stage
+  - id: p31-compact-artifact-model
+    markdown: p31-compact-artifact-model.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder/references/shared/artifact-model.md
+      - skills/superCoder/assets/templates/task-and-mr.md
+      - skills/superCoder/assets/templates/gates.md
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+    expected_verdicts:
+      - DEVELOPMENT_ARTIFACTS_PRESERVED
+      - GATE_RECORDS_FUSED
+      - GATE_LEDGER_MIGRATION
+    must_not:
+      - collapse_development_flow_to_delivery_and_evidence
+      - omit_execution_or_validation
+      - put_domain_evidence_into_gate_ledger
+      - generate_duplicate_gate_status_or_empty_review
+      - migrate_non_gate_development_artifacts
+  - id: p32-code-comment-audit
+    markdown: p32-code-comment-audit.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+      - skills/superCoder-checkpoint/references/document-review-checklist.md
+      - skills/superCoder/assets/templates/task-and-mr.md
+    expected_verdicts:
+      - NON_OBVIOUS_LOGIC_COMMENT_REQUIRED
+      - STALE_COMMENT_UPDATE_REQUIRED
+      - REDUNDANT_COMMENT_NOT_ACCEPTED
+      - COMMENT_AUDIT_NA_WITH_REASON
+      - CODE_COMMENT_AUDIT_PASS
+    must_not:
+      - accept_non_obvious_logic_without_comment
+      - accept_stale_comment
+      - require_line_by_line_comments
+      - use_na_for_business_logic_change
+      - keep_commented_out_dead_code
+  - id: p33-single-bug-mr-plan
+    markdown: p33-single-bug-mr-plan.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder/references/shared/artifact-model.md
+      - skills/superCoder-bug-root-cause/references/bug-root-cause.md
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+    expected_verdicts:
+      - SINGLE_BUG_MR_PLAN_ALLOWED
+      - INLINE_MR_CONTRACT_INVALID
+      - INLINE_MR_MATERIALIZATION_REQUIRED
+    must_not:
+      - duplicate_equivalent_plan_and_mr
+      - omit_execution_or_validation
+      - inline_multi_mr_or_independent_boundary
+      - treat_unplanned_inline_hotfix_as_single_mr_plan
+  - id: p34-executable-mr-input-output-contract
+    markdown: p34-executable-mr-input-output-contract.md
+    required_routes:
+      - skills/superCoder/assets/templates/task-and-mr.md
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+      - skills/superCoder-checkpoint/references/document-review-checklist.md
+    expected_verdicts:
+      - MR_INPUT_OUTPUT_CONTRACT_REQUIRED
+      - IMPLEMENTATION_REASONING_SPACE_PRESERVED
+      - TASK_EXECUTABILITY_REQUIRED
+      - TASK_IMPLEMENTATION_DEFINITION_REQUIRED
+      - CODE_DESIGN_CONTRACT_REQUIRED
+      - TASK_COVERAGE_NOT_CLOSED
+      - BOUNDED_DISCOVERY_STEP_REQUIRED
+      - PARALLEL_CONDITION_NOT_MET
+    must_not:
+      - reduce_inputs_to_file_list
+      - use_vague_action_as_execution_contract
+      - over_prescribe_private_implementation
+      - fabricate_path_or_symbol
+      - infer_parallelism_from_missing_dependency
+      - accept_task_with_undefined_implementation_semantics
+      - accept_uncovered_output_or_orphan_task
+      - accept_named_but_undefined_object_or_protocol
+      - allow_task_to_redefine_code_design
+      - paste_requirement_prose_as_code_design
+      - ready_with_architecture_block_or_unresolved_design
+      - require_irrelevant_fixed_object_attributes
+  - id: p35-shared-artifact-root
+    markdown: p35-shared-artifact-root.md
+    required_routes:
+      - skills/superCoder/SKILL.md
+      - skills/superCoder/references/shared/artifact-root.md
+      - skills/superCoder-ledger-audit/SKILL.md
+      - skills/superCoder-execution/SKILL.md
+    expected_verdicts:
+      - SHARED_ARTIFACT_ROOT_RESOLVED
+      - SHARED_LEDGER_RESUMED
+      - ARTIFACT_SCOPE_BLOCKED
+    must_not:
+      - fallback_to_local_ledger
+      - append_extra_coder_directory
+      - reuse_other_worktree_validation
+      - expand_product_code_scope
+      - escape_selected_artifact_root
+  - id: p36-adversarial-mechanism-review
+    markdown: p36-adversarial-mechanism-review.md
+    required_routes:
+      - skills/superCoder-review/SKILL.md
+      - skills/superCoder-review/references/review.md
+      - skills/superCoder-checkpoint/references/document-review-checklist.md
+    expected_verdicts:
+      - FAIL
+      - CONDITIONAL_PASS
+      - PASS
+    must_not:
+      - replace_ablation_with_full_suite_or_plan
+      - approve_unverified_core_mechanism
+      - infer_no_contribution_from_inactive_fixture
+      - report_impossible_counterexample_as_defect
+      - change_plain_review_routing
+      - mutate_product_or_production_for_ablation

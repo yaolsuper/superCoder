@@ -1,63 +1,46 @@
-# BUG 根因证据链协议
+# BUG 根因证据协议
 
-当用户请求修复 BUG、缺陷、回归、线上问题、热修、P0/P1/P2 或任何“先改一下”的异常处理任务时，读取本文件。紧急性只影响拆分粒度和验证优先级，不豁免根因证据、实施计划和 fix-mr。
+BUG、缺陷、回归、事故、hotfix 和 P0-P2 不得使用 LIGHT，默认使用 CONTROLLED 并保留完整根因、Plan、执行契约、执行和验证链路。
 
-## 核心规则
-
-BUG 修复任务不享受链路豁免，必须形成文件化链路：
+## 必需链路
 
 ```text
-analysis(根因证据矩阵)
-  -> implementation plan(根因映射)
-  -> fix-mr(根因修复范围)
-  -> current task
-  -> execution
+analysis/<id>.md（根因矩阵） -> plans/<id>.md（修复映射） -> 执行契约（单 MR Plan 或独立 fix MR） -> current-task -> operations/execution -> validation -> gates.md
 ```
 
-不得因“只是一个 bug”“改动很小”“用户只说修一下”而跳过 analysis、plan 或 fix-mr。`source_chain.plan: null`、`source_chain.mr: null`、`HOTFIX`、`inline_hotfix_root_cause`、`inline_hotfix_single_slice`、`ad_hoc_fix` 或同类占位链路都不得进入编码。
-不得把聊天中的排查结论当作根因证据链。即使本轮只回答“是不是某个前缀、配置或调用链导致失败”，只要用户没有明确要求轻量口头答复，就必须按规划协议生成或更新 analysis、project-progress、coder-current-task、checkpoint-status、handoff、task-state 和 review 产物。
-轻量口头答复只能用于用户明确要求“不落盘 / 快速判断 / 只要结论”的场景；最终回复必须说明没有建立根因账本，且不得输出可执行修复范围、可提交状态或完成态判断。
+根因和 Plan 已通过、只有一个不可再拆的修复 MR 且无需独立审批时，允许 `SINGLE_MR_PLAN`，不生成内容等价的 fix MR。Plan 必须补齐 MR 合约字段并成为 current-task 的活动执行契约。execution record 和 validation 始终保留；未发生偏差时不创建 deviation。
 
-## 根因证据矩阵
+## 根因矩阵
 
-BUG 修复任务的 plan 必须包含根因证据矩阵：
+`analysis.md` 至少记录：
 
 | 字段 | 要求 |
 |---|---|
-| 故障现象 | 可观察的异常表现、错误信息、影响范围 |
-| 复现证据 | 复现命令 / 接口 / 步骤 / 日志摘要（有界，精确命令） |
-| 根因定位 | 命中的 `file:line`、调用链或数据流路径，不得只写模块名 |
-| 根因结论 | 为什么这里会出错，区分代码事实与推断 |
-| 修复范围 | 最小修复面，明确哪些文件属于本次 fix-mr、哪些属于其他 MR 或不修 |
-| 回归验证 | 防回归测试 / 命令 / 断言点 |
+| 故障现象 | 可观察异常、错误信息和影响范围 |
+| 复现证据 | 有界命令、接口、步骤或日志摘要 |
+| 根因定位 | `file:line`、调用链或数据流，不只写模块名 |
+| 根因结论 | 区分代码事实与推断 |
+| 修复范围 | 最小修复面和明确非目标 |
+| 回归验证 | 能证明原故障被覆盖的命令或验收步骤 |
 
-根因定位缺失、复现证据缺失、或修复范围无法回溯到根因定位时，plan 的 CP2 必须 FAIL，不得生成 fix-mr，不得进入执行。
+根因定位、复现证据或范围映射缺失时 CP2 必须 FAIL。
 
-## Fix MR 要求
+## 修复计划
 
-fix-mr 文件必须包含 `## 来源链路`，并显式标注：
-
-- 来源类型：根因证据矩阵结论 ID（如 R1、R2）。
-- 修复范围如何对应根因定位。
-- 哪些相关问题不在本 MR 修复范围内。
-- 回归验证如何证明根因被修复，而不是只遮住症状。
+`plan.md` 的每个修复单元必须引用根因结论 ID，说明文件范围、步骤、回归验证和停止条件。若拆分 MR，MR 只保留本单元的引用和执行细节，不复制整份根因矩阵。
 
 ## Pre-Edit Guard 扩展
 
-BUG / 热修进入产品代码修改前，除通用 pre-edit guard 外，还必须确认：
+- analysis、plan 和活动执行契约真实存在且 revision 链一致；`SINGLE_MR_PLAN` 时 Plan 标记 `execution_contract: true`；
+- 当前修复单元引用根因结论 ID；
+- 至少一个验证能覆盖原故障，而非只遮蔽症状；
+- `gates.md` 中 Analysis Gate 和当前 fix MR 的 CP4 已通过；
+- 不使用 `HOTFIX`、`inline_hotfix_*`、`ad_hoc_fix` 或 null 占位链路。
 
-- [ ] analysis 文件真实存在，且包含根因证据矩阵。
-- [ ] plan 文件真实存在，且包含根因映射。
-- [ ] fix-mr 文件真实存在，且 `## 来源链路` 指向根因结论 ID。
-- [ ] `source_chain` 没有 `HOTFIX`、`inline_hotfix_*`、`ad_hoc_fix` 或 null 占位。
-- [ ] 至少一个回归验证命令或人工验收步骤能证明原故障已被覆盖。
+失败时只允许补证据或修复计划，不得编码。
 
-## 压力场景
+## 记录
 
-| 场景 | 输入特征 | 正确行为 |
-|---|---|---|
-| 小修诱惑 | “这个 bug 很小，直接改吧” | 先生成根因证据矩阵和 fix-mr |
-| 热修绕过 | `mode: HOTFIX` 且 `source_chain.plan: inline_hotfix_single_slice` | 阻断编码，重建链路 |
-| 空壳 plan | plan 存在但无根因 `file:line` | CP2 FAIL |
-| 症状修复 | 只改异常捕获或默认值，无复现证据 | 继续根因分析 |
-| 验证缺口 | 代码已改但没有回归验证 | 保持 `VERIFYING` / `BLOCKED` |
+诊断事实写入 analysis；编辑和重试写入 operations/execution record；回归验证写入 validation；真实偏差写入 deviation；状态与恢复写入 current-task/progress/handoff/context/task-state；Gate 结论统一写入 gates。
+
+用户明确要求“只要口头结论 / 不落盘”时可给轻量诊断，但必须说明未建立可执行根因链路，不得声明可提交、已修复或已验收。

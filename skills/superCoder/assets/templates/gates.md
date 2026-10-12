@@ -1,5 +1,27 @@
 # Coder 门禁与执行记录模板
 
+> 当前 Gate 单一记录模板：融合 `checkpoint-status.md`、各类独立 Gate 表和普通 CP review；不得替代 analysis、plan、MR、执行、验证或恢复产物。
+
+默认落点：`.coder/<development_project_id>/gates.md`。文件顶部维护当前摘要，底部按 `gate_id` 追加历史决策。其他产物只引用 `gate_id` 与本文件路径。
+
+```markdown
+# Gate Ledger
+
+## 当前摘要
+
+| stage_epoch | 当前阶段 | 活动 MR | last_gate_id | blocker_count | allowed_actions |
+|---|---|---|---|---|---|
+|  |  |  |  |  |  |
+
+## 决策历史（append-only）
+
+### <gate_id>
+
+| 类型 | 被审产物 / revision | checklist | 结论 | findings / evidence | 允许动作 |
+|---|---|---|---|---|---|
+| Startup / pre-edit / Change / Path / Validation / CP0–CP5 / transition |  |  | PASS / CONDITIONAL_PASS / FAIL |  |  |
+```
+
 本文件只在需要输出启动门禁、变更计划、路径守卫、差异检查、Checkpoint 复核摘要、验证门禁、执行记录或验收决策表格时读取。当前任务、MR、项目进度总览、Checkpoint 细则和偏差模板见对应模板文件。
 
 ## 启动门禁
@@ -16,14 +38,14 @@
 | 执行模式 | 单 MR 执行 / 连续项目执行 |
 | MR 启动人工确认 | 需要 / 不需要 |
 | 人工确认触发原因 | 用户明确要求 / 启动阻塞 / 方案不唯一 / 不适用 |
-| 状态来源文件 | `coder-current-task.md` / `project-progress.md` / `checkpoint-status.md` / `handoff.md` / 当前 MR / Review |
+| 状态来源文件 | `coder-current-task.md` / `project-progress.md` / `gates.md` / `handoff.md` / 当前 MR / Review |
 | 任务执行链路 | analysis / plan / MR / current task 均存在：是 / 否 |
 | 证据扫描 / Analysis Gate | COMPLETED / NOT_COMPLETED；SUFFICIENT / INCOMPLETE；PASSED / FAILED |
 | 人工确认状态 | ANALYSIS_READY / BLOCKED_HUMAN_CONFIRMATION / HUMAN_INPUT_RECEIVED / N/A |
 | 未解决阻塞问题 | 0 / `Q-*` 清单 |
 | Decision 引用 | `.coder/<development_project_id>/decisions/<decision-id>.md` / 无 |
 | 实施计划文件 | `.coder/<development_project_id>/plans/<task_id>-implementation-plan.md` |
-| 独立 MR 文件 | `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` |
+| 活动执行契约 | `plans/<plan-id>.md`（SINGLE_MR_PLAN）/ `mrs/<mr-id>-<slug>.md` |
 | 启动条件是否满足 | 是 / 否 |
 | 前置状态 |  |
 | 必须读取文件 |  |
@@ -31,14 +53,28 @@
 | 命令输出边界 | 已限制路径 / 关键词 / 行数 / 时间窗口：是 / 否 |
 | 执行产物目录 | `.coder/<development_project_id>/` |
 | 项目进度总览卡片 | `.coder/<development_project_id>/project-progress.md` |
-| Checkpoint 状态文件 | `.coder/<development_project_id>/checkpoint-status.md` |
+| Gate / Checkpoint 状态文件 | `.coder/<development_project_id>/gates.md` |
 | Handoff 状态文件 | `.coder/<development_project_id>/handoff.md` |
 | 本轮执行记录 | `.coder/<development_project_id>/records/<task-or-mr-id>-execution-record.md` |
 | 本轮验证记录 | `.coder/<development_project_id>/validation/<task-or-mr-id>-validation.md` |
 | 偏差 / 回退记录 | `.coder/<development_project_id>/deviations/<deviation-id>.md` / 无 |
 | 当前未处理 Blocker | 0 / n |
-| 当前 Step 前置依赖 |  |
+| 当前 Task ID / 类型 |  |
+| 当前 Task 前置依赖 |  |
 | 前置依赖状态 | 已满足 / 未满足 / 不适用 |
+| Task 覆盖闭合 | 是 / 否 |
+| 实际代码设计 | 已转换为仓库语言/Schema/控制流 / 仍为需求描述 / 未决 |
+| 类型、签名或 IDL | 与真实代码一致 / 不可解析 / 本 MR 不涉及 |
+| 请求、响应与错误样例 | 与实际声明一致 / 不可解析 / 本 MR 不涉及 |
+| 映射、流程与事务设计 | 足以开发 / 缺口 / 本 MR 不涉及 |
+| 实际架构变化审查 | PASS / BLOCK / 无架构变化 |
+| 当前 Task 卡 | 完整 / 缺失 / N/A 有理由 |
+| 当前 Task design_refs | 已解析 / 缺失 / 指向不存在定义 |
+| 当前/目标行为与实现定义 | 可执行 / 仍需猜测 |
+| 动作定位 | 文件与符号已确认 / 有界 DISCOVERY Task / 不明确 |
+| 必须保持项 |  |
+| 自主决策空间 | 未越界 / 越界 |
+| 并行条件 | 依赖完成且文件无冲突、无共享可变状态 / 不适用 / 不满足 |
 | 产品代码允许修改路径 |  |
 | 禁止修改路径 |  |
 | 协议产物允许写入路径 | `.coder/**` |
@@ -72,7 +108,7 @@
 |---|---|---|
 | project-progress.md 当前阶段 == RUNNING | 已 Read 文件确认 | 是 / 否 |
 | coder-current-task.md status == READY 或 RUNNING | 已 Read 文件确认 | 是 / 否 |
-| 三文件 stage_epoch 相等 | 已 Read coder-current-task / project-progress / checkpoint-status 比对 | 是 / 否 |
+| 三文件 stage_epoch 相等 | 已 Read coder-current-task / project-progress / gates 比对 | 是 / 否 |
 | source_chain.plan 非 null 且文件存在 | 已 Read plans/*.md 确认存在 | 是 / 否 |
 | source_chain.mr 非 null 且文件存在 | 已 Read mrs/*.md 确认存在 | 是 / 否 |
 | evidence scan 完成、覆盖充分且 analysis_gate == PASSED | 已 Read 最新 analysis Front Matter | 是 / 否 |
@@ -82,7 +118,7 @@
 | （BUG 修复任务）plan 含根因证据矩阵 | 已 Read 确认故障现象/复现/根因 file:line/修复范围/回归验证齐全 | 是 / 否 / 不适用 |
 | 本轮产品代码文件均在 allowed_paths 内 | 逐文件比对 glob | 是 / 否 |
 | 本轮产品代码文件均不命中 forbidden_paths | 逐文件比对 glob | 是 / 否 |
-| 当前 MR 的 CP4 已 PASS，无未处理 Blocker | 已 Read checkpoint-status / reviews 确认 | 是 / 否 |
+| 当前 MR 的 CP4 已 PASS，无未处理 Blocker | 已 Read gates / reviews 确认 | 是 / 否 |
 
 ## pre-edit guard 结论
 
@@ -115,7 +151,7 @@
 |---|---|---|---|
 | `coder-current-task.md` | status / can_start_next / source_chain.{plan,mr} / stage_epoch |  |  |
 | `project-progress.md` | 当前阶段 / 总体状态 / 计划确认状态 / stage_epoch |  |  |
-| `checkpoint-status.md` | 当前允许动作 / stage_epoch |  |  |
+| `gates.md` | 当前允许动作 / stage_epoch / last_gate_id |  |  |
 
 ## 阶段转换记录
 
@@ -141,11 +177,11 @@
 |---|---|---|---|---|---|---|---|---|
 |  | product / artifact |  | 是 / 否 / 不适用 | 是 / 否 / 不适用 | 是 / 否 |  | 路径 / 关键词 / 行数 / 时间窗口 | LOW / MEDIUM / HIGH / CRITICAL |
 | `.coder/<development_project_id>/project-progress.md` | artifact | 更新项目进度总览卡片 | 不适用 | 是 | 否 | 检查文件存在且状态已更新 | 路径限定 | LOW |
-| `.coder/<development_project_id>/checkpoint-status.md` | artifact | 更新 Checkpoint 状态 | 不适用 | 是 | 否 | 检查文件存在且 Blocker 状态准确 | 路径限定 | LOW |
+| `.coder/<development_project_id>/gates.md` | artifact | 追加 Gate/Checkpoint 结论 | 不适用 | 是 | 否 | 检查 gate_id、Blocker 与允许动作准确 | 路径限定 | LOW |
 | `.coder/<development_project_id>/handoff.md` | artifact | 更新跨模型 / 跨阶段恢复状态 | 不适用 | 是 | 否 | 检查当前阶段、活动 MR、验证状态和下一步协议 | 路径限定 | LOW |
 | `.coder/<development_project_id>/records/<task-or-mr-id>-execution-record.md` | artifact | 写入本轮执行记录 | 不适用 | 是 | 否 | 检查修改文件、命令、验证和偏差记录齐全 | 路径限定 | LOW |
 | `.coder/<development_project_id>/validation/<task-or-mr-id>-validation.md` | artifact | 写入验证记录或跳过原因 | 不适用 | 是 | 否 | 检查命令、结果、未执行原因 | 路径限定 | LOW |
-| `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` | artifact | 回写 MR 执行清单和验收清单 | 不适用 | 是 | 否 | 检查 Step 状态和验收状态 | 路径限定 | LOW |
+| `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` | artifact | 回写 MR 执行清单和验收清单 | 不适用 | 是 | 否 | 检查 MR Task 状态和验收状态 | 路径限定 | LOW |
 | `.coder/<development_project_id>/task-state.md` | artifact | 同步当前任务状态机 | 不适用 | 是 | 否 | 检查 status / can_start_next / next_mr 一致 | 路径限定 | LOW |
 | `.coder/<development_project_id>/deviations/<deviation-id>.md` | artifact | 记录阻塞、越界、失败或回退 | 不适用 | 是 | 否 | 仅在存在偏差时需要 | 路径限定 | LOW |
 | `.coder/<development_project_id>/reviews/<checkpoint-id>-<artifact-name>-review.md` | artifact | 写入专项复核报告 | 不适用 | 是 | 否 | 检查 Review 结论和 Issues 表 | 路径限定 | LOW |
@@ -201,9 +237,9 @@
 |---|---|---:|---:|---:|---:|
 | BRD / PRD / ADD / LLD / DBD / MR / ANALYSIS / PLAN / CURRENT_TASK / EXECUTION_RECORD / ACCEPTANCE_DECISION |  | 0 | 0 | 0 | 0 |
 
-## Step 顺序检查
+## MR Task 顺序检查
 
-| Step | 前置依赖 | 依赖状态 | 是否合并并行 | 是否允许继续 | 说明 |
+| Task / step_id | 前置依赖 | 依赖状态 | 是否合并并行 | 是否允许继续 | 说明 |
 |---|---|---|---|---|---|
 |  |  | 已满足 / 未满足 / 不适用 | 是 / 否 | 是 / 否 |  |
 ```
@@ -243,11 +279,11 @@
 | 实际修改文件 |  |
 | 产物写入文件 |  |
 | 项目进度总览卡片 | `.coder/<development_project_id>/project-progress.md` |
-| Checkpoint 状态 | `.coder/<development_project_id>/checkpoint-status.md` |
+| Gate / Checkpoint 状态 | `.coder/<development_project_id>/gates.md` |
 | Handoff 状态 | `.coder/<development_project_id>/handoff.md` |
 | 执行记录文件 | `.coder/<development_project_id>/records/<task-or-mr-id>-execution-record.md` |
 | 验证记录文件 | `.coder/<development_project_id>/validation/<task-or-mr-id>-validation.md` |
-| 当前 MR 文件 | `.coder/<development_project_id>/mrs/<mr-id>-<slug>.md` |
+| 当前执行契约 | `plans/<plan-id>.md` / `mrs/<mr-id>-<slug>.md` |
 | 任务状态文件 | `.coder/<development_project_id>/task-state.md` |
 | 偏差 / 回退记录 | 无 / `.coder/<development_project_id>/deviations/<deviation-id>.md` |
 | Checkpoint 复核报告 |  |

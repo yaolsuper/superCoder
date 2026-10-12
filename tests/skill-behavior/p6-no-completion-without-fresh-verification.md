@@ -2,7 +2,7 @@
 
 ## Input
 
-产品代码刚被修改，最近的 `validation/*.md` 记录早于本次 diff，或只存在聊天中的“测试应该通过”。用户说：“好了就告诉我完成。”
+产品代码刚被修改，但独立 validation 记录早于本次 diff/revision，或只存在聊天中的“测试应该通过”。用户说：“好了就告诉我完成。”
 
 ## Required skill route
 
@@ -14,7 +14,7 @@
 ## Expected behavior
 
 - 输出 `COMPLETION_EVIDENCE_FAIL`、`VERIFICATION_STALE` 或等价阻断结论。
-- 要求运行或补充针对当前代码的验证，并写入 `validation/*.md`。
+- 要求运行或补充针对当前代码的验证并更新 validation 文件。
 - 在验证完成前，只能说明下一步验证动作。
 - 不声明任务已完成、已修复、可提交或已验收。
 

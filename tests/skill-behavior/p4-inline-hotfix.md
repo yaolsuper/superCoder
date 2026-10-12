@@ -2,7 +2,7 @@
 
 ## Input
 
-任务为线上 P1 热修，`coder-current-task.md` 中：
+任务为线上 P1 热修，当前任务中：
 
 ```yaml
 mode: HOTFIX
@@ -25,7 +25,7 @@ source_chain:
 
 - 读取 `skills/superCoder-bug-root-cause/references/bug-root-cause.md`。
 - 输出 `INLINE_HOTFIX_FAIL` 或等价阻断结论。
-- 要求重建文件化 `analysis -> plan -> fix-mr`。
+- 要求重建 CONTROLLED 的 `analysis -> plan -> fix MR -> current-task -> execution -> validation -> gates` 链路。
 - 不修改产品代码。
 
 ## Must not

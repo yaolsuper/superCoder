@@ -2,12 +2,12 @@
 
 ## 场景 A：需求整体完成
 
-一个包含两个 MR 的需求已完成。两个 MR 均为 `ACCEPTED`，验证和 CP5 通过，但当前 `.coder/<development_project_id>/` 没有 `requirement-delivery-summary.md`。执行者准备向用户声明需求完成。
+一个包含两个 MR 且已启用 Knowledge Trace / 跨需求关联的需求已完成。两个 MR 均为 `ACCEPTED`，验证和 CP5 通过，但当前 `.coder/<development_project_id>/` 没有 `requirement-delivery-summary.md`。执行者准备向用户声明需求完成。
 
 ### 期望行为
 
 - 阻断整体完成声明，返回 `DELIVERY_SUMMARY_MISSING`。
-- 基于实际 diff、执行记录、operations、验证和最终账本生成摘要；不得直接复制计划中的预计实现。
+- 基于实际 diff、execution record、validation、gates 和最终账本生成摘要；不得直接复制计划中的预计实现。
 - 摘要按 Why / Who / What 总结业务背景、目标用户、最终需求能力、规则、边界和结果。
 - 摘要保留业务语义 `relation_keys`，但不包含文件、类、方法、命令、diff、Checkpoint 或产物索引。
 - 生成后重新执行 ledger audit 和 CP5。
@@ -28,3 +28,5 @@
 - `RELATED_REQUIREMENT_EVIDENCE_REQUIRED`
 - 缺摘要时：`DELIVERY_SUMMARY_MISSING`
 - 摘要与实际账本不一致时：`DELIVERY_SUMMARY_DRIFT`
+
+即使未启用 Knowledge Trace，需求整体完成也生成摘要；Knowledge Trace 只决定是否维护关联图。
