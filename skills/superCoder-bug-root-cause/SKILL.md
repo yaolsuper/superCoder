@@ -13,6 +13,7 @@ description: 当 superCoder 任务涉及 BUG、缺陷、回归、生产事故、
 
 ## 必读文件
 
+- `../superCoder/references/shared/advancement-mode.md`：BUG 也按所选推进模式确认或自动启动，根因要求不变
 - `references/bug-root-cause.md`
 - 生成根因产物前读取 `../superCoder/references/shared/artifact-model.md`
 - 生成或修复 analysis / plan / fix 执行契约时读取 `../superCoder-planning/references/planning.md`

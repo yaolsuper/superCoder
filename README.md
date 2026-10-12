@@ -15,7 +15,7 @@ superCoder 是一个面向 AI 辅助开发的 **执行协议（Execution Protoco
 | 风险 | 表现 | superCoder 的应对 |
 |------|------|-------------------|
 | **上下文漂移** | 多轮对话后模型遗忘早期约束，产出与初始需求渐行渐远 | Markdown 驱动状态：`.coder/` 文件是唯一可恢复状态源，每轮必须从文件读取而非依赖聊天记忆 |
-| **目标漂移** | 模型自行扩大或偏离需求范围，"顺手多改了几个地方" | 执行链 + 阶段门禁：分析→方案→MR→任务→执行，每步必须通过检查点门，阶段升级需用户显式确认，模糊指令不构成升级 |
+| **目标漂移** | 模型自行扩大或偏离需求范围，"顺手多改了几个地方" | 执行链 + 阶段门禁：阶段开发检查模式按完整单元人工确认启动；目标结果模式在授权目标内通过检查后自动推进 |
 | **局部补丁化** | 模型逐处打补丁而非系统性实现，修改碎片化、缺乏整体性 | 变更边界 + 审计记录：每次修改前必须通过 pre-edit guard（9 项硬检查）、变更计划门（逐文件声明意图与风险）、路径守卫（allowed/forbidden paths）；执行记录与 Diff 检查确保变更可追溯 |
 
 superCoder 将 AI Coding 从 **"自由生成代码"** 升级为 **"可控的软件工程流程"**，通过以下机制实现：
@@ -60,19 +60,36 @@ development analysis → delivery plan → optional MR split → execution → v
 
 每个阶段有独立门禁，但不再机械生成独立文件。Bug 修复无证据豁免，单一修复单元不复制产物。
 
+开发输入可以是 spec.md、prd.md 或需求描述，保留来源并核对当前系统，不要求先补齐产品文档。STANDARD / CONTROLLED 的 Plan 明确受影响服务的当前/目标结构、功能模块职责、变更关系、数据库/DDL 与 API 输入输出骨架、公共契约和实施顺序；MR 展开完整局部 API/DDL、代码设计与 Tasks。共同契约有唯一权威定义，设计变化按影响重新检查。详见 [方案分层协议](skills/superCoder-planning/references/solution-design.md) 和 [Plan 模板](skills/superCoder/assets/templates/implementation-plan.md)。LIGHT 不套用完整架构模板。
+
 ### Gate-first 融合
 
 原开发流程的 analysis、plan、执行契约、current-task、progress、handoff/context/task-state、operations、execution record、validation 和需求落地摘要全部保留。执行契约通常是独立 MR；仅当 BUG 根因与 Plan 已明确、只有一个不可再拆 MR 且无需独立审批时，Plan 可直接承担 MR 契约，避免 Plan/MR 重复。Gate 内容仍统一融合到 `gates.md`。
 
-### 阶段升级裁决
+### 推进模式与阶段升级
 
-用户口头指令只能降级或维持当前阶段，不能升级。升级需满足：
+推进模式默认使用**阶段开发检查**，与 LIGHT / STANDARD / CONTROLLED 风险模式、单 MR / 连续项目执行范围分别记录。
 
-1. 当前阶段可升级
-2. `coder-current-task.md`、`project-progress.md` 和 `gates.md` 的 `stage_epoch` 一致
-3. 用户显式触发词（如"确认方案"、"开始执行 MR-X"）
+| 推进模式 | 配置值 | 完整任务或 MR 验收后的动作 |
+|---|---|---|
+| 阶段开发检查 | `STAGED_CHECK`（默认） | 展示结果和下一单元范围，等待人工确认启动下一单元 |
+| 目标结果 | `GOAL_RESULT` | 自动完成方案检查、依赖对齐、代码 review、验证，检查通过后自动启动后续授权单元，直到目标验收 |
 
-模糊指令（"继续"、"往下走") 不构成升级触发。
+```yaml
+execution_policy:
+  advancement_mode: "STAGED_CHECK" # 或 GOAL_RESULT
+  confirmation_unit: "mr" # 有 MR 时按完整 MR，无 MR 时按完整任务；可显式改为 task
+```
+
+用户当前明确选择优先于已有账本、项目配置和默认值。可直接说“使用阶段开发检查模式，每个 MR 完成后等我确认”或“使用目标结果模式，自动完成这个目标”。仅请求计划时仍止于计划；配置不扩大任务授权。
+
+两种模式都保留质量门禁。STAGED_CHECK 的启动确认绑定具体单元及 revision；正常等待记为 WAITING_HUMAN_START，不影响当前单元已验收状态。GOAL_RESULT 的计划确认记录 AUTO_CHECKED 与检查证据，不伪造人工批准。阶段升级还必须满足账本一致性和适用的 Gate；含糊“继续”不能绕过人工等待点。
+
+详细规则见 [开发推进模式](skills/superCoder/references/shared/advancement-mode.md)。
+
+新任务使用 [账本状态 CLI](skills/superCoder/references/shared/state-automation.md) 进行路径/编辑/验收检查和串行阶段转换；gates 是机器状态权威，其他状态块由脚本同步。跨文件写入使用中断 journal 和 recover，不声称文件系统天然支持三文件原子更新。旧账本按兼容审计处理，不自动覆盖。
+
+LIGHT 使用一个 light-task.md 保存分析、范围、review、验证与最终结果；不要求独立 MR、三文件、validation 文件或 CP5。STANDARD / CONTROLLED 的最终业务摘要始终保留，Knowledge Trace 只控制知识卡与关联图。
 
 ### 检查点体系
 

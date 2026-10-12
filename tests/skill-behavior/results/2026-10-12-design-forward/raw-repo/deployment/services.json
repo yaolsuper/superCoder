@@ -1,0 +1,13 @@
+{
+  "declared_services": {
+    "orders": {
+      "entry": "services/orders/app.py",
+      "storage": "sqlite"
+    },
+    "web": {
+      "entry": "web/orders.js",
+      "api": "orders"
+    }
+  },
+  "note": "declaration only; no live deployment evidence supplied"
+}

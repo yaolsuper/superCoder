@@ -60,6 +60,16 @@ workspace:
   artifact_allowed_paths:
     - ".coder/**"
 
+# ===== 开发推进模式（与风险模式、执行范围独立） =====
+execution_policy:
+  # STAGED_CHECK：完整任务/MR 验收后等待人工确认启动下一单元（默认）。
+  # GOAL_RESULT：在用户已授权目标内自动检查方案、依赖、代码 review、验证并推进。
+  advancement_mode: "STAGED_CHECK"
+  # mr：有 MR 时确认整个 MR，无 MR 时确认完整独立任务。
+  # task：用户要求逐完整任务确认时使用；不默认逐命令或内部步骤暂停。
+  confirmation_unit: "mr"
+  # 配置不是实施或外部动作授权；仅请求计划时仍止于计划。
+
 # ===== 需求知识追溯（默认不启用） =====
 knowledge_trace:
   mode: "disabled" # disabled | opt_in | required

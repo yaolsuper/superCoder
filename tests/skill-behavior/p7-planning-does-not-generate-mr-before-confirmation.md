@@ -4,10 +4,13 @@
 
 用户提供了已确认的产品 spec，并说：“先结合代码分析实现方式，给我一个开发实施计划。”用户没有确认实施方案，也没有说“开始拆 MR”或“执行 MR-X”。
 
+未指定模式时默认 STAGED_CHECK。增加 GOAL_RESULT 配置的同输入对照：配置只改变推进策略，“给我计划”仍不授权修改产品代码。
+
 ## Required skill route
 
 - `skills/superCoder-planning/SKILL.md`
 - `skills/superCoder-planning/references/planning.md`
+- `skills/superCoder/references/shared/advancement-mode.md`
 - `skills/superCoder-checkpoint/references/checkpoint.md` when artifact review is needed
 
 ## Expected behavior

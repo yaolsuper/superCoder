@@ -49,6 +49,16 @@ python3 tests/skill-behavior/runner/run_scenarios.py --scenario P1-P34 --format 
 | P35 shared artifact root | artifact-root / all skill entries / knowledge CLI | 指定根目录后仍读写本地 .coder、跨 worktree 验证混用或路径守卫失效 |
 | P34 executable MR Task contract | planning / execution / checkpoint / task-and-mr | MR 输入输出、关键代码设计或 Task 覆盖不闭合，对象/请求响应不可编码，Task 缺少实现定义、虚构精确位置、实现自由度被过度限制或错误并行 |
 | P36 adversarial mechanism review | review / document-review-checklist / reviewer | 核心机制无有效消融仍放行、无区分力实验被当成贡献证据、设计计划冒充实测或风格偏好驱动重构 |
+| P37 staged development confirmation | advancement-mode / execution / ledger-audit | 默认模式错误、无确认启动下一完整单元、确认跨 revision/单元复用、正常等待冒充业务阻塞 |
+| P38 goal result auto execution | advancement-mode / planning / execution / review / verification | 授权目标内反复确认、自动跳过方案/依赖/review/验证、伪造人工批准、扩大请求范围 |
+| P40 development input and solution design | solution-design / implementation-plan / planning / checkpoint / execution | 强制补产品文档、无整体架构或公共契约、MR 与 Plan 不一致、计划授权进入编码、无关变更强制完整设计 |
+| P39 state automation | state CLI / state-automation | 漂移/过期证据仍执行、确认跨 revision 复用、中断后继续、恢复覆盖外部修改 |
+
+P37/P38 同时含允许推进和必须阻断的变体，以各规格的可观察判据为准。通用 runner 尚未执行完整变体矩阵，仍返回 NOT_RUN；独立前向 smoke 用例单独记录，不提升整个场景为 PASS。
+
+真实模型前向测试先用 runner/prepare_forward_fixtures.py 冻结技能并生成隔离仓库，再将自然用户请求与原始仓库交给独立模型，不提供预期答案。结束后运行 runner/grade_forward_fixtures.py，依据真实产品 diff、验收命令、当前账本和证据摘要判分，不依据报告中的 PASS 字样。2026-10-12 已执行三个独立 smoke 用例，结果见 results/2026-10-12-optimization.md；未覆盖的模型/runtime/变体仍需补测。
+
+P40 另有一个独立 agent 对 spec、prd、需求描述三个计划请求实际执行，主代理回读整体方案并核对原始文件摘要、状态及授权边界；证据见 [方案分层验证](results/2026-10-12-solution-design.md)。这些计划 smoke 没有使用产品完成 grader，不表示全部 P40 变体或新功能编码通过。
 
 ## 通过标准
 

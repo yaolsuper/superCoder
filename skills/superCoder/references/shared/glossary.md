@@ -180,9 +180,17 @@ ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> 
 | `stop_conditions` | 停止条件 |
 | `acceptance` | 验收标准 |
 | `validation_commands` | 验证命令 |
-| `can_start_next` | 是否允许进入下一 MR |
-| `execution_mode` | 执行模式：`single_mr` 表示只推进当前 MR；`continuous_project` 表示按状态账本连续推进完整项目需求 |
-| `manual_confirmation_required` | 是否要求 MR 启动前人工确认；只能由用户明确要求、启动阻塞、方案不唯一、范围变化等条件触发 |
+| `can_start_next` | 下一完整单元是否允许启动；必须同时满足推进模式授权与质量 Gate |
+| `execution_mode` | 执行范围：single_mr 只推进当前 MR，continuous_project 覆盖项目需求；不决定是否自动启动 |
+| `advancement_mode` | 推进模式：STAGED_CHECK（阶段开发检查，默认）或 GOAL_RESULT（目标结果）；详见 advancement-mode.md |
+| `advancement_mode_source` | 模式来源：user / ledger / config / default |
+| `confirmation_unit` | 人工确认边界：默认 mr，无 MR 时按完整独立任务；显式 task 按计划标明的完整任务，不默认按内部步骤 |
+| `authorization_ref` | 用户授权目标、非目标和实施范围的消息/契约引用 |
+| `plan_confirmation` | 计划确认状态；CONFIRMED 为人工确认，AUTO_CHECKED 为授权目标内自动方案检查 |
+| `plan_approval_source` | 计划确认来源：human / automatic_checks / none |
+| `execution_wait_state` | NONE 或 WAITING_HUMAN_START；后者为正常下一单元启动等待，不是业务需求阻塞 |
+| `next_unit_approval` | 绑定 unit_id、contract_revision、answer_ref 的一次人工启动确认；启动后消费，不跨单元或 revision 复用 |
+| `manual_confirmation_required` | 是否等待启动人工确认；STAGED_CHECK 完整单元边界默认要求，其他原因按推进协议处理 |
 | `analysis_gate` | 分析门禁状态：`PASSED` / `FAILED`；扫描未完成或存在未解决阻塞问题时必须为 `FAILED` |
 | `evidence_scan_status` | 任务相关证据扫描状态：`NOT_STARTED` / `IN_PROGRESS` / `COMPLETED` |
 | `evidence_scan_coverage` | 扫描覆盖结论：`INCOMPLETE` / `SUFFICIENT`；`INCOMPLETE` 时继续调查，不得提前询问人工 |
@@ -192,7 +200,7 @@ ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> 
 | `source_point` | 带资源 URI、locator、revision、关系、置信度和扫描活动引用的稳定来源点 |
 | `evidence_gap` | 未找到可靠来源时记录期望来源、扫描范围、检索词、限制和覆盖结论的证据缺口 |
 | `decision_id` | 显式人工答案形成的稳定 `D-*` Decision ID |
-| `auto_start_next_allowed` | 当前 MR 验收后是否允许自动进入下一 MR 启动门禁；必须基于验证、Checkpoint、状态回写和下一 MR READY 证据 |
+| `auto_start_next_allowed` | 仅 GOAL_RESULT 在授权目标内通过方案/依赖/review/验证和启动 Gate 后可为 true；STAGED_CHECK 为 false |
 | `stage_last_transition` | 最近一次阶段转换记录：from / to / trigger（用户触发词或 Checkpoint 报告 PASS） |
 
 ## 推导链路术语
@@ -204,7 +212,7 @@ ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> 
 | Requirement Knowledge Card | 完成任务的本体化需求图载体，包含 canonical manifest 与按 digest 定位的 sections |
 | Product Tree | 由 Module/Capability 构成并连接需求、改动、验证、风险与建议的长期产品结构 |
 | 证据矩阵 | 分析报告中的结论追溯表，记录结论 ID、证据位置、置信度和开放问题 |
-| 根因证据矩阵 | BUG 修复任务 plan 的强制内容，记录故障现象、复现证据、根因定位 file:line、根因结论、修复范围、回归验证；作为 BUG 修复放行依据替代用户对方案的确认，是 pre-edit guard 在 BUG 场景的硬前置 |
+| 根因证据矩阵 | BUG analysis 的故障现象、复现、根因 file:line、修复范围与回归证据，Plan 引用修复映射；不替代 STAGED_CHECK 的人工启动确认 |
 | 分析结论映射 | 实施计划中的映射表，说明阶段或 MR 来自哪些分析结论 |
 | 来源链路 | 执行契约中的来源说明，记录 analysis、Plan、执行原因和继承开放问题 |
 | 任务执行链路 | analysis → plan → 执行契约（Plan-as-MR 或 MR 文件）→ current-task → operations/execution → validation → acceptance |
@@ -216,10 +224,10 @@ ANALYZING -> BLOCKED_HUMAN_CONFIRMATION -> HUMAN_INPUT_RECEIVED -> ANALYZING -> 
 | 会话计划投影 | Codex/harness 的临时 plan，由 Markdown 状态源恢复，用于展示本轮动作，不是权威状态源 |
 | 需求最终落地摘要 | `.coder/<development_project_id>/requirement-delivery-summary.md`，在需求整体验收后记录最终实现和关联检索信息，供后续需求发现依赖、重叠、冲突和回归风险 |
 | 状态回写 | 更新 gates、current-task、progress 和恢复产物，并分别回写 MR、execution、validation；未回写视为未完成 |
-| 阶段转换原子性 | 先在 gates 追加 transition，再同步 current-task/progress 的 epoch；三者不一致即失败 |
-| 阶段升级裁决 | 当前阶段可升级、触发来源明确且 Gate 状态转换完成后才允许升级；含糊指令不能越过等待人工确认态 |
-| 连续项目执行 | 用户目标覆盖完整项目需求时，按 MR 依赖顺序串行推进；每个 MR 独立门禁、验证、Checkpoint 和状态回写，MR 之间默认不等人工确认 |
-| 人工确认例外 | 只有用户明确要求 MR 启动人工审核，或启动阻塞、方案不唯一、范围变化、未处理 Blocker 等无法安全自动推进的情况，才在 MR 启动前等待人工确认 |
+| 阶段转换一致性 | CLI 串行写入 Gate 与投影，单文件替换加中断 journal；跨文件不天然原子，不一致或 pending 时先修复/恢复 |
+| 阶段升级裁决 | 先按 advancement-mode 取得人工启动确认或授权目标内自动检查证据，再执行 Gate/epoch 回写；含糊指令不绕过人工等待 |
+| 连续项目执行 | 按 MR 依赖推进完整目标；STAGED_CHECK 单元间等人工启动确认，GOAL_RESULT 检查通过后自动推进 |
+| 人工启动确认 | STAGED_CHECK 每个完整单元的启动授权，绑定单元/revision；与系统证据无法解决的业务决策分别记录 |
 | 证据优先人工确认 | 在计划前扫描代码、配置、Schema、测试、文档和历史决策；只对系统证据无法解决的决策性未知信息阻塞，并要求每个问题引用 Source Point 或 Evidence Gap |
 | Analysis Gate | 扫描完成且覆盖充分、阻塞问题与关键假设清零、来源可复核、验收可判定时才允许从 ANALYZING 进入 ANALYSIS_READY 的硬门禁 |
 | pre-edit guard | 修改产品代码前的硬闸门：RUNNING epoch 一致、source chain、路径守卫和 CP4 均通过 |

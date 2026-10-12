@@ -227,6 +227,14 @@ def execute_scenario(scenario: dict[str, Any], repository_root: Path, harness_ov
     if number == 27:
         raw, harness = run_p27(harness_override)
         return raw, "adapter-contract-runner", harness
+    if number == 39:
+        completed = subprocess.run(
+            [sys.executable, "-B", "-m", "unittest", "discover", "-s", "tests/skill-behavior/runner", "-p", "test_state_cli.py"],
+            cwd=REPOSITORY_ROOT, check=False, capture_output=True, text=True, timeout=30,
+        )
+        raw = json.dumps({"returncode": completed.returncode, "output": completed.stdout + completed.stderr,
+                          "verdicts": ["STATE_AUTOMATION_PASS"] if completed.returncode == 0 else []}, ensure_ascii=False)
+        return raw, "deterministic-unittest", "stdlib-state-cli"
     return None, "not-executed", "none"
 
 

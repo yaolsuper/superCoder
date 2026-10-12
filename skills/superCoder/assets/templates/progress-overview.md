@@ -14,9 +14,12 @@
 | 当前 MR / 任务切片 |  |
 | 总体状态 | PENDING / READY / RUNNING / BLOCKED / VERIFYING / ACCEPTED / MERGED |
 | 执行模式 | 单 MR 执行 / 连续项目执行 |
+| 推进模式 / 来源 | STAGED_CHECK（默认）/ GOAL_RESULT；user / ledger / config / default |
+| 确认边界 / 授权 | mr / task；authorization_ref |
+| 启动等待 / 确认记录 | NONE / WAITING_HUMAN_START；下一单元 ID/revision/answer_ref 或无 |
 | MR 启动人工确认 | 需要 / 不需要 |
 | stage_epoch | int（与 coder-current-task.md / gates.md 必须相等） |
-| 计划确认状态 | DRAFT_PENDING_CONFIRMATION / CONFIRMED / BLOCKED / N/A |
+| 计划确认状态 / 来源 | DRAFT_PENDING_CONFIRMATION / CONFIRMED / AUTO_CHECKED / BLOCKED / N/A；human / automatic_checks / none |
 | 阶段最近转换 | from -> to / 触发词或 Checkpoint PASS |
 | 分析报告 | `.coder/<development_project_id>/analysis/<task_id>-analysis.md` |
 | 证据扫描 / Analysis Gate | NOT_STARTED / IN_PROGRESS / COMPLETED；INCOMPLETE / SUFFICIENT；PASSED / FAILED |
@@ -124,8 +127,9 @@
 | 审查结论未超出审查范围 | PASS / FAIL / N/A |  |
 | 命令输出和内容查询均有界过滤 | PASS / FAIL / N/A |  |
 | 本地测试值未写入产品默认配置 | PASS / FAIL / N/A |  |
-| 连续执行模式下下一 MR 自动启动依据完整 | PASS / FAIL / N/A | 当前 MR ACCEPTED、验证通过、CP4/CP5 PASS、状态回写完整、can_start_next=true、下一 MR READY |
-| 人工确认只用于系统证据无法解决的阻塞问题，未把可调查事实转给用户 | PASS / FAIL / N/A |  |
+| STAGED_CHECK 下一完整单元人工启动确认有效 | PASS / FAIL / N/A | unit_id/revision/answer_ref；正常等待时当前单元保留 ACCEPTED |
+| GOAL_RESULT 下一单元自动启动依据完整 | PASS / FAIL / N/A | 授权目标内，方案/依赖/review/新鲜验证通过，状态回写完整，下一单元 CP4 PASS；continuous_project 本身不授权 |
+| 需求阻塞问题有系统证据缺口，阶段启动确认未冒充业务阻塞 | PASS / FAIL / N/A | WAITING_HUMAN_START 与 BLOCKED_HUMAN_CONFIRMATION 分开 |
 
 ## 下一步
 

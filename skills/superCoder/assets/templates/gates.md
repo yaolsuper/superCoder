@@ -2,6 +2,8 @@
 
 > 当前 Gate 单一记录模板：融合 `checkpoint-status.md`、各类独立 Gate 表和普通 CP review；不得替代 analysis、plan、MR、执行、验证或恢复产物。
 
+本模板只用于 STANDARD / CONTROLLED。新账本的状态摘要由 `../../references/shared/state-automation.md` 的机器块生成；下列业务门禁表按当前决策需要选择，不整份复制，不手写另一套 epoch/模式事实。
+
 默认落点：`.coder/<development_project_id>/gates.md`。文件顶部维护当前摘要，底部按 `gate_id` 追加历史决策。其他产物只引用 `gate_id` 与本文件路径。
 
 ```markdown
@@ -9,9 +11,9 @@
 
 ## 当前摘要
 
-| stage_epoch | 当前阶段 | 活动 MR | last_gate_id | blocker_count | allowed_actions |
-|---|---|---|---|---|---|
-|  |  |  |  |  |  |
+| stage_epoch | 当前阶段 | 活动 MR | advancement_mode / confirmation_unit | execution_wait_state | last_gate_id | blocker_count | allowed_actions |
+|---|---|---|---|---|---|---|---|
+|  |  |  |  |  |  |  |  |
 
 ## 决策历史（append-only）
 
@@ -36,8 +38,11 @@
 | 本轮唯一目标 |  |
 | 恢复 / 交接场景 | 新任务 / 跨模型恢复 / 跨轮次继续 / 上下文压缩后恢复 |
 | 执行模式 | 单 MR 执行 / 连续项目执行 |
+| 推进模式 / 来源 | STAGED_CHECK（默认）/ GOAL_RESULT；user / ledger / config / default |
+| 确认边界 / 授权 | mr / task；authorization_ref |
+| 启动等待 / 确认记录 | NONE / WAITING_HUMAN_START；下一单元 ID/revision/answer_ref 或无 |
 | MR 启动人工确认 | 需要 / 不需要 |
-| 人工确认触发原因 | 用户明确要求 / 启动阻塞 / 方案不唯一 / 不适用 |
+| 人工确认触发原因 | 阶段单元边界 / 用户明确要求 / 启动阻塞 / 方案不唯一 / 不适用 |
 | 状态来源文件 | `coder-current-task.md` / `project-progress.md` / `gates.md` / `handoff.md` / 当前 MR / Review |
 | 任务执行链路 | analysis / plan / MR / current task 均存在：是 / 否 |
 | 证据扫描 / Analysis Gate | COMPLETED / NOT_COMPLETED；SUFFICIENT / INCOMPLETE；PASSED / FAILED |
@@ -109,13 +114,14 @@
 | project-progress.md 当前阶段 == RUNNING | 已 Read 文件确认 | 是 / 否 |
 | coder-current-task.md status == READY 或 RUNNING | 已 Read 文件确认 | 是 / 否 |
 | 三文件 stage_epoch 相等 | 已 Read coder-current-task / project-progress / gates 比对 | 是 / 否 |
+| 推进模式、确认边界和授权一致；当前完整单元启动条件满足 | STAGED_CHECK 核对有效人工确认；GOAL_RESULT 核对目标授权与方案/依赖 Gate | 是 / 否 |
 | source_chain.plan 非 null 且文件存在 | 已 Read plans/*.md 确认存在 | 是 / 否 |
-| source_chain.mr 非 null 且文件存在 | 已 Read mrs/*.md 确认存在 | 是 / 否 |
+| 活动执行契约非 null 且文件存在 | SINGLE_MR_PLAN 读取已确认 Plan，其余读取 MR；核对 execution_contract 与 mr_id | 是 / 否 |
 | evidence scan 完成、覆盖充分且 analysis_gate == PASSED | 已 Read 最新 analysis Front Matter | 是 / 否 |
 | blocking_question_count == 0，状态不处于人工确认阻塞或回答处理中 | 已 Read analysis / current task / progress / checkpoint / handoff / task-state 比对 | 是 / 否 |
 | 已回答阻塞问题均有 Decision 且已重新分析 | 已 Read decisions/*.md 和最新 analysis revision | 是 / 否 / 不适用 |
 | plan/mr 内容真实非空壳 | 已 Read 正文确认非空、章节齐全 | 是 / 否 |
-| （BUG 修复任务）plan 含根因证据矩阵 | 已 Read 确认故障现象/复现/根因 file:line/修复范围/回归验证齐全 | 是 / 否 / 不适用 |
+| BUG 根因与修复映射完整 | analysis 根因矩阵含现象/复现/file:line/范围/回归；Plan 修复项引用根因结论 | 是 / 否 / 不适用 |
 | 本轮产品代码文件均在 allowed_paths 内 | 逐文件比对 glob | 是 / 否 |
 | 本轮产品代码文件均不命中 forbidden_paths | 逐文件比对 glob | 是 / 否 |
 | 当前 MR 的 CP4 已 PASS，无未处理 Blocker | 已 Read gates / reviews 确认 | 是 / 否 |
@@ -139,7 +145,9 @@
 | 触发来源 | 用户输入（含触发词）/ Checkpoint 报告 PASS / 当前 MR 验收通过且 can_start_next=true / 偏差降级 |
 | 执行模式 | 单 MR 执行 / 连续项目执行 |
 | MR 启动人工确认 | 需要 / 不需要 |
-| 阶段升级裁决 | 当前阶段可升级：是 / 否；触发来源明确：是 / 否；含糊指令在等待人工审核态按原地或澄清处理：是 / 否 |
+| 阶段升级裁决 | advancement-mode 的授权与 Gate 条件已满足：是 / 否；STAGED_CHECK 人工确认有效或 GOAL_RESULT 自动证据充分；含糊指令不得绕过人工等待 |
+| 模式 / 确认边界 / 授权 | advancement_mode / confirmation_unit / authorization_ref；与 current-task、progress 和恢复摘要一致 |
+| 计划或下一单元启动来源 | human / automatic_checks；人工确认绑定 unit_id/revision/answer_ref 或自动 Gate 引用 |
 | 旧阶段 | ANALYSIS / PLANNING / MR_SPLIT / READY / RUNNING / VERIFYING / ACCEPTED |
 | 新阶段 | 同上 |
 | 旧 stage_epoch |  |
@@ -304,6 +312,8 @@
 |---|---|
 | 当前 MR / 任务切片 |  |
 | 当前状态 |  |
+| 推进模式 / 确认边界 | STAGED_CHECK / GOAL_RESULT；mr / task |
+| 实际 diff review | PASS / FAIL；review 范围/revision/证据引用 |
 | 是否完成全部验收 | 是 / 否 |
 | 项目进度总览卡片是否已更新 | 是 / 否 |
 | Checkpoint 状态是否已更新 | 是 / 否 |
@@ -320,7 +330,7 @@
 | 是否允许进入下一 MR | 是 / 否 |
 | 下一 MR |  |
 | 下一 MR 启动方式 | 自动进入启动门禁 / 等待人工审核 / 阻塞待修复 / 无下一 MR |
-| 自动进入下一 MR 依据 | 当前 MR ACCEPTED / 验证通过 / CP4+CP5 PASS / 状态回写完整 / can_start_next=true / 下一 MR READY |
+| 下一单元启动依据 | STAGED_CHECK：当前 revision 的人工确认；GOAL_RESULT：目标授权、方案/依赖/review/验证通过、当前单元已验收、下一单元 CP4 PASS、状态一致 |
 | 备注 |  |
 ```
 ## Knowledge Trace Gate

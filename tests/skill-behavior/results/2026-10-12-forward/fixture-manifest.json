@@ -1,0 +1,10 @@
+{
+  "package": "/private/tmp/supercoder-forward-20261012-a/package",
+  "skill": "/private/tmp/supercoder-forward-20261012-a/package/skills/superCoder/SKILL.md",
+  "skill_digest": "09d28c8963d285566365d1166a35f5c27bfee75eed99047fe0a2f8c927114c0d",
+  "cases": {
+    "staged": "/private/tmp/supercoder-forward-20261012-a/staged",
+    "goal": "/private/tmp/supercoder-forward-20261012-a/goal",
+    "light": "/private/tmp/supercoder-forward-20261012-a/light"
+  }
+}

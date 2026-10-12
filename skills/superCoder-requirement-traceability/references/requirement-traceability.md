@@ -10,7 +10,7 @@
 
 只有需求范围内全部交付单元均为 `ACCEPTED` / `MERGED` 且验证完成后才生成。正确顺序是：交付单元和验证完成 → 生成摘要 → ledger audit → CP5 → 最终状态回写和交付回复。
 
-摘要必须使用 `../superCoder/assets/templates/requirement-delivery-summary.md`。生成时读取实际 diff、analysis、plan、MR、execution record、validation、review、gates 和最终决策确认事实，但这些技术证据不得写入摘要正文。
+STANDARD / CONTROLLED 摘要使用 `../../superCoder/assets/templates/requirement-delivery-summary.md`；LIGHT 的最终结果写在 light-task.md。生成时读取实际 diff、analysis、plan、活动执行契约、execution、validation、review 与 Gate 的验收事实，技术证据不写入业务正文。
 
 摘要正文严格遵循 3W：
 

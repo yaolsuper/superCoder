@@ -500,3 +500,72 @@ scenarios:
       - report_impossible_counterexample_as_defect
       - change_plain_review_routing
       - mutate_product_or_production_for_ablation
+  - id: p37-staged-development-confirmation
+    markdown: p37-staged-development-confirmation.md
+    required_routes:
+      - skills/superCoder/references/shared/advancement-mode.md
+      - skills/superCoder-execution/SKILL.md
+      - skills/superCoder-ledger-audit/references/ledger-audit.md
+    expected_verdicts:
+      - STAGED_CHECK_SELECTED
+      - WAITING_HUMAN_START
+      - UNIT_SCOPED_START_CONFIRMATION
+    must_not:
+      - start_next_unit_without_human_confirmation
+      - infer_auto_authorization_from_execution_scope
+      - reuse_consumed_or_stale_start_confirmation
+      - treat_normal_start_wait_as_analysis_blocker
+  - id: p38-goal-result-auto-execution
+    markdown: p38-goal-result-auto-execution.md
+    required_routes:
+      - skills/superCoder/references/shared/advancement-mode.md
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-execution/references/execution.md
+      - skills/superCoder-verification/SKILL.md
+    expected_verdicts:
+      - GOAL_RESULT_SELECTED
+      - AUTO_CHECKED
+      - AUTO_ADVANCE_ALLOWED
+      - REVIEW_VALIDATION_CLOSED
+    must_not:
+      - request_redundant_goal_scope_approval
+      - forge_human_plan_confirmation
+      - skip_dependency_plan_review_or_validation
+      - expand_authorized_goal_or_execution_scope
+  - id: p39-state-automation
+    markdown: p39-state-automation.md
+    required_routes:
+      - skills/superCoder/scripts/coder_state.py
+      - skills/superCoder/references/shared/state-automation.md
+    expected_verdicts:
+      - STATE_AUTOMATION_PASS
+    must_not:
+      - overwrite_external_recovery_change
+      - accept_stale_validation_or_wrong_start_confirmation
+      - treat_deterministic_cli_checks_as_model_behavior_pass
+
+  - id: p40-development-input-and-solution-design
+    markdown: p40-development-input-and-solution-design.md
+    required_routes:
+      - skills/superCoder-planning/SKILL.md
+      - skills/superCoder-planning/references/planning.md
+      - skills/superCoder-planning/references/solution-design.md
+      - skills/superCoder/assets/templates/implementation-plan.md
+      - skills/superCoder/assets/templates/task-and-mr.md
+      - skills/superCoder-checkpoint/references/checkpoint.md
+      - skills/superCoder-execution/references/execution.md
+    expected_verdicts:
+      - DEVELOPMENT_INPUT_SOURCE_SUPPORTED
+      - SOLUTION_DESIGN_REQUIRED
+      - PLAN_MR_DESIGN_MISMATCH
+      - PLAN_MR_DESIGN_ALIGNED
+    must_not:
+      - require_missing_prd_or_spec_when_text_is_sufficient
+      - treat_upstream_design_as_running_system_fact
+      - omit_global_architecture_or_cross_mr_contract
+      - copy_full_mr_design_into_plan
+      - ready_consumer_before_contract_delivery
+      - bypass_recheck_by_only_bumping_plan_revision
+      - expand_plan_only_authorization_to_implementation
+      - force_full_architecture_template_on_light
+      - mark_smoke_or_static_check_as_full_behavior_pass

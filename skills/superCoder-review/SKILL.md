@@ -1,11 +1,11 @@
 ---
 name: superCoder-review
-description: 仅当用户明确要求 superCoder review、质量审核、回归风险 review、发布判断或 handoff 批准时使用。
+description: 用户明确要求 superCoder review、质量审核、回归风险、发布或 handoff 判断，或已进入 superCoder 交付链且内部代码 review 无可用原生能力时使用；不抢占普通独立代码审查。
 ---
 
 # superCoder 复核（Review）
 
-仅对明确的 superCoder review、质量审核、回归风险评估、发布判断或 handoff 批准使用本可组合技能。普通 code review 在当前环境存在原生 review 能力时，应优先使用该能力。
+对明确的 superCoder review、质量审核、回归风险评估、发布判断、handoff 批准，或交付链内无可用原生能力的代码 review 使用本可组合技能。普通独立 code review 在当前环境存在原生 review 能力时，应优先使用该能力。
 
 ## 执行产物位置
 
@@ -14,6 +14,7 @@ description: 仅当用户明确要求 superCoder review、质量审核、回归�
 ## 必读文件
 
 - `references/review.md`
+- 交付链内的自动 review 读取 `../superCoder/references/shared/advancement-mode.md`
 - 需要批准、条件批准、阻断或与其他协议组合时读取 `../superCoder/references/shared/decision-contract.md`
 - 请求 CP review 或正式产物判断时读取 `../superCoder-checkpoint/references/checkpoint.md`
 - review 涉及完成、提交范围或交付批准时读取 `../superCoder-ledger-audit/references/ledger-audit.md`
@@ -21,7 +22,7 @@ description: 仅当用户明确要求 superCoder review、质量审核、回归�
 
 ## 职责
 
-- 确认用户明确选择了 superCoder review。
+- 确认用户明确选择了 superCoder review，或当前已处于 superCoder 交付链的内部 review Gate。
 - 在判断前定义 review 范围和证据来源。
 - 从目标、约束和不变量重新推导最小方案，对当前方案做对抗性审查；按 `references/review.md` 验证核心机制的消融证据、复杂度必要性和模块边界。
 - 按严重程度报告 findings；review 代码时提供文件和行号引用。
@@ -32,6 +33,6 @@ description: 仅当用户明确要求 superCoder review、质量审核、回归�
 ## 禁止事项
 
 - 在应由 harness 原生 code review 技能处理时抢占普通 review 请求。
-- 为通用 “review current changes” 请求生成 `.coder` review 产物。
+- 为普通独立 “review current changes” 请求生成 `.coder` review 产物。
 - 在缺少账本和验证证据时批准发布或提交范围。
 - 将推测性担忧与已确认 findings 混在一起。

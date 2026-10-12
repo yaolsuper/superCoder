@@ -1,0 +1,384 @@
+{
+  "schema_version": "supercoder.forward-evaluation/v1",
+  "evaluated_at": "2026-10-12T13:24:58.544384+00:00",
+  "model": "inherited-session-model (name not exposed)",
+  "harness": "codex-collaboration-subagent",
+  "skill_digest": "09d28c8963d285566365d1166a35f5c27bfee75eed99047fe0a2f8c927114c0d",
+  "manifest": "/private/tmp/supercoder-forward-20261012-a/fixture-manifest.json",
+  "overall": "PASS",
+  "records": [
+    {
+      "case_id": "staged",
+      "result": "PASS",
+      "checks": {
+        "model_report_exists": true,
+        "git_diff_available": true,
+        "one_active_project": true,
+        "fresh_completion_evidence": true,
+        "next_start_requires_confirmation": true,
+        "product_unchanged": true,
+        "current_acceptance_preserved": true,
+        "normal_start_wait_not_business_blocker": true
+      },
+      "product_changes": [],
+      "state": {
+        "advancement_mode": "STAGED_CHECK",
+        "advancement_mode_source": "user-message:使用 superCoder 阶段开发检查模式，按现有账本继续整个目标",
+        "allowed_paths": [
+          "greeting.py",
+          "test_greeting.py",
+          "tags.py",
+          "test_tags.py"
+        ],
+        "analysis_gate": "PASSED",
+        "analysis_state": "ANALYSIS_READY",
+        "artifact_base": "/private/tmp/supercoder-forward-20261012-a/staged/.coder",
+        "artifact_base_source": "repository default; no workspace.artifact_root configured",
+        "artifact_strategy": "MULTI_MR",
+        "authorization_ref": "fixture:original-user-goal",
+        "auto_start_next_allowed": false,
+        "blocking_question_count": 0,
+        "can_start_next": false,
+        "checkpoints": {
+          "CP2": "PASS",
+          "CP3": "PASS",
+          "CP4": "PASS",
+          "CP5": "PASS"
+        },
+        "code_paths": [
+          "greeting.py",
+          "test_greeting.py"
+        ],
+        "confirmation_unit": "mr",
+        "development_project_id": "20261012-forward",
+        "execution_mode": "continuous_project",
+        "execution_wait_state": "WAITING_HUMAN_START",
+        "forbidden_paths": [
+          "requirements.md"
+        ],
+        "goal_complete": false,
+        "manual_confirmation_reason": "staged_boundary",
+        "manual_confirmation_required": true,
+        "mr_id": "MR-A",
+        "next_unit": {
+          "contract_path": "mrs/MR-B.md",
+          "contract_revision": 1,
+          "cp4": "PASS",
+          "dependency_evidence": [],
+          "unit_id": "MR-B"
+        },
+        "plan_approval_source": "human",
+        "plan_confirmation": "CONFIRMED",
+        "repo_root": "/private/tmp/supercoder-forward-20261012-a/staged",
+        "review": {
+          "code_digest": "a5ccc56636d4441d54478cc81d1b393ce91117b9b41122931262bcc38b70c2ea",
+          "command": "python3 -B -m unittest test_greeting",
+          "evidence_digest": "951d91103f7cc4773d8d373b5f66c4ecd31f06d62cce22054cef4bebd231fb21",
+          "path": "reviews/MR-A.md",
+          "result": "PASS"
+        },
+        "risk_mode": "CONTROLLED",
+        "schema_version": "supercoder.state/v1",
+        "source_chain": {
+          "analysis": "analysis/a.md",
+          "mr": "mrs/MR-A.md",
+          "plan": "plans/a.md"
+        },
+        "stage": "ACCEPTED",
+        "stage_epoch": 4,
+        "unresolved_semantic_decision_count": 0,
+        "unsupported_negative_constraint_count": 0,
+        "validation": {
+          "code_digest": "a5ccc56636d4441d54478cc81d1b393ce91117b9b41122931262bcc38b70c2ea",
+          "command": "python3 -B -m unittest test_greeting",
+          "evidence_digest": "d472a1cc65d09868262aed68113c907241f1fc75259e47e530ba57ff9852fe09",
+          "path": "validation/MR-A.md",
+          "result": "PASSED"
+        }
+      },
+      "commands": [
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--name-only"
+          ],
+          "exit_code": 0,
+          "stdout": ".coder/20261012-forward/coder-current-task.md\n.coder/20261012-forward/context-summary.md\n.coder/20261012-forward/gates.md\n.coder/20261012-forward/handoff.md\n.coder/20261012-forward/project-progress.md\n.coder/20261012-forward/records/MR-A-execution-record.md\n.coder/20261012-forward/records/MR-A-operations.md\n.coder/20261012-forward/task-state.md\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "-B",
+            "/private/tmp/supercoder-forward-20261012-a/package/skills/superCoder/scripts/coder_state.py",
+            "check",
+            "--repo",
+            "/private/tmp/supercoder-forward-20261012-a/staged",
+            "--project-id",
+            "20261012-forward",
+            "--action",
+            "complete"
+          ],
+          "exit_code": 0,
+          "stdout": "{\"schema_version\": \"supercoder.state-cli/v1\", \"command\": \"check\", \"status\": \"PASS\", \"data\": {\"state\": {\"advancement_mode\": \"STAGED_CHECK\", \"advancement_mode_source\": \"user-message:使用 superCoder 阶段开发检查模式，按现有账本继续整个目标\", \"allowed_paths\": [\"greeting.py\", \"test_greeting.py\", \"tags.py\", \"test_tags.py\"], \"analysis_gate\": \"PASSED\", \"analysis_state\": \"ANALYSIS_READY\", \"artifact_base\": \"/private/tmp/supercoder-forward-20261012-a/staged/.coder\", \"artifact_base_source\": \"repository default; no workspace.artifact_root configured\", \"artifact_strategy\": \"MULTI_MR\", \"authorization_ref\": \"fixture:original-user-goal\", \"auto_start_next_allowed\": false, \"blocking_question_count\": 0, \"can_start_next\": false, \"checkpoints\": {\"CP2\": \"PASS\", \"CP3\": \"PASS\", \"CP4\": \"PASS\", \"CP5\": \"PASS\"}, \"code_paths\": [\"greeting.py\", \"test_greeting.py\"], \"confirmation_unit\": \"mr\", \"development_project_id\": \"20261012-forward\", \"execution_mode\": \"continuous_project\", \"execution_wait_state\": \"WAITING_HUMAN_START\", \"forbidden_paths\": [\"requirements.md\"], \"goal_complete\": false, \"manual_confirmation_reason\": \"staged_boundary\", \"manual_confirmation_required\": true, \"mr_id\": \"MR-A\", \"next_unit\": {\"contract_path\": \"mrs/MR-B.md\", \"contract_revision\": 1, \"cp4\": \"PASS\", \"dependency_evidence\": [], \"unit_id\": \"MR-B\"}, \"plan_approval_source\": \"human\", \"plan_confirmation\": \"CONFIRMED\", \"repo_root\": \"/private/tmp/supercoder-forward-20261012-a/staged\", \"review\": {\"code_digest\": \"a5ccc56636d4441d54478cc81d1b393ce91117b9b41122931262bcc38b70c2ea\", \"command\": \"python3 -B -m unittest test_greeting\", \"evidence_digest\": \"951d91103f7cc4773d8d373b5f66c4ecd31f06d62cce22054cef4bebd231fb21\", \"path\": \"reviews/MR-A.md\", \"result\": \"PASS\"}, \"risk_mode\": \"CONTROLLED\", \"schema_version\": \"supercoder.state/v1\", \"source_chain\": {\"analysis\": \"analysis/a.md\", \"mr\": \"mrs/MR-A.md\", \"plan\": \"plans/a.md\"}, \"stage\": \"ACCEPTED\", \"stage_epoch\": 4, \"unresolved_semantic_decision_count\": 0, \"unsupported_negative_constraint_count\": 0, \"validation\": {\"code_digest\": \"a5ccc56636d4441d54478cc81d1b393ce91117b9b41122931262bcc38b70c2ea\", \"command\": \"python3 -B -m unittest test_greeting\", \"evidence_digest\": \"d472a1cc65d09868262aed68113c907241f1fc75259e47e530ba57ff9852fe09\", \"path\": \"validation/MR-A.md\", \"result\": \"PASSED\"}}, \"allowed_actions\": [\"ACCEPT_CURRENT_UNIT\"]}, \"issues\": []}\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "-B",
+            "/private/tmp/supercoder-forward-20261012-a/package/skills/superCoder/scripts/coder_state.py",
+            "check",
+            "--repo",
+            "/private/tmp/supercoder-forward-20261012-a/staged",
+            "--project-id",
+            "20261012-forward",
+            "--action",
+            "start-next"
+          ],
+          "exit_code": 1,
+          "stdout": "{\"schema_version\": \"supercoder.state-cli/v1\", \"command\": \"check\", \"status\": \"FAIL\", \"data\": null, \"issues\": [{\"code\": \"WAITING_HUMAN_START\", \"message\": \"explicit approval for this unit/revision is required\"}]}\n",
+          "stderr": ""
+        }
+      ],
+      "report_digest": "3eea254a8cff8dc27627a38849d74e134b6cb5585823481a079eb28f9a90edd5"
+    },
+    {
+      "case_id": "goal",
+      "result": "PASS",
+      "checks": {
+        "model_report_exists": true,
+        "git_diff_available": true,
+        "one_active_project": true,
+        "fresh_completion_evidence": true,
+        "only_authorized_product_change": true,
+        "goal_complete": true,
+        "independent_business_summary": true,
+        "actual_tests_pass": true
+      },
+      "product_changes": [
+        "tags.py"
+      ],
+      "state": {
+        "advancement_mode": "GOAL_RESULT",
+        "advancement_mode_source": "user-message:current-goal",
+        "allowed_paths": [
+          "tags.py",
+          "test_tags.py"
+        ],
+        "analysis_gate": "PASSED",
+        "analysis_state": "ANALYSIS_READY",
+        "artifact_base": "/private/tmp/supercoder-forward-20261012-a/goal/.coder",
+        "artifact_base_source": "repo-default",
+        "artifact_strategy": "MULTI_MR",
+        "authorization_ref": "user-message:使用 superCoder 目标结果模式，按账本自动完成这个目标",
+        "auto_start_next_allowed": false,
+        "blocking_question_count": 0,
+        "can_start_next": false,
+        "checkpoints": {
+          "CP2": "PASS",
+          "CP3": "PASS",
+          "CP4": "PASS",
+          "CP5": "PASS"
+        },
+        "code_paths": [
+          "tags.py",
+          "test_tags.py"
+        ],
+        "confirmation_unit": "mr",
+        "contract_revision": 1,
+        "development_project_id": "20261012-forward",
+        "execution_mode": "continuous_project",
+        "execution_wait_state": "NONE",
+        "forbidden_paths": [
+          "requirements.md",
+          "greeting.py",
+          "test_greeting.py"
+        ],
+        "goal_complete": true,
+        "last_gate_id": "G-GOAL-CP5",
+        "manual_confirmation_required": false,
+        "mr_id": "MR-B",
+        "plan_approval_source": "automatic_checks",
+        "plan_confirmation": "AUTO_CHECKED",
+        "repo_root": "/private/tmp/supercoder-forward-20261012-a/goal",
+        "review": {
+          "code_digest": "3d68bf71cbb4429b63224e71eadb3195e9d538a54e8304255aba24827510d6d6",
+          "evidence_digest": "62e468d036e23cf2d76d8237043691fa6010da6f570ce64d811b1b8566c81e79",
+          "path": "records/MR-B-execution-record.md",
+          "result": "PASS"
+        },
+        "risk_mode": "CONTROLLED",
+        "schema_version": "supercoder.state/v1",
+        "source_chain": {
+          "analysis": "analysis/a.md",
+          "mr": "mrs/MR-B.md",
+          "plan": "plans/a.md"
+        },
+        "stage": "ACCEPTED",
+        "stage_epoch": 7,
+        "unresolved_semantic_decision_count": 0,
+        "unsupported_negative_constraint_count": 0,
+        "validation": {
+          "code_digest": "3d68bf71cbb4429b63224e71eadb3195e9d538a54e8304255aba24827510d6d6",
+          "command": "python3 -B -m unittest discover -p 'test_*.py'",
+          "evidence_digest": "7fbad1e89585dc9cd62932ec0b8bff439c93448f4b5a47b72d71092d13ae4059",
+          "path": "validation/MR-B-validation.md",
+          "result": "PASSED"
+        }
+      },
+      "commands": [
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--name-only"
+          ],
+          "exit_code": 0,
+          "stdout": ".coder/20261012-forward/coder-current-task.md\n.coder/20261012-forward/context-summary.md\n.coder/20261012-forward/gates.md\n.coder/20261012-forward/handoff.md\n.coder/20261012-forward/mrs/MR-B.md\n.coder/20261012-forward/project-progress.md\n.coder/20261012-forward/task-state.md\ntags.py\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "-B",
+            "/private/tmp/supercoder-forward-20261012-a/package/skills/superCoder/scripts/coder_state.py",
+            "check",
+            "--repo",
+            "/private/tmp/supercoder-forward-20261012-a/goal",
+            "--project-id",
+            "20261012-forward",
+            "--action",
+            "complete"
+          ],
+          "exit_code": 0,
+          "stdout": "{\"schema_version\": \"supercoder.state-cli/v1\", \"command\": \"check\", \"status\": \"PASS\", \"data\": {\"state\": {\"advancement_mode\": \"GOAL_RESULT\", \"advancement_mode_source\": \"user-message:current-goal\", \"allowed_paths\": [\"tags.py\", \"test_tags.py\"], \"analysis_gate\": \"PASSED\", \"analysis_state\": \"ANALYSIS_READY\", \"artifact_base\": \"/private/tmp/supercoder-forward-20261012-a/goal/.coder\", \"artifact_base_source\": \"repo-default\", \"artifact_strategy\": \"MULTI_MR\", \"authorization_ref\": \"user-message:使用 superCoder 目标结果模式，按账本自动完成这个目标\", \"auto_start_next_allowed\": false, \"blocking_question_count\": 0, \"can_start_next\": false, \"checkpoints\": {\"CP2\": \"PASS\", \"CP3\": \"PASS\", \"CP4\": \"PASS\", \"CP5\": \"PASS\"}, \"code_paths\": [\"tags.py\", \"test_tags.py\"], \"confirmation_unit\": \"mr\", \"contract_revision\": 1, \"development_project_id\": \"20261012-forward\", \"execution_mode\": \"continuous_project\", \"execution_wait_state\": \"NONE\", \"forbidden_paths\": [\"requirements.md\", \"greeting.py\", \"test_greeting.py\"], \"goal_complete\": true, \"last_gate_id\": \"G-GOAL-CP5\", \"manual_confirmation_required\": false, \"mr_id\": \"MR-B\", \"plan_approval_source\": \"automatic_checks\", \"plan_confirmation\": \"AUTO_CHECKED\", \"repo_root\": \"/private/tmp/supercoder-forward-20261012-a/goal\", \"review\": {\"code_digest\": \"3d68bf71cbb4429b63224e71eadb3195e9d538a54e8304255aba24827510d6d6\", \"evidence_digest\": \"62e468d036e23cf2d76d8237043691fa6010da6f570ce64d811b1b8566c81e79\", \"path\": \"records/MR-B-execution-record.md\", \"result\": \"PASS\"}, \"risk_mode\": \"CONTROLLED\", \"schema_version\": \"supercoder.state/v1\", \"source_chain\": {\"analysis\": \"analysis/a.md\", \"mr\": \"mrs/MR-B.md\", \"plan\": \"plans/a.md\"}, \"stage\": \"ACCEPTED\", \"stage_epoch\": 7, \"unresolved_semantic_decision_count\": 0, \"unsupported_negative_constraint_count\": 0, \"validation\": {\"code_digest\": \"3d68bf71cbb4429b63224e71eadb3195e9d538a54e8304255aba24827510d6d6\", \"command\": \"python3 -B -m unittest discover -p 'test_*.py'\", \"evidence_digest\": \"7fbad1e89585dc9cd62932ec0b8bff439c93448f4b5a47b72d71092d13ae4059\", \"path\": \"validation/MR-B-validation.md\", \"result\": \"PASSED\"}}, \"allowed_actions\": [\"ACCEPT_CURRENT_UNIT\"]}, \"issues\": []}\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-p",
+            "test_*.py"
+          ],
+          "exit_code": 0,
+          "stdout": "",
+          "stderr": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.000s\n\nOK\n"
+        }
+      ],
+      "report_digest": "681e49b6ab04085ea57b287f1980f62c254b29f86f831e646083fe8b0568b501"
+    },
+    {
+      "case_id": "light",
+      "result": "PASS",
+      "checks": {
+        "model_report_exists": true,
+        "git_diff_available": true,
+        "one_active_project": true,
+        "fresh_completion_evidence": true,
+        "authorized_literal_and_test_changes": true,
+        "one_light_ledger_no_full_chain": true,
+        "light_complete": true,
+        "actual_tests_pass": true
+      },
+      "product_changes": [
+        "labels.py",
+        "test_labels.py"
+      ],
+      "state": {
+        "advancement_mode": "STAGED_CHECK",
+        "allowed_paths": [
+          "labels.py",
+          "test_labels.py"
+        ],
+        "analysis_gate": "PASSED",
+        "analysis_state": "ANALYSIS_READY",
+        "authorization_ref": "user-message:label-prefix-change",
+        "blocking_question_count": 0,
+        "code_paths": [
+          "labels.py",
+          "test_labels.py"
+        ],
+        "confirmation_unit": "mr",
+        "development_project_id": "20261012-label-prefix",
+        "execution_mode": "single_mr",
+        "execution_wait_state": "NONE",
+        "forbidden_paths": [
+          ".git/**"
+        ],
+        "goal_complete": true,
+        "mr_id": "TASK-1",
+        "review": {
+          "code_digest": "bb55ded779742904e80e1c965d0bdfcd3085ac38039a353bae88c3c20818a8d5",
+          "evidence_digest": "08b306e2bec8bce0db8e1045691584c6f39ab0298831b4db352229bea8c2376f",
+          "path": "light-task.md",
+          "result": "PASS"
+        },
+        "risk_mode": "LIGHT",
+        "schema_version": "supercoder.state/v1",
+        "stage": "ACCEPTED",
+        "stage_epoch": 1,
+        "task_kind": "CHANGE",
+        "unresolved_semantic_decision_count": 0,
+        "unsupported_negative_constraint_count": 0,
+        "validation": {
+          "code_digest": "bb55ded779742904e80e1c965d0bdfcd3085ac38039a353bae88c3c20818a8d5",
+          "command": "python3 -B -m unittest -v; git diff --check",
+          "evidence_digest": "08b306e2bec8bce0db8e1045691584c6f39ab0298831b4db352229bea8c2376f",
+          "path": "light-task.md",
+          "result": "PASSED"
+        }
+      },
+      "commands": [
+        {
+          "argv": [
+            "git",
+            "diff",
+            "--name-only"
+          ],
+          "exit_code": 0,
+          "stdout": "labels.py\ntest_labels.py\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "-B",
+            "/private/tmp/supercoder-forward-20261012-a/package/skills/superCoder/scripts/coder_state.py",
+            "check",
+            "--repo",
+            "/private/tmp/supercoder-forward-20261012-a/light",
+            "--project-id",
+            "20261012-label-prefix",
+            "--action",
+            "complete"
+          ],
+          "exit_code": 0,
+          "stdout": "{\"schema_version\": \"supercoder.state-cli/v1\", \"command\": \"check\", \"status\": \"PASS\", \"data\": {\"state\": {\"advancement_mode\": \"STAGED_CHECK\", \"allowed_paths\": [\"labels.py\", \"test_labels.py\"], \"analysis_gate\": \"PASSED\", \"analysis_state\": \"ANALYSIS_READY\", \"authorization_ref\": \"user-message:label-prefix-change\", \"blocking_question_count\": 0, \"code_paths\": [\"labels.py\", \"test_labels.py\"], \"confirmation_unit\": \"mr\", \"development_project_id\": \"20261012-label-prefix\", \"execution_mode\": \"single_mr\", \"execution_wait_state\": \"NONE\", \"forbidden_paths\": [\".git/**\"], \"goal_complete\": true, \"mr_id\": \"TASK-1\", \"review\": {\"code_digest\": \"bb55ded779742904e80e1c965d0bdfcd3085ac38039a353bae88c3c20818a8d5\", \"evidence_digest\": \"08b306e2bec8bce0db8e1045691584c6f39ab0298831b4db352229bea8c2376f\", \"path\": \"light-task.md\", \"result\": \"PASS\"}, \"risk_mode\": \"LIGHT\", \"schema_version\": \"supercoder.state/v1\", \"stage\": \"ACCEPTED\", \"stage_epoch\": 1, \"task_kind\": \"CHANGE\", \"unresolved_semantic_decision_count\": 0, \"unsupported_negative_constraint_count\": 0, \"validation\": {\"code_digest\": \"bb55ded779742904e80e1c965d0bdfcd3085ac38039a353bae88c3c20818a8d5\", \"command\": \"python3 -B -m unittest -v; git diff --check\", \"evidence_digest\": \"08b306e2bec8bce0db8e1045691584c6f39ab0298831b4db352229bea8c2376f\", \"path\": \"light-task.md\", \"result\": \"PASSED\"}}, \"allowed_actions\": [\"ACCEPT_CURRENT_UNIT\"]}, \"issues\": []}\n",
+          "stderr": ""
+        },
+        {
+          "argv": [
+            "/opt/homebrew/opt/python@3.14/bin/python3.14",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-p",
+            "test_*.py"
+          ],
+          "exit_code": 0,
+          "stdout": "",
+          "stderr": "..\n----------------------------------------------------------------------\nRan 2 tests in 0.000s\n\nOK\n"
+        }
+      ],
+      "report_digest": "ecbcf4bd10a9a64265b2dc4f3d3f0e28588d3f0e6949b0e5bcf38e24bf62063e"
+    }
+  ],
+  "scope": "Three independent forward smoke cases; not the full P37/P38 variant matrix or cross-runtime certification."
+}

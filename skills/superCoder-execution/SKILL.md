@@ -13,14 +13,16 @@ description: "当 superCoder 任务已准备进入实现、产品代码修改、
 
 ## 必读文件
 
-- `references/execution.md`
+- `../superCoder/references/shared/advancement-mode.md`：区分人工启动等待与目标内自动推进
+- 新任务的机器状态与编辑/验收前检查读取 `../superCoder/references/shared/state-automation.md`
+- LIGHT 读取 `references/light-execution.md` 和 `../superCoder/assets/templates/light-task.md`；STANDARD / CONTROLLED 读取 `references/execution.md`
 - 选择、恢复和更新产物前读取 `../superCoder/references/shared/artifact-model.md`
-- 启动或恢复执行前读取 `../superCoder/references/shared/human-confirmation-gate.md`
+- 分析状态阻塞、收到业务答案或存在关键未知项时读取 `../superCoder/references/shared/human-confirmation-gate.md`
 - `STANDARD` / `CONTROLLED` 的恢复、下一 MR、提交范围或完成判断前读取 `../superCoder-ledger-audit/references/ledger-audit.md`；`LIGHT` 仅在升级时读取
 - BUG / hotfix / P0-P2 修改前读取 `../superCoder-bug-root-cause/references/bug-root-cause.md`
 - 需要 CP4/CP5 或产物复核时读取 `../superCoder-checkpoint/references/checkpoint.md`
-- 生成任务/MR 和融合 Gate 时读取 `../superCoder/assets/templates/task-and-mr.md`、`../superCoder/assets/templates/gates.md`
-- 需求整体完成并生成最终落地摘要时读取 `../superCoder-requirement-traceability/references/requirement-traceability.md`
+- STANDARD / CONTROLLED 生成任务/MR 和融合 Gate 时读取 `../superCoder/assets/templates/task-and-mr.md`、`../superCoder/assets/templates/gates.md`；不为 LIGHT 默认加载大模板
+- STANDARD / CONTROLLED 需求整体完成时读取需求追踪协议；LIGHT 将最终结果写入 light-task.md
 
 ## 资源门禁
 
@@ -30,10 +32,11 @@ description: "当 superCoder 任务已准备进入实现、产品代码修改、
 ## 职责
 
 - 在修改产品代码前运行 startup guard 和 pre-edit guard。
+- 按推进模式处理完整任务/MR 边界；自动执行方案检查、依赖对齐、实际 diff review 和验证，并保留各自证据。
 - 拒绝在 Analysis Gate 未通过、扫描未完成、语义决策/负向约束计数未清零，或处于 `BLOCKED_HUMAN_CONFIRMATION` / `HUMAN_INPUT_RECEIVED` 时启动执行。
 - 强制执行 allowed / forbidden 路径规则。
 - 将实现限制在当前已批准的任务 / MR 范围内。
-- 分别维护 operations、execution record、validation、progress 与恢复产物；Gate/Checkpoint 结论统一写入 `gates.md`。
+- STANDARD / CONTROLLED 按职责维护执行/验证/恢复产物与 gates.md；LIGHT 使用单文件职责小节，不生成完整流程占位文件。
 - 调用 ledger audit 和 bug-root-cause 协议，而不是在本技能中重复它们的规则。
 - 不创建空 review 或空 deviation；不得用 Gate 融合替代开发阶段产物。
 

@@ -14,7 +14,7 @@ This adapter maps harness-neutral superCoder actions to a generic desktop, IDE, 
 | Complete work | Route through `superCoder-verification` before any completion claim. |
 | Query knowledge | Execute `skills/superCoder/scripts/coder_knowledge.py`; preserve JSON stdout, exit code, error code, and requested section/entity scope. |
 
-Adapter contract ID: `app-agent@1`. P27 executes this adapter rather than treating this mapping as dynamic evidence.
+Adapter contract ID: `app-agent@1`. P27 checks the canonical CLI through named test wrappers; it does not execute or prove integration with a live app-agent runtime.
 
 ## Non-Goals
 

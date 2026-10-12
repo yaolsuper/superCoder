@@ -13,6 +13,8 @@ description: 当 superCoder 决策依赖 .coder 账本、恢复状态、下一 M
 
 ## 必读文件
 
+- `../superCoder/references/shared/advancement-mode.md`：审计模式、目标授权和下一单元确认
+- `../superCoder/references/shared/state-automation.md`：新账本先运行 CLI 检查结构/摘要，再审计领域事实；旧账本不强制迁移
 - `references/ledger-audit.md`
 - 审计前读取 `../superCoder/references/shared/artifact-model.md`
 - 恢复状态涉及分析阻塞或人工答案时读取 `../superCoder/references/shared/human-confirmation-gate.md`

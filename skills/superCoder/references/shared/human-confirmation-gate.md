@@ -6,6 +6,8 @@
 
 ## 适用边界
 
+本协议处理系统证据无法解决的需求/业务决策。`advancement-mode.md` 的 STAGED_CHECK 完整单元启动确认另行记录为 WAITING_HUMAN_START，不创建虚假的 Blocking Question，不使已通过的 Analysis Gate 失效；GOAL_RESULT 也不能替用户回答本协议的真实阻塞问题。
+
 只对无法由可靠系统证据解决、且会实质改变范围、验收、数据、安全、API 兼容、架构、合规、发布或资源约束的问题执行人工阻塞。不要对命名、格式、可逆低风险实现细节或当前阶段尚不需要的信息阻塞。
 
 把不确定项分为：

@@ -20,7 +20,7 @@ description: 当已进入 superCoder 交付链的任务需要生成需求最终�
 
 ## 职责
 
-- 仅在启用 Knowledge Trace、明确要求跨需求关联或仓库策略要求时，于需求整体完成前生成最终落地摘要。
+- STANDARD / CONTROLLED 于需求整体完成前生成最终落地摘要；LIGHT 在 light-task.md 中记录最终业务结果。Knowledge Trace 仅控制知识卡与关联图，历史关联按任务需要有界检索。
 - 从最终验收事实中提炼符合 Why / Who / What 的业务需求内容。
 - 维护可检索的 `relation_keys` 和历史需求关系。
 - 在开发分析，或显式指定由 superCoder 执行的新需求分析中，有界发现候选历史需求并输出证据化关系判断。

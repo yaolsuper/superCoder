@@ -2,6 +2,8 @@
 
 > 当前任务、MR、恢复、执行和验证产物模板。Gate 表格与 Checkpoint 状态统一引用 `gates.md`，不在本文件重复维护。
 
+本模板用于 STANDARD / CONTROLLED，LIGHT 使用 light-task.md。新任务使用 `../../references/shared/state-automation.md` 的 JSON 机器块；下列字段供结构与职责参考，不与 JSON 双写阶段/epoch/模式。当前任务正文只补本单元的输入与执行细节，状态投影由 CLI 同步。
+
 本文件只在需要当前任务结构、MR 文件结构、状态维护或偏差记录模板时读取。门禁表格见同目录 `gates.md`，项目进度总览卡片见同目录 `progress-overview.md`。
 本文件位于主技能目录 `skills/superCoder/assets/templates/`；共享资源不得从包根 `shared/` 或工作区同名目录读取。
 
@@ -12,6 +14,8 @@ artifact_strategy: SINGLE_MR_PLAN | SINGLE_MR_FILE | MULTI_MR
 delivery_unit_count: 1
 plan_revision: 1
 based_on_plan_revision: 1
+architecture_refs: []                 # 当前 MR 消费的 Plan#ARCH-###
+contract_refs: []                     # 当前公共契约的 ID、权威位置和 revision/digest
 ```
 
 `SINGLE_MR_PLAN` 仅用于 analysis 和 Plan 已通过的单 BUG MR；Plan 标记 `execution_contract: true` 并补齐 MR 合约字段，不创建等价 MR。其他单 MR 使用 `SINGLE_MR_FILE`，多个交付单元使用 `MULTI_MR`。
@@ -30,13 +34,25 @@ plan_revision: int
 based_on_plan_revision: int
 status: PENDING | READY | RUNNING | BLOCKED | VERIFYING | ACCEPTED | MERGED
 execution_mode: single_mr | continuous_project
+advancement_mode: STAGED_CHECK | GOAL_RESULT
+advancement_mode_source: user | ledger | config | default
+confirmation_unit: mr | task
+authorization_ref: string              # 用户授权消息及契约目标/非目标的引用
+plan_confirmation: DRAFT_PENDING_CONFIRMATION | CONFIRMED | AUTO_CHECKED | BLOCKED | N/A
+plan_approval_source: human | automatic_checks | none
+execution_wait_state: NONE | WAITING_HUMAN_START
 manual_confirmation_required: true | false
-manual_confirmation_reason: explicit_user_request | startup_blocker | ambiguous_safe_plan | scope_change | none
+manual_confirmation_reason: staged_boundary | explicit_user_request | startup_blocker | ambiguous_safe_plan | scope_change | none
+next_unit_approval:
+  unit_id: string                      # 仅绑定待启动的完整任务/MR
+  contract_revision: int
+  answer_ref: string                   # 显式人工启动确认的消息引用
+  state: PENDING | CONFIRMED | CONSUMED
 stage_epoch: int                      # 单调递增阶段版本号，与 project-progress.md / gates.md 必须相等
 stage_last_transition:
   from: ANALYSIS | PLANNING | MR_SPLIT | READY | RUNNING | VERIFYING | ACCEPTED
   to: ANALYSIS | PLANNING | MR_SPLIT | READY | RUNNING | VERIFYING | ACCEPTED
-  trigger: string                      # 用户触发词或 Checkpoint 报告 PASS
+  trigger: string                      # 人工启动确认，或 GOAL_RESULT 授权及 Checkpoint PASS 引用
 objective: string
 repo_root: <absolute-code-repo-root>
 artifact_base: <absolute-resolved-artifact-base>
@@ -102,6 +118,8 @@ auto_start_next_allowed: true | false
 
 `source_chain.plan` 和 `source_chain.mr` 是正式编码执行的硬门槛。分析中间态可以暂时没有 plan；计划待确认态可以暂时没有 MR；但状态必须是 `PENDING` 或 `BLOCKED` 且 `can_start_next: false`。任何 `READY`、`RUNNING`、`VERIFYING`、`ACCEPTED` 的编码任务都不得出现 `source_chain.plan: null` 或 `source_chain.mr: null`。
 
+推进字段按 `../../references/shared/advancement-mode.md` 维护：默认 STAGED_CHECK；`execution_mode` 仅表示范围。STAGED_CHECK 单元验收后的正常等待不改写当前 ACCEPTED，下一单元未确认时两个 start 标志均为 false。GOAL_RESULT 自动检查计划使用 AUTO_CHECKED，不写成 HUMAN_CONFIRMED；模式、确认边界和授权引用同步到进度、Gate 与恢复摘要。`next_unit_approval` 无待确认单元时不创建，启动后标记 CONSUMED，后续单元或新 revision 不复用。
+
 ## 上下文路由字段
 
 `required_context` 是上下文装配路由，不是“默认全文读取清单”。字段含义：
@@ -160,7 +178,7 @@ resume_gate:
   blocked_reason: string
 ```
 
-如果 `status_consistency: FAIL`、`stage_epoch_consistency: FAIL` 或 `can_enter_start_gate: false`，只能修复状态产物、登记偏差或请求用户确认，不得修改产品代码。含糊指令（“继续”“接着做”）只有在 `manual_confirmation_required: true` 或 handoff 明确等待人工审核时才被视为不能升级；连续执行模式下，当前 MR 已验收且 `can_start_next: true` / `auto_start_next_allowed: true` 时，可以按文件证据进入下一 MR 启动门禁，见 `skills/superCoder-execution/references/execution.md` 阶段升级裁决规则。
+如果 `status_consistency: FAIL`、`stage_epoch_consistency: FAIL` 或 `can_enter_start_gate: false`，只能修复状态产物、登记偏差或请求必要确认，不得修改产品代码。STAGED_CHECK 的 WAITING_HUMAN_START 不接受含糊“继续”替代绑定单元/revision 的启动确认；GOAL_RESULT 在授权目标内，当前单元验收、依赖/review/验证与下一单元 CP4 通过后，可自动启动。仅有 continuous_project 或 start 标志不足以授权自动推进；详细裁决读取 `../../references/shared/advancement-mode.md`。
 
 ## MR 执行层结构
 
@@ -244,6 +262,8 @@ MR-X
 ```
 
 如果 MR 没有可追溯来源链路，状态只能是 `PENDING` 或 `BLOCKED`，不能标记为 `READY`。
+
+来源链路还记录 `based_on_plan_revision`、适用的 `architecture_refs`（Plan#ARCH-###）和 `contract_refs`（CONTRACT-###、权威定义位置及 revision/digest）。局部 DESIGN 项注明承接的架构/契约，不复制全局方案或公共 Schema。没有结构变化或公共契约时可明确复用依据，无需创建空 ARCH/CONTRACT 项；单 BUG 内联执行层同样引用所在 Plan 的适用小节。详细分层与修订规则见 `skills/superCoder-planning/references/solution-design.md`。
 
 ## MR 详细落地结构
 
@@ -338,6 +358,8 @@ DESIGN-003 | target: <OpenAPI/Proto/DTO/schema path> | source: existing protocol
 | 模块依赖、模型归属、接口/Schema、事务一致性、外部副作用或 NFR 中实际变化的一项 | 真实代码证据 | `DESIGN-###` | 与现有架构一致或 Decision | 对消费者、数据、发布和回退的影响 | PASS / BLOCK |
 
 架构审查确认：设计可放入现有模块边界；没有不允许的依赖反转或重复模型；公开接口、数据与事件具备兼容策略；事务和副作用顺序闭合；涉及的性能、安全和可观测性要求可验证。没有变化的维度不生成表格行。存在 `BLOCK` 或未决设计问题时先修订 MR，不生成可执行 Task。
+
+同时核对当前设计与有效 Plan 的整体架构、数据/API 骨架及跨 MR 公共契约一致。依赖契约尚未实际交付时，消费者不因设计草案可读而 READY；名称、类型或业务语义变化先做 Plan/MR 修订影响分析，不允许各 MR 自行定义不兼容版本。
 ## 实现约束与自主决策
 
 ### 必须遵守
@@ -505,7 +527,14 @@ MR Task 遵循以下规则：
 mr_id: MR-X
 status: RUNNING
 execution_mode: continuous_project
-manual_confirmation_required: false
+advancement_mode: STAGED_CHECK
+advancement_mode_source: default
+confirmation_unit: mr
+authorization_ref: <user-goal-and-scope-ref>
+plan_confirmation: CONFIRMED
+plan_approval_source: human
+execution_wait_state: NONE
+manual_confirmation_required: false  # 当前已获授权单元正在执行；验收后有下一单元时改为 true
 previous_required_status: ACCEPTED
 next_mr: MR-Y
 can_start_next: false
@@ -534,6 +563,9 @@ review_profile:
 | task_id |  |
 | mr_id |  |
 | 当前状态 | PENDING / READY / RUNNING / BLOCKED / VERIFYING / ACCEPTED |
+| 推进模式 / 来源 | STAGED_CHECK / GOAL_RESULT；user / ledger / config / default |
+| 确认边界 / 授权 | mr / task；authorization_ref |
+| 启动等待 / 确认记录 | NONE / WAITING_HUMAN_START；next_unit_approval 或无 |
 | 分析状态 | ANALYZING / BLOCKED_HUMAN_CONFIRMATION / HUMAN_INPUT_RECEIVED / ANALYSIS_READY / N/A |
 | Analysis Gate | PASSED / FAILED / N/A |
 | 阻塞问题 | `Q-*` 清单 / 无 |

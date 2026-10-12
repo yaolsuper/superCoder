@@ -13,12 +13,13 @@ description: 在声明 superCoder 工作 complete、fixed、passing、accepted�
 
 ## 必读文件
 
+- `../superCoder/references/shared/advancement-mode.md`：区分当前单元验收、下一单元启动和目标整体完成
 - `../superCoder/references/shared/human-confirmation-gate.md`
 - `../superCoder/references/shared/artifact-model.md`
 - `CONTROLLED` 或涉及恢复、提交范围、下一 MR 时读取 `../superCoder-ledger-audit/references/ledger-audit.md`
 - `CONTROLLED` 的 CP5 和最终交付决策需要 `../superCoder-checkpoint/references/checkpoint.md`
-- 验证记录要求需要 `../superCoder-execution/references/execution.md`
-- 需求整体完成时读取 `../superCoder-requirement-traceability/references/requirement-traceability.md`
+- 验证记录要求：LIGHT 读取 `../superCoder-execution/references/light-execution.md`，STANDARD / CONTROLLED 读取 `../superCoder-execution/references/execution.md`
+- STANDARD / CONTROLLED 需求整体完成时读取 `../superCoder-requirement-traceability/references/requirement-traceability.md`；LIGHT 最终结果写入 light-task.md
 - 被验证工作是 BUG / hotfix / P0-P2 时读取 `../superCoder-bug-root-cause/references/bug-root-cause.md`
 
 ## 职责
@@ -29,6 +30,7 @@ description: 在声明 superCoder 工作 complete、fixed、passing、accepted�
 - `CONTROLLED` 在交付声明前确保兼容 CP5 的账本审计通过；STANDARD / CONTROLLED 确保新鲜验证已写入独立 validation 文件并被 execution record、MR 与 `gates.md` 引用，LIGHT 写入 `light-task.md`。
 - 如果证据缺失或过期，阻断完成声明，并说明下一步允许的验证动作。
 - 需求整体完成时确认最终落地摘要存在，并与实际 diff、验证、遗留项和关系检索键一致。
+- 阶段开发检查模式可以确认当前单元已验收且正在等待下一单元人工启动；不得把正常等待写成目标完成。目标结果模式须检查授权目标内全部单元及实际 diff review 已闭合。
 
 ## 禁止事项
 

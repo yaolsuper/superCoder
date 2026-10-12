@@ -11,7 +11,7 @@ description: 当任务已进入开发分析与实施阶段，涉及实施计划�
 
 默认仅在任务已进入 **code delivery** 阶段，并涉及以下任一事项时使用本入口：
 
-- 基于已确认的需求、spec 或验收目标，读取代码库并形成开发实现分析；
+- 基于 spec.md、prd.md、需求描述或验收目标，读取代码库并形成开发实现分析，核对目标/规则与待确认项；
 - 生成开发实施计划、迁移计划或 MR 拆分；
 - BUG、缺陷、回归、生产事故、hotfix 或 P0-P2 修复；
 - 产品代码实现、修改，以及对应的测试、构建、lint 或运行时验证；
@@ -30,7 +30,7 @@ description: 当任务已进入开发分析与实施阶段，涉及实施计划�
 
 ## 复核例外（Review Exception）
 
-普通 “code review”、“review current changes” 或类似请求，应在当前环境存在原生 review 能力时优先使用该能力。只有用户明确要求 superCoder review、质量审核、回归风险评估、发布 / handoff 判断时，才路由到 `superCoder-review`。
+普通独立 “code review”、“review current changes” 或类似请求，应在当前环境存在原生 review 能力时优先使用该能力。用户明确要求 superCoder review、质量审核、回归风险评估、发布 / handoff 判断，或已进入本交付链且内部代码 review 没有可用原生能力时，路由到 `superCoder-review`。
 
 ## 维护 superCoder 自身
 
@@ -55,22 +55,31 @@ description: 当任务已进入开发分析与实施阶段，涉及实施计划�
 
 1. `STANDARD` / `CONTROLLED` 必须保留 analysis、plan、执行契约、current-task、progress、handoff/context/task-state、execution、validation 等阶段产物；执行契约通常为独立 MR。仅 BUG 分析与计划已明确且只有一个交付单元时，可由 Plan 内联承担单 MR 执行契约。`LIGHT` 使用单一 `light-task.md`。聊天记忆不是账本。
 2. 当前模式的必需状态缺失时，禁止继续执行、输出提交范围或声明完成。
-3. `coder-current-task.md`、`project-progress.md` 和 `gates.md` 的阶段、`stage_epoch` 与活动 MR 必须一致；不一致时禁止修改产品代码或启动下一 MR。
-4. 修改产品代码必须具备 analysis → plan → 执行契约 → current-task 来源链路、路径守卫和 pre-edit guard。执行契约为独立 MR，或满足单 BUG MR 例外的 `SINGLE_MR_PLAN`；不得同时维护内容重复的 Plan 与 MR。
+3. STANDARD / CONTROLLED 的 current-task、progress、gates 阶段、stage_epoch 与活动 MR 必须一致；LIGHT 在 light-task.md 内保持状态一致，不要求三文件。
+4. 修改产品代码必须有来源、执行范围、路径守卫和 pre-edit guard。STANDARD / CONTROLLED 使用 analysis → plan → 执行契约 → current-task；LIGHT 在 light-task.md 内记录这些职责。不得同时维护等价 Plan 与 MR。
 5. BUG、回归、生产事故、hotfix 和 P0-P2 修复必须具备文件化根因证据链。
-6. “continue”、“go on” 或类似含糊指令不得升级阶段。
-7. 完成声明必须具备独立且新鲜的 validation 记录；`CONTROLLED` 还必须具备兼容 CP5 的账本审计。
+6. 阶段升级遵守 `references/shared/advancement-mode.md`；含糊指令不得绕过阶段开发检查的人工启动确认，目标结果模式在已有授权和 Gate 通过时自动推进。
+7. 完成声明必须有当前代码的新鲜验证。STANDARD / CONTROLLED 使用独立 validation 文件及适用的 CP5；LIGHT 在 light-task.md 的独立验证小节保存真实命令/结果，不要求 CP5 或单独文件。
 8. Skill 正文应以通用动作描述流程；harness 映射负责把动作转换为具体工具。
 9. `.coder/**` 正式产物默认使用中文；若用户、仓库规范或 `.coder-config.yaml` 明确指定其他语言，按更具体规则执行。代码标识、API 名称、字段名、路径、命令、错误码、日志和协议关键字保留原文。
-10. 需求整体完成前必须生成或更新 `requirement-delivery-summary.md`；若与实际 diff、验证和遗留项漂移，不得声明需求完成。
+10. STANDARD / CONTROLLED 的需求整体完成前必须更新 requirement-delivery-summary.md；LIGHT 将最终业务结果写入 light-task.md。Knowledge Trace 只控制知识卡与关联图，不控制是否记录最终结果。
 11. 创建人工阻塞问题前必须完成有界系统证据扫描；每个问题必须引用稳定 Source Point 或 Evidence Gap。可由代码、配置、Schema、测试、文档或历史决策可靠回答的问题不得转给用户。
 12. 存在未解决 `BLOCKING` 问题时必须写入 `BLOCKED_HUMAN_CONFIRMATION` 并禁止 planning、MR、产品代码修改、迁移、部署和提交范围；收到显式人工回答后必须先返回 `ANALYZING` 重新运行 Analysis Gate，不得直接进入 planning 或 execution。
 13. 数据结构、字段类型和单复数文案不得替代业务语义。遇到数组/集合、相似能力复用、固定对象选择或跨节点汇总时，必须分别核对基数、空值、顺序、去重、运行态编码及合并/冲突规则；任何“只能一个”“至少一个”“最多 N 个”“多值应失败”等负向约束必须追溯到用户原话、权威协议、明确要求保持的现状或显式人工 Decision，否则按影响等级进入人工确认门禁。
 14. 产品代码修改必须执行代码注释审计：非显然业务规则、边界与不变量、兼容/临时方案、并发事务、安全性能约束和跨系统映射必须添加或更新解释“为什么/约束是什么”的注释；同时删除或修正因改动而失真的旧注释。不得用逐行复述代码的注释凑数。
+15. STANDARD / CONTROLLED 的整体架构、模块职责、变更关系及公共数据/API 契约骨架在 Plan 明确，MR 承接可执行详细设计；输入来源、分层与修订规则见 `../superCoder-planning/references/solution-design.md`，仅规划/设计时读取，不向 LIGHT 强加完整架构产物。
 
 人工确认状态、动作和转换以 `config/human-confirmation-gate.yaml` 为机器契约；详细流程读取 `references/shared/human-confirmation-gate.md`，输出结构读取 `assets/templates/human-confirmation.md`。必需资源缺失时返回 `SKILL_RESOURCE_BLOCKED`。
 
-## 渐进式模式选择
+## 开发推进模式选择
+
+进入子技能前读取 `references/shared/advancement-mode.md`。当前用户选择 → 已有账本 → `execution_policy.advancement_mode` → 默认 `STAGED_CHECK`（阶段开发检查）。`STAGED_CHECK` 在每个完整任务或 MR 验收后等待人工确认启动下一单元；`GOAL_RESULT`（目标结果）在已授权目标内自动完成方案检查、依赖对齐、代码 review、验证和后续启动。
+
+推进模式与下面的风险模式、`single_mr / continuous_project` 执行范围分别记录；任一推进模式都不跳过质量门禁，不从连续项目范围推断自动授权。
+
+新任务的账本状态、编辑/验收检查和阶段转换读取 `references/shared/state-automation.md`，使用 coder_state.py。旧账本不自动覆盖或迁移，按该协议保留兼容审计路径。
+
+## 渐进式风险模式选择
 
 进入子技能前，先按风险、范围和可恢复性选择最低充分模式；模式只约束输入、输出和门禁，不指定思考方法或唯一实现。
 
@@ -101,7 +110,7 @@ description: 当任务已进入开发分析与实施阶段，涉及实施计划�
 | 恢复执行、下一 MR、提交范围、完成证据、账本一致性 | `../superCoder-ledger-audit/SKILL.md` |
 | 产品代码修改、启动门禁、pre-edit guard、实现、验证记录 | `../superCoder-execution/SKILL.md` |
 | CP0-CP5、正式产物复核、Generator/Reviewer/Fixer 分离 | `../superCoder-checkpoint/SKILL.md` |
-| 明确的 superCoder review、质量审核、回归风险、发布判断 | `../superCoder-review/SKILL.md` |
+| 明确的 superCoder review、质量审核、回归风险、发布判断；交付链内无原生能力的代码 review | `../superCoder-review/SKILL.md` |
 | 声明 complete、fixed、passing、accepted 或 ready to submit 前 | `../superCoder-verification/SKILL.md` |
 | 需求最终落地摘要、历史关联需求发现与关系跟踪 | `../superCoder-requirement-traceability/SKILL.md` |
 

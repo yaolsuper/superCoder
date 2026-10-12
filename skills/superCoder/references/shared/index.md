@@ -10,10 +10,13 @@
 |---|---|---|
 | skill_pack | `skills/superCoder/SKILL.md` / `skills/superCoder-*/SKILL.md` | 薄入口 + 多技能组合；每个子技能只承载触发、职责和路由 |
 | decision_contract | `decision-contract.md` | Review、Ledger Audit、Checkpoint 等多协议组合时的统一决策字段、阻断映射和允许动作 |
+| advancement_mode | `advancement-mode.md` | STAGED_CHECK（默认）/ GOAL_RESULT 的选择、阶段授权、完整单元确认和自动质量检查；独立于风险模式与执行范围 |
+| state_automation | `state-automation.md` / `skills/superCoder/scripts/coder_state.py` | 新账本结构/路径/证据摘要检查、串行状态转换与中断恢复，旧账本显式兼容 |
 | human_confirmation_gate | `human-confirmation-gate.md` / `../../config/human-confirmation-gate.yaml` | 分析阶段的证据扫描、来源点、阻塞问题、显式回答归因和重新分析状态机 |
 | artifact_model | `artifact-model.md` / `../../assets/templates/task-and-mr.md` / `../../assets/templates/gates.md` | 保留开发阶段产物，只融合 Gate/Checkpoint 重复记录 |
 | trace_contract | `trace-model.md` / `knowledge-card-contract.md` / `product-tree-contract.md` | 稳定资源引用、CAE/PROV 关系、Card manifest/section 与产品树治理 |
 | planning | `skills/superCoder-planning/references/planning.md` | 分析、迁移评估、实施计划、MR 拆分和来源链路 |
+| solution_design | `skills/superCoder-planning/references/solution-design.md` / `../../assets/templates/implementation-plan.md` | spec/prd/需求描述来源、Plan 整体架构/公共契约与 MR 详细设计分工、修订影响 |
 | bug_root_cause | `skills/superCoder-bug-root-cause/references/bug-root-cause.md` | BUG、缺陷、回归、线上问题、热修和 P0/P1/P2 修复的根因证据链 |
 | ledger_audit | `skills/superCoder-ledger-audit/references/ledger-audit.md` | 跨模型 / 跨工具恢复、完成态、下一 MR 切换和最终交付前的状态账本审计 |
 | review | `skills/superCoder-review/references/review.md` | 用户明确要求 superCoder 时的代码审查、质量审核、回归风险评估和放行判断 |
@@ -53,11 +56,14 @@
 
 - Skill Pack 薄入口与组合路由：`skills/superCoder/SKILL.md` 与 `skills/superCoder-*/SKILL.md`
 - 多协议统一决策契约：`decision-contract.md`
+- 开发推进模式、阶段授权与完整单元启动确认：`advancement-mode.md`
+- 机器状态块、验证绑定和可恢复转换：`state-automation.md`
 - 分析阶段证据优先人工确认：`human-confirmation-gate.md`、`../../config/human-confirmation-gate.yaml`
 - 开发产物职责和 Gate 融合：`artifact-model.md`、`../../assets/templates/task-and-mr.md`、`../../assets/templates/gates.md`
 - 追溯对象、关系与状态：`trace-model.md`
 - 需求卡片与产品树格式：`knowledge-card-contract.md`、`product-tree-contract.md`
 - 分析、计划和 MR 拆分细则：`skills/superCoder-planning/references/planning.md`
+- 开发输入、整体架构骨架与 MR 详细设计分层：`skills/superCoder-planning/references/solution-design.md`
 - BUG / 热修根因证据链：`skills/superCoder-bug-root-cause/references/bug-root-cause.md`
 - 状态账本审计：`skills/superCoder-ledger-audit/references/ledger-audit.md`
 - superCoder 代码审查和质量审核细则：`skills/superCoder-review/references/review.md`
@@ -93,6 +99,7 @@
 | 修改完成前验证规则 | `skills/superCoder-verification/SKILL.md`、ledger / checkpoint / execution / bug-root-cause 子技能、`tests/skill-behavior/` |
 | 修改产物目录或状态文件规则 | planning / execution / checkpoint 子技能、`../../assets/templates/` |
 | 修改人工确认状态、问题或恢复规则 | `human-confirmation-gate.md`、`../../config/human-confirmation-gate.yaml`、planning / execution / checkpoint / verification、`../../assets/templates/human-confirmation.md`、行为测试 |
+| 修改推进模式、阶段授权或下一单元启动规则 | `advancement-mode.md`、入口与 planning / execution / ledger / checkpoint / review / verification、任务/Gate/进度模板、配置示例、README 和行为场景 |
 | 修改 Review 标准 | review 子技能、checkpoint checklist、reviewer prompt |
 | 修改 Generator / Reviewer / Fixer 边界 | checkpoint 子技能的 prompts、checkpoint 协议、document review checklist |
 | 修改模块映射规则 | `skills/superCoder/config/module-map.yaml`、本文件 |

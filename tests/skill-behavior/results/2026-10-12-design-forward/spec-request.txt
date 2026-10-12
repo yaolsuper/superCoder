@@ -1,0 +1,1 @@
+使用 $superCoder，根据 spec.md，结合这个仓库做开发分析和实施方案。先给我可审阅的方案，确认后再编码。使用阶段开发检查模式。仓库路径：/private/tmp/supercoder-design-20261012/spec

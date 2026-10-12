@@ -13,6 +13,7 @@ description: 当 superCoder 任务需要 CP0-CP5 判断、正式产物复核、�
 
 ## 必读文件
 
+- `../superCoder/references/shared/advancement-mode.md`：按模式核对阶段授权、依赖和 review 证据
 - `references/checkpoint.md`
 - 决定 Checkpoint 记录落点前读取 `../superCoder/references/shared/artifact-model.md`
 - 分析、计划或执行门禁涉及人工确认时读取 `../superCoder/references/shared/human-confirmation-gate.md`

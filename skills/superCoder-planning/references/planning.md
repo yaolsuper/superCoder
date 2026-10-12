@@ -1,14 +1,18 @@
 # 开发分析与实施计划协议
 
-本协议负责开发实现分析、实施计划和 MR 拆分，不修改产品代码。先读取 `../../superCoder/references/shared/artifact-model.md`、`../../superCoder/assets/templates/task-and-mr.md` 和 `../../superCoder/assets/templates/gates.md`；分析澄清还必须读取 `../../superCoder/references/shared/human-confirmation-gate.md`。
+本协议负责 STANDARD / CONTROLLED 的开发分析、实施计划和 MR 拆分，不修改产品代码。读取 artifact-model 和 `solution-design.md`；生成 Plan 时读取 implementation-plan 模板的适用章节，生成具体任务/MR 时先索引 task-and-mr 模板章节，再只读当前需要的结构。记录 Gate 时读取 gates 模板的当前摘要/历史结构，不默认加载全部表格。存在关键未知项时读取 human-confirmation-gate。
 
 ## 正式产物
+
+先读取 `../../superCoder/references/shared/advancement-mode.md` 并记录推进模式、来源、确认边界和目标授权。下文“计划确认”包含该协议允许的人工确认或 GOAL_RESULT 下的自动方案检查；仅请求计划时不得自动进入实施。
 
 STANDARD / CONTROLLED 按阶段维护 analysis、plan、执行契约、current-task、progress、恢复状态与 gates。执行契约通常为 `mrs/<mr-id>.md`；满足 artifact-model 全部条件的单 BUG MR 使用 `SINGLE_MR_PLAN`，由已确认 Plan 内联承担执行契约，不再生成等价 MR。计划确认前不得生成或激活任何执行契约。
 
 ## 分析门禁
 
 分析先做有界证据扫描，区分用户输入、代码事实、推断和假设。至少覆盖相关 spec、代码、配置、API/Schema、测试和历史 Decision。关键结论必须引用文件、行号、命令摘要、协议或用户输入。
+
+开发输入支持 spec.md、prd.md 或需求描述，记录来源/版本/条目或消息引用，不要求补齐产品文档。按 solution-design 的来源规则核对当前系统，不能把上游设计建议当作已运行服务、已应用 DDL 或唯一实现。
 
 Analysis Gate 同时满足才通过：`evidence_scan_status` 完成且覆盖充分、`blocking_question_count == 0`、`semantic_decision_matrix` 没有未决维度、`negative_constraint_inventory` 中约束均有来源、验收标准可判定。`analysis_state` 只有在这些条件满足时才能进入 ANALYSIS_READY。Gate 结论写入 `gates.md`；分析正文只引用 `gate_id`。
 
@@ -18,7 +22,13 @@ Analysis Gate 同时满足才通过：`evidence_scan_status` 完成且覆盖充�
 
 计划必须从已通过的分析结论推导，至少记录目标/非目标、方案取舍、交付单元、文件/接口/数据影响、允许/禁止路径、稳定 Task、依赖、验证、验收、风险、回退和停止条件。
 
+Plan 必须按 solution-design 明确受影响系统的整体架构与变更关系、功能模块职责、数据库/DDL 与 API 输入输出骨架、实际一致性/迁移/兼容约束及 MR 映射；只展开真实变化。跨 MR 公共契约有唯一权威定义和依赖放行条件，局部完整 API/DDL、代码与 Tasks 下沉到 MR。Plan 不是完整 MR 的集合，也不能只列任务清单。
+
+STAGED_CHECK 的计划确认记录人工来源；GOAL_RESULT 在已有实施授权、Analysis Gate 和方案 CP2 检查通过后记录 `plan_confirmation: AUTO_CHECKED`、`plan_approval_source: automatic_checks` 和 Gate 引用，然后生成执行契约并通过来源/依赖 CP3、启动 CP4。计划标明完整任务/MR 的确认边界，不能用 `continuous_project` 替代推进模式选择。
+
 每个 MR 执行契约必须明确执行输入和交付输出。输入覆盖前置状态、代码/符号、数据、配置、外部能力及其可依赖条件；输出覆盖代码、接口、数据、配置、测试、migration 或文档产物及可观察完成判据，并明确不属于本 MR 的输出。不得用“相关代码”“完成适配”“按需修改”等概括语替代可执行契约。
+
+MR 记录 `based_on_plan_revision` 和适用的 `architecture_refs` / `contract_refs`，引用 Plan 的 ARCH 项和公共契约权威位置/版本。局部 DESIGN 项承接这些约束；变更来源、共同契约或架构时按 solution-design 做修订影响分析与重新检查，不能静默改写或仅更新版本号。
 
 Tasks 生成前，MR 必须把需求语义转换为适配当前仓库的程序设计语言，而不是转贴需求描述或填写固定对象属性。根据真实改动选择目标语言类型/方法、OpenAPI/Proto/Schema、DDL/ORM、mapper 表达式或关键控制流，使用真实名称、签名、字段和错误类型；未涉及的设计维度不输出。每个实际代码设计块使用稳定 `DESIGN-###`，标注目标文件/符号和来源证据。存在未决真实名称/签名、引用不可解析、样例与声明不一致或自然语言占位时不得 READY。私有结构只在影响边界、不变量、复用或测试时预先规定。
 

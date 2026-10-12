@@ -14,7 +14,7 @@ This adapter maps generic superCoder actions to an OpenCode-style runtime. Valid
 | Complete work | Route to `superCoder-verification` before final completion wording. |
 | Query knowledge | Execute `skills/superCoder/scripts/coder_knowledge.py`; preserve JSON stdout, exit code, error code, and requested section/entity scope. |
 
-Adapter contract ID: `opencode@1`. P27 executes this adapter rather than treating this mapping as dynamic evidence.
+Adapter contract ID: `opencode@1`. P27 checks the canonical CLI through named test wrappers; it does not execute or prove integration with a live OpenCode runtime.
 
 ## Adapter Rules
 

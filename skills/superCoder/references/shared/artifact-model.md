@@ -19,6 +19,8 @@
 .coder/<development_project_id>/light-task.md
 ```
 
+LIGHT 的输入、分析/方案、执行范围、状态、review、新鲜验证和最终结果都在该文件的独立小节中；不要求三文件 epoch、独立 MR/validation/需求摘要或 CP5。执行细则见 `skills/superCoder-execution/references/light-execution.md`。
+
 ### STANDARD / CONTROLLED
 
 ```text
@@ -42,6 +44,8 @@
 ```
 
 分析、计划、执行契约、当前任务、进度、恢复、执行记录、操作账本、验证和需求落地摘要属于开发流程的可审计边界，不能因为内容可引用就取消。执行契约通常为独立 MR；唯一例外是满足下述条件的单 BUG MR，可由 Plan 直接承担执行契约，避免等价正文重复。
+
+Plan 保留受影响系统的整体架构、模块职责、变更关系、数据/API 骨架和公共契约；MR 保留自身详细设计。设计职责见 `skills/superCoder-planning/references/solution-design.md`，Plan 结构见 `../../assets/templates/implementation-plan.md`。不额外强制 architecture.md / ADD / LLD / DBD，也不把完整局部设计复制到 Plan。
 
 ## 单 BUG MR 的 Plan 内联例外
 
@@ -90,11 +94,13 @@
 `coder-current-task.md`、`project-progress.md` 和 `gates.md` 的 `stage_epoch` 必须一致。阶段转换按固定顺序执行：
 
 1. 在 `gates.md` 追加阶段转换 Gate 记录并分配新 epoch；
-2. 原子更新 `coder-current-task.md` 与 `project-progress.md`；
+2. 按 state-automation.md 使用单文件替换和可恢复 journal 更新 current-task/progress，三文件不是天然原子事务；
 3. 回读三文件确认 epoch、阶段、活动 MR 与允许动作一致；
 4. 更新 handoff/context/task-state 的恢复摘要，但这些摘要不参与 epoch 仲裁。
 
 不一致返回 `STATUS_CONSISTENCY_FAIL`，只能修复状态，不得修改产品代码或启动下一 MR。
+
+新任务的机器块由 coder_state.py 同步，gates 是权威，其他两份是生成投影。中断时先 recover；旧账本按兼容审计路径处理，不自动覆盖。LIGHT 的一致性只检查本文件。
 
 ## Review、偏差与兼容
 

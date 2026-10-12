@@ -26,10 +26,10 @@
 14. 代码审查和质量审核必须有范围、证据、推理链和验证说明，不得无界泛化
 15. 正式编码执行必须满足 analysis -> implementation plan -> detailed MR -> coder-current-task -> execution 完整链路；`source_chain.plan:null` 启动门禁失败
 16. 执行契约必须包含文件级计划、按仓库技术栈生成的实际代码设计（真实类型/方法及适用的协议、Schema、存储、映射或关键控制流）、MR Task 索引、依赖图、必要任务卡、覆盖矩阵、测试矩阵和质量清单；不得强制填写与改动无关的对象属性；SINGLE_MR_PLAN 由 Plan 承担，其他场景使用 MR 文件
-17. Plan 默认先待确认，确认前不得生成或激活执行契约、不得标记 READY、不得进入编码
+17. STAGED_CHECK 的 Plan 默认待人工确认；GOAL_RESULT 在实施授权和方案/依赖检查通过后记录 AUTO_CHECKED；未按模式确认不得激活执行契约
 18. 阶段转换必须先在 `gates.md` 追加 Gate 记录，再同步更新 current-task 与 progress 的 `stage_epoch`；三者不一致不得推进
 19. 修改产品代码前必须通过 pre-edit guard：当前阶段 == RUNNING、transition evidence 一致、source chain 真实、路径守卫通过、CP4 无 Blocker
-20. 用户口头指令不得直接升级阶段；含糊指令（继续 / 接着做）在等待确认态只能原地或请求澄清；阶段升级需“可升级 + stage_epoch 写入 + 触发词明确”三者同时满足
+20. 阶段升级按 advancement-mode 取得授权与质量证据并同步 epoch；STAGED_CHECK 在完整单元验收后等明确启动确认，GOAL_RESULT 在授权目标内自动推进，含糊“继续”不绕过人工等待
 21. 有依赖关系的 MR Task 必须串行执行、逐项复核和逐项放行，不得合并并行生成
 22. 正式 Review 必须判定文档/产物类型，并使用对应场景 checklist；不得用通用 checkpoint 清单替代 BRD/PRD/ADD/LLD/DBD/MR 或 Coder 产物专项标准
 23. 命令输出和内容查询必须有界过滤；禁止无范围 `git diff`、`docker logs -f`、无 `--tail` / 无时间窗口日志、无界 `cat` / `grep` / `find`
@@ -70,6 +70,24 @@
 ```
 
 ## 当前任务示例
+
+## 从需求输入到交付的方案分层示例
+
+以下是示例，不是已经运行或完成的项目事实。详细规则见 `skills/superCoder-planning/references/solution-design.md`，Plan 模板见 `../templates/implementation-plan.md`。
+
+新功能输入可为“根据 spec.md / prd.md 实现订单备注”，或直接给出行为和验收描述。analysis 引用输入并核对已有订单服务、表、API 和前端，不把 spec 设计建议当现状。Plan 给出当前/目标服务关系、订单/交互模块职责、备注数据和 API 骨架、兼容迁移及真实 MR 边界；跨单元字段/错误语义由唯一契约定义。具体完整 DDL/API 声明、代码设计和 Tasks 在对应 MR 展开。依赖尚未交付时，消费者待就绪。
+
+| 阶段 | 介质 | STAGED_CHECK 的 Leader 确认 |
+|---|---|---|
+| 输入与开发分析 | 上游文件/消息引用、analysis | 只在系统证据无法解决关键决策时确认 |
+| 整体方案 | Plan 中架构、数据/API 骨架、MR 顺序及 Gate | 确认方案与当前单元启动；已有匹配授权不重复问 |
+| 当前 MR 实施 | MR 详细设计、代码/测试、operations/execution/validation、Gate | 内部实施、review 和必要修复自动执行 |
+| 当前 MR 验收及下一启动 | 已验收结果、下一 MR 范围/版本及依赖 | 明确确认下一单元及当前 revision |
+| 整体目标完成 | 最终验收、需求摘要、恢复状态 | 无下一单元不再请求启动确认；用户指定最终签收时按要求处理 |
+
+GOAL_RESULT 保留同样的分析/架构/契约/依赖/review/验证要求，授权目标内自动检查和推进，不把自动检查伪装成人工批准；只请求方案时不编码。
+
+BUG 示例：“订单空查询返回 500，应返回 200 空列表”。先落盘复现和行级根因矩阵，再在 Plan 映射修复、回归及必要结构变化；单一修复且无独立审批/owner/发布回退边界时采用 SINGLE_MR_PLAN，在同一 Plan 内补齐执行层，独立保留执行和验证记录。无结构变化就说明复用现有架构，不增加新服务/表，也不创建等价 MR。
 
 ## v2.1 CLI-first Knowledge Trace 示例
 

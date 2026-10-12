@@ -21,12 +21,37 @@ def validate_summary(data):
         value=data.get(field)
         if not isinstance(value,str) or not value.strip(): raise KnowledgeError("DELIVERY_SUMMARY_DRIFT",f"{field} is required")
         if forbidden.search(value): raise KnowledgeError("DELIVERY_SUMMARY_DRIFT",f"{field} contains implementation detail")
+def validate_completion(data):
+    """A completion write requires executed validation for every actual change."""
+    validations=data.get("validations",[])
+    actual={item.get("ref") for item in data.get("actual_changes",[]) if item.get("status")=="ACTUAL"}
+    if not validations or not actual or None in actual:
+        raise KnowledgeError("COMPLETION_EVIDENCE_FAIL","actual changes and executed validations are required")
+    covered=set()
+    evidence=set()
+    for validation in validations:
+        targets=validation.get("target_refs",[])
+        if (validation.get("result")!="PASSED" or validation.get("stale")
+            or not validation.get("command") or not validation.get("evidence_ref")
+            or not targets or not re.fullmatch(r"[0-9a-f]{64}",str(validation.get("source_digest","")))):
+            raise KnowledgeError("COMPLETION_EVIDENCE_FAIL","validation is failed, stale or missing its execution binding")
+        covered.update(targets)
+        evidence.add(validation["evidence_ref"])
+    outputs={item.get("ref") for event in data.get("operations",[]) if event.get("result")=="PASS"
+             for item in event.get("outputs",[])}
+    if not actual <= covered or not actual <= outputs:
+        raise KnowledgeError("COMPLETION_EVIDENCE_FAIL","every actual change needs successful operation and validation evidence")
+    for expected in data.get("expected_changes",[]):
+        refs=set(expected.get("actual_refs",[]))
+        if refs and (not refs <= actual or not set(expected.get("evidence_refs",[])) <= evidence):
+            raise KnowledgeError("COMPLETION_EVIDENCE_FAIL","reconciliation references must resolve to actual changes and validation evidence")
 def propose(repo:Path,project_id:str,artifact_root=None):
     card=parse_card(locate(repo,project_id=project_id,artifact_root=artifact_root)); issues=validate_card(card)
     if issues: raise KnowledgeError("CARD_DRIFT",canonical(issues))
     input_path=scoped_path(artifact_directory(repo,artifact_root),f"{project_id}/records/completion-input.json")
     try: data=json.loads(input_path.read_text(encoding="utf-8"))
     except (OSError,json.JSONDecodeError) as exc: raise KnowledgeError("LEDGER_INCOMPLETE",str(exc)) from exc
+    validate_completion(data)
     lineage=validate_lineage(data.get("operations",[]),data.get("validations",[]))
     if lineage: raise KnowledgeError(lineage[0]["code"],canonical(lineage))
     governance(data)
@@ -50,7 +75,7 @@ def propose(repo:Path,project_id:str,artifact_root=None):
 def render(card,graph):
     text=card.path.read_text(encoding="utf-8"); content=canonical(graph)+"\n"; digest=hashlib.sha256(content.encode()).hexdigest(); marker=f'<!-- sc:section id="final-graph" digest="{digest}" -->\n{content}<!-- /sc:section -->'
     existing=re.compile(r'<!-- sc:section id="final-graph" digest="[0-9a-f]{64}" -->\n.*?<!-- /sc:section -->',re.S); text=existing.sub(marker,text) if existing.search(text) else text.rstrip()+"\n\n"+marker+"\n"
-    manifest=dict(card.manifest); manifest["resource"]=dict(manifest["resource"]); manifest["resource"]["status"]="ACCEPTED"; manifest["sections"]=[x for x in manifest.get("sections",[]) if x.get("id")!="final-graph"]+[{"id":"final-graph","digest":digest}]
+    manifest=dict(card.manifest); manifest["resource"]=dict(manifest["resource"]); manifest["resource"]["status"]=graph["status"]; manifest["sections"]=[x for x in manifest.get("sections",[]) if x.get("id")!="final-graph"]+[{"id":"final-graph","digest":digest}]
     replacement="<!-- sc:manifest -->\n```json\n"+canonical(manifest)+"\n```\n<!-- /sc:manifest -->"; return MANIFEST_RE.sub(replacement,text)
 def atomic_write(path:Path,text:str):
     fd,name=tempfile.mkstemp(prefix=".knowledge-",dir=path.parent); os.close(fd); tmp=Path(name)

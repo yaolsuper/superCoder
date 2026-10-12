@@ -1,0 +1,193 @@
+{
+  "scope": "three planning smoke cases, one independent agent, inherited session model; no full P40 or runtime certification",
+  "frozen_skill_file_count": 62,
+  "changed_frozen_files": [],
+  "changed_product_files": [],
+  "final_skill_files_updated_after_freeze": [
+    "skills/superCoder/assets/examples/protocol-examples.md",
+    "skills/superCoder/references/shared/index.md",
+    "skills/superCoder-ledger-audit/references/ledger-audit.md"
+  ],
+  "cases": [
+    {
+      "variant": "spec",
+      "state_projections_equal": true,
+      "stage": "PLANNING",
+      "status": "PENDING",
+      "epoch": 2,
+      "plan_confirmation": "DRAFT_PENDING_CONFIRMATION",
+      "source_chain": {
+        "analysis": "analysis/AN-001.md",
+        "mr": null,
+        "plan": "plans/PLAN-001.md"
+      },
+      "goal_complete": false,
+      "mr_files": 0,
+      "original_product_files_changed": []
+    },
+    {
+      "variant": "prd",
+      "state_projections_equal": true,
+      "stage": "PLANNING",
+      "status": "PENDING",
+      "epoch": 2,
+      "plan_confirmation": "DRAFT_PENDING_CONFIRMATION",
+      "source_chain": {
+        "analysis": "analysis/AN-001.md",
+        "mr": null,
+        "plan": "plans/PLAN-001.md"
+      },
+      "goal_complete": false,
+      "mr_files": 0,
+      "original_product_files_changed": []
+    },
+    {
+      "variant": "text",
+      "state_projections_equal": true,
+      "stage": "PLANNING",
+      "status": "PENDING",
+      "epoch": 2,
+      "plan_confirmation": "DRAFT_PENDING_CONFIRMATION",
+      "source_chain": {
+        "analysis": "analysis/AN-001.md",
+        "mr": null,
+        "plan": "plans/PLAN-001.md"
+      },
+      "goal_complete": false,
+      "mr_files": 0,
+      "original_product_files_changed": []
+    }
+  ],
+  "archive": [
+    {
+      "original": "/private/tmp/supercoder-design-20261012/agent-report.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/agent-report.md",
+      "sha256": "cb1285086a642f51f0972f21dbb321ee9062278b3772e621d5c082ef55555b29"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/manifest.json",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/fixture-manifest.json",
+      "sha256": "c19a5d2fbccd9b7ecdc71b054c03996d3d97d96fdd9b561e04c44600cef6d41f"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec-request.txt",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/spec-request.txt",
+      "sha256": "527f4fa632981f3773642c35ebd35b31e26aa9ddd13d411f62dececf8fc5eb18"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/.coder/20261012-spec/analysis/AN-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/spec/analysis/AN-001.md",
+      "sha256": "2915ce3f588da36421bd4d44122ea1bdb1662eab6e6499a864c4e05fa125a6ca"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/.coder/20261012-spec/plans/PLAN-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/spec/plans/PLAN-001.md",
+      "sha256": "3120ff70d30174859ff2dc0c47e1539f1455490dad221b677e6a542490b75ca0"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/.coder/20261012-spec/gates.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/spec/gates.md",
+      "sha256": "38dcaf310026551191024a48ac87269e0a1181568e4b53b9b38825e308f74691"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/.coder/20261012-spec/validation/BASELINE-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/spec/validation/BASELINE-001.md",
+      "sha256": "c180b6577b3f26433df09111bb1f82a4970c919561065d59c9567b3df090bf41"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/.coder/20261012-spec/validation/PLANNING-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/spec/validation/PLANNING-001.md",
+      "sha256": "1d10ba3b0590678aa401ce90edbc953e7f164216845d96468725f41a80bb0625"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/prd-request.txt",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/prd-request.txt",
+      "sha256": "bb5678de1af99df33505b0dac8f3c273c9bd017643e635a401e71af7a97aa8fb"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/prd/.coder/20261012-prd/analysis/AN-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/prd/analysis/AN-001.md",
+      "sha256": "db4dbe93083225b4ae5fe2cfcd0f627aa38175934620fa466a5791427d9345b7"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/prd/.coder/20261012-prd/plans/PLAN-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/prd/plans/PLAN-001.md",
+      "sha256": "f731289bd7b8ff4ac5b93b16f4821ee123e2dda6a56b64314b7772a6850ee2c9"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/prd/.coder/20261012-prd/gates.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/prd/gates.md",
+      "sha256": "6cba090df9b68fdb19c40a3686cc9ca66700e327f1b734d936c01a42c251a08b"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/prd/.coder/20261012-prd/validation/BASELINE-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/prd/validation/BASELINE-001.md",
+      "sha256": "c180b6577b3f26433df09111bb1f82a4970c919561065d59c9567b3df090bf41"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/prd/.coder/20261012-prd/validation/PLANNING-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/prd/validation/PLANNING-001.md",
+      "sha256": "90520731a3096b57dc161e7ab1ee77d2a4616909484a13019232e93046488dac"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/text-request.txt",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/text-request.txt",
+      "sha256": "47eff987928b45516eae0c7535dfe3cfe16f7cbf9d93c2eba61c97195044af00"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/text/.coder/20261012-text/analysis/AN-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/text/analysis/AN-001.md",
+      "sha256": "a9330d42f0ec6ac077d101342d79c5ad5d152e81f6b57cb4916642bc950504f3"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/text/.coder/20261012-text/plans/PLAN-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/text/plans/PLAN-001.md",
+      "sha256": "134037b8cf050045499a5d1c1f4910fb7f8cbfd0a726a5607fbdc84533ca4203"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/text/.coder/20261012-text/gates.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/text/gates.md",
+      "sha256": "435b2cc5c42c2e0c9534d3294dc3bf8f691ce9fc992389c1c19baf54d8a96976"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/text/.coder/20261012-text/validation/BASELINE-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/text/validation/BASELINE-001.md",
+      "sha256": "c180b6577b3f26433df09111bb1f82a4970c919561065d59c9567b3df090bf41"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/text/.coder/20261012-text/validation/PLANNING-001.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/text/validation/PLANNING-001.md",
+      "sha256": "e15f52848e5bc8fa3a732205a5148fe05ef9950b79c61c9282e1c6f929005889"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/spec.md",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/raw-repo/spec.md",
+      "sha256": "17f124d759f2734664c223b63248a4b3ec38e3b4fe7710f4ae2141cec9095715"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/web/orders.js",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/raw-repo/web/orders.js",
+      "sha256": "6c3e2fdf32ebdca88924e5470eada57df602e5d4c7c96b3a1c9b98e354ccbc7b"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/tests/test_orders.py",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/raw-repo/tests/test_orders.py",
+      "sha256": "bf86406e4699fa641b69adba238dea499aca52d8f823bbe6f4f820e3317641fa"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/deployment/services.json",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/raw-repo/deployment/services.json",
+      "sha256": "ebc7e3f76547373069c9457f18f1b1569f670a441fc758cc3d96bb1731d54dda"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/services/orders/schema.sql",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/raw-repo/services/orders/schema.sql",
+      "sha256": "f7ef3f770dcb9c8e31287eece8be8b227c679f9ae5d64dca67b72fb5a9c96916"
+    },
+    {
+      "original": "/private/tmp/supercoder-design-20261012/spec/services/orders/app.py",
+      "archived": "tests/skill-behavior/results/2026-10-12-design-forward/raw-repo/services/orders/app.py",
+      "sha256": "1809415b65e7a90e51159d7393c6867eae77939f236f693c159fb3dc49c65e7a"
+    }
+  ]
+}
